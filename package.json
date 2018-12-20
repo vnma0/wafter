@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "babel-node server.js",
+    "test": "mocha",
     "dev": "nodemon --exec npm start"
   },
   "repository": {
