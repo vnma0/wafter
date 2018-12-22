@@ -1,25 +1,43 @@
-import { check, send } from "../driver/themis";
+import { check, send, get } from "../driver/themis";
 import assert from "assert";
 
-describe("check", function() {
-    it("should return true if judger is available, or false otherwise", function() {
-        return check("http://192.168.100.4:3000/check");
+const host = "http://192.168.1.40:30000";
+
+describe("check", function () {
+    it("should return true if judger is available, or false otherwise", function () {
+        return check(host + "/check");
     });
 });
 
-describe("send", function() {
-    it("should return true when sending .cpp ...", function() {
+describe("send", function () {
+    it("should return true when sending .cpp ...", function () {
         return send(
-            "http://192.168.100.4:3000/submit",
+            host + "/submit",
             "./test/submitcode.cpp",
             "hash sha-256"
         );
     });
-    it("...and false when sending .pas", function() {
+    it("...and false when sending .pas", function () {
         return send(
-            "http://192.168.100.4:3000/submit",
+            host + "/submit",
             "./test/submitcode.pas",
             "hash sha-256"
         ).catch(bool => !bool);
     });
+});
+
+describe("get", function () {
+    it("should return true when receiving result...", function () {
+        return get(
+            host + "/get"
+        )
+        .then(result => result.length);
+    });
+    it("... and false when can't receiving result or receiving nothing", function() {
+        return get(
+            host + "/get"
+        )
+        .then(result => !result.length)
+        .catch(bool => !bool);
+    })
 });
