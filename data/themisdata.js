@@ -97,14 +97,14 @@ export async function submitCode(source_code, username, problemID) {
     */
     return new Promise((resolve, reject) => {
         db.users.findOne(
-            {username: username},
-            function(err,docs){
-                if(err) reject("error");
-                if(docs === null) reject("user not found");
+            { username: username },
+            function (err, docs) {
+                if (err) reject("error");
+                if (docs === null) reject("user not found");
             }
         )
         db.submissions.insert(
-            [{ source_code: source_code, status: "pending", date: new Date(), username: username, problemID: problemID}],
+            [{ source_code: source_code, status: "pending", date: new Date(), username: username, problemID: problemID }],
             function (err, docs) {
                 if (err) reject("error");
                 else resolve("submitted");
@@ -118,7 +118,7 @@ function writeLog(username, logfile) {
     db.users.insert([logfile], function (err, docs) { });
 }
 
-newUser('dmcs','vnch').then(console.log).catch(console.log);
+newUser('dmcs', 'vnch').then(console.log).catch(console.log);
 //submitCode('viet nam cong hoa se phuc quoc thanh cong vao nam n+1','dmcs','A1').then(console.log).catch(console.log);
 /*
     nodemon --exec npx babel-node .\data\themisdata.js
