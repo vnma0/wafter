@@ -15,11 +15,9 @@ db.submissions.loadDatabase();
 //db.persistence.setAutocompactionInterval(5001);
 
 /*
-    mô tả về các tuple trong database của users và submissions
     code{
         _id: (hidden)
-        openID:
-        problem ID:
+        problemID:
         username:
         source_code:
         date:
@@ -33,93 +31,133 @@ db.submissions.loadDatabase();
 */
 
 
-
+// checking if an username is valid
 function usernameChecking(username) {
     for (let i = 0; i < username.length; i++) {
-        if (username[i] === ' ') return false;
+        var c;
+        if (!(('0' <= c && c <= '9') || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'))) return false;
     }
     return true;
 }
+// adding new user
 export async function newUser(username, pass) {
     return new Promise((resolve, reject) => {
-        if (pass.length > 32) reject("the maximum length allowed is 32");
         db.users.findOne(
             { username: username },
             function (err, docs) {
                 if (err) reject("error");
-                if (username.length > 32) reject("the maximum length allowed is 32");
-                if (docs !== null) reject("this username has already been taken");
-            }
-        );
-        if (usernameChecking(username) === false) reject("invalid characters included");
-        db.users.insert(
-            [{ username: username, pass: pass }],
-            function (err, docs) {
-                if (err) reject("error");
-                else resolve("new user created");
+                // making sure that the lengths meet the requirements
+                else if (username.length > 32) reject("the maximum length allowed is 32");
+                // making sure that the lengths meet the requirements
+                else if (pass.length > 32) reject("the maximum length allowed is 32");
+                // making sure there isn't any invalid character
+                else if (usernameChecking(username) === false) reject("invalid characters included");
+                // making sure the username hasn't been taken
+                else if (docs !== null) reject("this username has already been taken");
+                // creating new user
+                else db.users.insert(
+                    [{ username: username, pass: pass }],
+                    function (err, docs) {
+                        if (err) reject("error");
+                        else resolve("new user created");
+                    }
+                );
             }
         );
     });
 }
 
-
+// get user's properties
 export async function readUser(username) {
     return new Promise((resolve, reject) => {
         db.submissions.findOne(
             { username: username },
             function (err, docs) {
                 if (err) reject("error");
+                // making sure that the username is valid
                 if (docs === null) reject("invalid user");
+                // return user's properties
                 else resolve(docs);
             }
         )
     });
 }
 
+// reading the submission's properties by id
 export async function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
         db.submissions.findOne(
             { _id: sub_id },
             function (err, docs) {
                 if (err) reject("error");
+                // making sure that the id is valid
                 if (docs === null) reject("invalid id");
+                // return the submission's properties
                 else resolve(docs);
             }
         )
     });
 }
 
+// submitting the code
 export async function submitCode(source_code, username, problemID) {
-    /*
-    var openID;
-    db.submissions.count({}, function (err, docs) { openID = docs; });
-    openID += 1;
-    */
     return new Promise((resolve, reject) => {
         db.users.findOne(
             { username: username },
             function (err, docs) {
                 if (err) reject("error");
+                // making sure the username is valid
                 if (docs === null) reject("user not found");
-            }
-        )
-        db.submissions.insert(
-            [{ source_code: source_code, status: "pending", date: new Date(), username: username, problemID: problemID }],
-            function (err, docs) {
-                if (err) reject("error");
-                else resolve("submitted");
+                // submitting the code
+                else db.submissions.insert(
+                    [{ source_code: source_code, status: "pending", date: new Date(), username: username, problemID: problemID }],
+                    function (err, docs) {
+                        if (err) reject("error");
+                        else resolve("submitted");
+                    }
+                )
             }
         )
     });
 };
 
-
-function writeLog(username, logfile) {
-    db.users.insert([logfile], function (err, docs) { });
+//getting user's submissions
+export async function getUserSubmissions(username) {
+    return new Promise((resolve, reject) => {
+        db.submissions.find(
+            { username: username },
+            function (err, docs) {
+                if (err) reject("error");
+                // return an array of objects that represent user's submissions
+                else resolve(docs);
+            }
+        )
+    });
 }
 
-newUser('dmcs', 'vnch').then(console.log).catch(console.log);
-//submitCode('viet nam cong hoa se phuc quoc thanh cong vao nam n+1','dmcs','A1').then(console.log).catch(console.log);
+//get problem's submissions
+export async function getProblemSubmissions(problemID) {
+    return new Promise((resolve, reject) => {
+        db.submissions.find(
+            { problemID: problemID },
+            function (err, docs) {
+                if (err) reject("error");
+                // return an array of objects that represent problem's submissions
+                else resolve(docs);
+            }
+        )
+    });
+}
+// testing
+newUser("user1", "password").then(console.log).catch(console.log);
+readUser("user1").then(console.log).catch(console.log);
+submitCode("this is source code 1", "user1", "A").then(console.log).catch(console.log);
+readSubmission("").then(console.log).catch(console.log);
+submitCode("this is source code 2", "user1", "A").then(console.log).catch(console.log);
+readSubmission("").then(console.log).catch(console.log);
+getUserSubmissions("user1").then(console.log).catch(console.log);
+getProblemSubmissions("user1").then(console.log).catch(console.log);
+
 /*
     nodemon --exec npx babel-node .\data\themisdata.js
 */
