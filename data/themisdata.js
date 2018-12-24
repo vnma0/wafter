@@ -12,8 +12,6 @@ db.submissions = new Datastore('data/submissions.db');
 db.users.loadDatabase();
 db.submissions.loadDatabase();
 
-//db.persistence.setAutocompactionInterval(5001);
-
 /*
     code{
         _id: (hidden)
@@ -30,7 +28,6 @@ db.submissions.loadDatabase();
     }
 */
 
-
 // checking if an username is valid
 function usernameChecking(username) {
     for (let i = 0; i < username.length; i++) {
@@ -39,6 +36,7 @@ function usernameChecking(username) {
     }
     return true;
 }
+
 // adding new user
 export async function newUser(username, pass) {
     return new Promise((resolve, reject) => {
@@ -70,8 +68,24 @@ export async function newUser(username, pass) {
 // get user's properties
 export async function readUser(username) {
     return new Promise((resolve, reject) => {
-        db.submissions.findOne(
+        db.users.findOne(
             { username: username },
+            function (err, docs) {
+                if (err) reject("error");
+                // making sure that the username is valid
+                if (docs === null) reject("invalid user");
+                // return user's properties
+                else resolve(docs);
+            }
+        )
+    });
+}
+
+// get user's properties by ID
+export async function readUser(user_id) {
+    return new Promise((resolve, reject) => {
+        db.users.findOne(
+            { _id: user_id },
             function (err, docs) {
                 if (err) reject("error");
                 // making sure that the username is valid
@@ -152,9 +166,9 @@ export async function getProblemSubmissions(problemID) {
 newUser("user1", "password").then(console.log).catch(console.log);
 readUser("user1").then(console.log).catch(console.log);
 submitCode("this is source code 1", "user1", "A").then(console.log).catch(console.log);
-readSubmission("").then(console.log).catch(console.log);
+readSubmission("OVdJBSsIsZOnLdrA").then(console.log).catch(console.log);
 submitCode("this is source code 2", "user1", "A").then(console.log).catch(console.log);
-readSubmission("").then(console.log).catch(console.log);
+readSubmission("h8vhdOAGSBw2QIx1").then(console.log).catch(console.log);
 getUserSubmissions("user1").then(console.log).catch(console.log);
 getProblemSubmissions("user1").then(console.log).catch(console.log);
 
