@@ -1,7 +1,7 @@
 import { check, send, get } from "../driver/themis";
 import assert from "assert";
 
-const host = "http://192.168.1.40:30000";
+const host = "http://192.168.1.145:30000";
 
 describe("check", function () {
     it("should return true if judger is available, or false otherwise", function () {
