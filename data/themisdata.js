@@ -8,10 +8,10 @@ var Datastore = require('nedb')
 db = {};
 db.users = new Datastore('data/users.db');
 db.submissions = new Datastore('data/submissions.db');
-
+db.problems = new Datastore('data/problems.db');
 db.users.loadDatabase();
 db.submissions.loadDatabase();
-
+db.problems.loadDatabase();
 /*
     code{
         _id: (hidden)
@@ -26,7 +26,46 @@ db.submissions.loadDatabase();
         username:
         pass:
     }
+    problem{
+        _id:
+        problemID:
+        wlink:
+        contest:
+    }
 */
+// adding new problem
+export async function newProblem(problemID, contest, wlink) {
+    return new Promise((resolve, reject) => {
+        db.problems.findOne(
+            { problemID: problemID },
+            function (err, docs) {
+                if (err) reject("error");
+                if (docs !== null) reject("this ID is used");
+                else db.problems.insert(
+                    { problemID: problemID, contest: contest, wlink: wlink },
+                    function (err, docs) {
+                        if (err) reject("error");
+                        else resolve(" new problem added");
+                    }
+                )
+            }
+        )
+    });
+}
+
+//get problem by ID
+export async function getProblem(problemID) {
+    return new Promise((resolve, reject) => {
+        db.problems.findOne(
+            { problemID: problemID },
+            function (err, docs) {
+                if (err) reject("error");
+                if (docs === null) reject("problem not found");
+                else resolve(docs);
+            }
+        )
+    })
+}
 
 // checking if an username is valid
 function usernameChecking(username) {
