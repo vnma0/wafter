@@ -22,7 +22,9 @@ describe("send", function () {
             host + "/submit",
             "./test/submitcode.pas",
             "hash sha-256"
-        ).catch(bool => !bool);
+        )
+        .then(bool => !bool)
+        .catch(err => console.log("error"));
     });
 });
 

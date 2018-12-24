@@ -11,13 +11,10 @@ import { createReadStream } from "fs";
  */
 
 export function check(server_address) {
-  return timeout(
-    fetch(server_address, {
-      cache: "no-cache",
-      mode: "no-cors"
-    }),
-    1000
-  )
+  return fetch(server_address, {
+    cache: "no-cache",
+    mode: "no-cors"
+  })
     .then(response => response.status)
     .then(status => status === 200)
     .catch(err => {
@@ -44,12 +41,13 @@ export function send(server_address, source_code_path, encrypted_info) {
 
   return fetch(server_address, {
     method: "POST",
-    // mode: "no-cors",
+    mode: "no-cors",
     body: data
   })
-    .then(response =>
-      console.log("Successful attempt of data transfering to judge")
-    )
+    .then(response => {
+      if (response.status !== 200) Promise.reject("Bad request");
+    })
+    .then(() => console.log("Successful attempt of data transfering to judge"))
     .catch(error =>
       Promise.reject("Unsuccesful attempt of data transfering to judger")
     );
@@ -70,6 +68,3 @@ export function get(server_address) {
       Promise.reject("Unsuccesful attempt of data receiving from judger")
     );
 }
-
-check('http://192.168.1.145/get');
-//get('http://192.168.1.145/get');
