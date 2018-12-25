@@ -21,22 +21,10 @@ describe("check", function() {
 
 describe("send", function() {
     it("should return true when sending .cpp ...", function() {
-        return send(
-            host + "/submit",
-            "./test/submitcode.cpp",
-            "hash sha-256"
-        ).catch(err => {
-            throw err;
-        });
+        return send(host + "/submit", "./test/submitcode.cpp", "hash sha-256");
     });
     it("...and return true when sending .pas ...", function() {
-        return send(
-            host + "/submit",
-            "./test/submitcode.pas",
-            "hash sha-256"
-        ).catch(err => {
-            throw err;
-        });
+        return send(host + "/submit", "./test/submitcode.pas", "hash sha-256");
     });
     it("...and false when sending .js", function() {
         return send(
@@ -51,14 +39,10 @@ describe("send", function() {
 });
 
 describe("get", function() {
-    it("should return true when receiving result...", function() {
+    it("should return true when receiving result, or false otherwise", function() {
         // Unknown
-        return get(host + "/get")
-            .then(result => {
-                if (!result) throw "Invalid result";
-            })
-            .catch(err => {
-                throw err;
-            });
+        return get(host + "/get").then(result => {
+            if (!result) throw "Invalid result";
+        });
     });
 });
