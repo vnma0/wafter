@@ -1,5 +1,5 @@
+import "@babel/polyfill";
 import fetch from "node-fetch";
-import { timeout, TimeoutError } from "promise-timeout";
 import FormData from "form-data";
 import { createReadStream } from "fs";
 
@@ -10,18 +10,18 @@ import { createReadStream } from "fs";
  * @return {promise} : true if judger is available, false otherwise
  */
 
-export function check(server_address) {
-  return fetch(server_address, {
-    cache: "no-cache",
-    mode: "no-cors"
-  })
-    .then(response => response.status)
-    .then(status => status === 200)
-    .catch(err => {
-      if (err instanceof TimeoutError) {
-        return Promise.reject("Timeout error!");
-      }
-    });
+export async function check(server_address) {
+    try {
+        const response = await fetch(server_address, {
+            cache: "no-cache",
+            mode: "no-cors",
+            timeout: 1000
+        });
+        const status = response.status;
+        return status === 200;
+    } catch (err) {
+        throw err;
+    }
 }
 
 /**
@@ -33,24 +33,25 @@ export function check(server_address) {
  * @return {Promise} : true if data is sent successfully, false otherwise
  */
 
-export function send(server_address, source_code_path, encrypted_info) {
-  let data = new FormData();
+export async function send(server_address, source_code_path, encrypted_info) {
+    let data = new FormData();
 
-  data.append("code", createReadStream(source_code_path));
-  data.append("id", encrypted_info);
+    data.append("code", createReadStream(source_code_path));
+    data.append("id", encrypted_info);
 
-  return fetch(server_address, {
-    method: "POST",
-    mode: "no-cors",
-    body: data
-  })
-    .then(response => {
-      if (response.status !== 200) Promise.reject("Bad request");
-    })
-    .then(() => console.log("Successful attempt of data transfering to judge"))
-    .catch(error =>
-      Promise.reject("Unsuccesful attempt of data transfering to judger")
-    );
+    try {
+        const response = await fetch(server_address, {
+            method: "POST",
+            mode: "no-cors",
+            body: data,
+            timeout: 1000
+        });
+        const status = response.status;
+
+        return status;
+    } catch (err) {
+        throw err;
+    }
 }
 
 /**
@@ -58,13 +59,16 @@ export function send(server_address, source_code_path, encrypted_info) {
  * @param {string} server_address : IP address of judger
  * @return {json} : result file, consist of verdicts ans hashes
  */
-export function get(server_address) {
-  return fetch(server_address, {
-    mode: "no-cors",
-    cache: "no-cache"
-  })
-    .then(response => response.json())
-    .catch(error =>
-      Promise.reject("Unsuccesful attempt of data receiving from judger")
-    );
+export async function get(server_address) {
+    try {
+        const response = await fetch(server_address, {
+            mode: "no-cors",
+            cache: "no-cache",
+            timeout: 1000
+        });
+        const json = await response.json();
+        return json;
+    } catch (err) {
+        throw err;
+    }
 }
