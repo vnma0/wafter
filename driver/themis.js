@@ -4,6 +4,7 @@ import FormData from "form-data";
 import { createReadStream } from "fs";
 
 //Supporting Library for Admin-Judger Interface, MIRAI's backend
+
 /**
  * Part 1: checking status of availability of judger
  * @param {string} server_address : IP address of judger
@@ -25,7 +26,37 @@ export async function check(server_address) {
 }
 
 /**
- * Part 2 : send data to judger
+ * Part 2: cloning Task file to judger
+ * @param {string} server_address : IP address of judger
+ * @param {string} compressed_task_path : path to database, linked to compressed Task file
+ * @return {promise} : true if Task file is successfully cloned, false otherwise
+ */
+
+export async function clone(server_address, compressed_task_path) {
+    let task = new FormData();
+
+    task.append("task", createReadStream(compressed_task_path));
+
+    try {
+        const response = await fetch(server_address, {
+            method: "POST",
+            mode: "no-cors",
+            body: data,
+            timeout: 1000
+        });
+        const status = response.status;
+
+        if (status === 415) throw "Incorrect file type";
+        else if (status == 413) throw "File is too large";
+
+        return status === 200;
+    } catch (err) {
+        throw err;
+    }
+}
+
+/**
+ * Part 3 : send data to judger
  * @param {string} server_address : IP address of judger
  * @param {string} source_code_path :
  * Path to the database, linked to submission's source code of contestant,
@@ -58,7 +89,7 @@ export async function send(server_address, source_code_path, encrypted_info) {
 }
 
 /**
- * Part 3 : receive result from judger
+ * Part 4 : receive result from judger
  * @param {string} server_address : IP address of judger
  * @return {json} : result file, consist of verdicts ans hashes
  */
