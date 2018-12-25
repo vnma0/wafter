@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/vnma0/wafter#readme",
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "express": "^4.16.4",
     "express-brute": "^1.0.1",
     "express-brute-nedb": "^1.1.0",

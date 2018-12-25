@@ -48,7 +48,10 @@ export async function send(server_address, source_code_path, encrypted_info) {
         });
         const status = response.status;
 
-        return status;
+        if (status === 415) throw "Incorrect file type";
+        else if (status == 413) throw "File is too large";
+
+        return status === 200;
     } catch (err) {
         throw err;
     }
