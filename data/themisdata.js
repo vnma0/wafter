@@ -11,6 +11,7 @@ db.problems = new Datastore('data/problems.db');
 db.users.loadDatabase();
 db.submissions.loadDatabase();
 db.problems.loadDatabase();
+
 /*
     code{
         _id: (hidden)
@@ -19,6 +20,7 @@ db.problems.loadDatabase();
         source_code:
         date:
         status:
+        contest:
         // verdict on testcase ?
     }
     user{
@@ -29,27 +31,29 @@ db.problems.loadDatabase();
     problem{
         _id:
         problemID:
-        wlink:
+        wlink: -> statements link
         contest:
-        // testcase[]{
-        //     id:
-        //     test:
-        // }
+    }
+    testcases{
+        _id
+        problemID
+        testid
+        test
     }
 */
 
 // adding new problem
-export async function newProblem(problemID, contest, wlink, testcases) {
+export async function newProblem(problemID, contest, wlink) {
     return new Promise((resolve, reject) => {
         db.problems.findOne(
             { problemID: problemID },
             function (err, docs) {
                 if (err) reject(err);
-                if (docs !== null) reject(err);
+                if (docs !== null) reject(null);
                 else db.problems.insert(
-                    { problemID: problemID, contest: contest, wlink: wlink, testcases: testcases },
-                    function (err, docs2) {
-                        if (err) reject(err);
+                    { problemID: problemID, contest: contest, wlink: wlink },
+                    function (err2, docs2) {
+                        if (err2) reject(err2);
                         else resolve(docs2);
                     }
                 )
@@ -57,6 +61,20 @@ export async function newProblem(problemID, contest, wlink, testcases) {
         )
     });
 }
+// return an array of testcases by problemID
+export async function getTestcases(problemID) {
+    return new Promise((resolve, reject) => {
+        db.testcases.findOne(
+            { problemID: problemID },
+            function (err, docs) {
+                if (err) reject(docs);
+                if (docs === null) reject(null);
+                else resolve(docs);
+            }
+        )
+    });
+}
+
 
 //get problem by ID
 export async function getProblem(problemID) {
@@ -69,7 +87,20 @@ export async function getProblem(problemID) {
                 else resolve(docs);
             }
         )
-    })
+    });
+}
+
+// add testcases
+export async function addTestcase(problemID, test, testID) {
+    return new Promise((resolve, reject) => {
+        db.testcases.insert(
+            { problemID: problemID, testID: testID, test: test },
+            function (err, docs) {
+                if (err) reject(err);
+                else resolve(true);
+            }
+        )
+    });
 }
 
 // checking if an username is valid
@@ -99,8 +130,8 @@ export async function newUser(username, pass) {
                 // creating new user
                 else db.users.insert(
                     [{ username: username, pass: pass }],
-                    function (err, docs2) {
-                        if (err) reject(err);
+                    function (err2, docs2) {
+                        if (err2) reject(err2);
                         else resolve(docs2);
                     }
                 );
@@ -158,7 +189,7 @@ export async function readSubmission(sub_id) {
 }
 
 // submitting the code
-export async function submitCode(source_code, username, problemID) {
+export async function submitCode(source_code, username, problemID, contest) {
     return new Promise((resolve, reject) => {
         db.users.findOne(
             { username: username },
@@ -168,9 +199,9 @@ export async function submitCode(source_code, username, problemID) {
                 if (docs === null) reject(null);
                 // submitting the code
                 else db.submissions.insert(
-                    [{ source_code: source_code, status: "pending", date: new Date(), username: username, problemID: problemID }],
-                    function (err, docs2) {
-                        if (err) reject(err);
+                    [{ source_code: source_code, status: "pending", date: new Date(), username: username, problemID: problemID, contest: contest }],
+                    function (err2, docs2) {
+                        if (err2) reject(err2);
                         else resolve(docs2);
                     }
                 )
@@ -207,13 +238,47 @@ export async function getProblemSubmissions(problemID) {
     });
 }
 
+// export async function contestLog(contestID) {
+//     return new Promise((resolve, reject) => {
+//         db.problems.find(
+//             { contest: contest },
+//             function (err, docs) {
+//                 if (err) reject(err);
+//                 else db.testcases.find(
+//                     { contest: contest },
+//                     function (err2, docs2) {
+//                         if (err2) reject(err2);
+//                         else resolve({
+//                             problems_log: docs,
+//                             testcases_log: docs2
+//                         })
+//                     }
+//                 )
+//             }
+//         )
+//     })
+// }
+
+// export async function login(username, password) {
+//     return new Promise((resolve, reject) => {
+//         db.submissions.find(
+//             { username: username, pass: password },
+//             function (err, docs) {
+//                 if (err) reject(err);
+//                 if (docs === null) reject(false);
+//                 else resolve(true);
+//             }
+//         )
+//     })
+// }
+
 
 // testing
 // newUser("user1", "password").then(console.log).catch(console.log);
 // readUserByUsername("user1").then(console.log).catch(console.log);
-// submitCode("this is source code 1", "user1", "A").then(console.log).catch(console.log);
+// submitCode("this is source code 1", "user1", "A","B").then(console.log).catch(console.log);
 // readSubmission("OVdJBSsIsZOnLdrA").then(console.log).catch(console.log);
-// submitCode("this is source code 2", "user1", "A").then(console.log).catch(console.log);
+// submitCode("this is source code 2", "user1", "A","B").then(console.log).catch(console.log);
 // readSubmission("h8vhdOAGSBw2QIx1").then(console.log).catch(console.log);
 // getUserSubmissions("user1").then(console.log).catch(console.log);
 // getProblemSubmissions("user1").then(console.log).catch(console.log);
