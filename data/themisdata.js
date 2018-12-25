@@ -49,7 +49,7 @@ export async function newProblem(problemID, contest, wlink) {
             { problemID: problemID },
             function (err, docs) {
                 if (err) reject(err);
-                if (docs !== null) reject(null);
+                else if (docs !== null) reject(new Error("this problem has already existed"));
                 else db.problems.insert(
                     { problemID: problemID, contest: contest, wlink: wlink },
                     function (err2, docs2) {
@@ -68,7 +68,7 @@ export async function getTestcases(problemID) {
             { problemID: problemID },
             function (err, docs) {
                 if (err) reject(docs);
-                if (docs === null) reject(null);
+                else if (docs === null) reject("this testcase doesn't exists");
                 else resolve(docs);
             }
         )
@@ -83,7 +83,7 @@ export async function getProblem(problemID) {
             { problemID: problemID },
             function (err, docs) {
                 if (err) reject(err);
-                if (docs === null) reject(null);
+                else if (docs === null) reject(new Error("invalid problem ID"));
                 else resolve(docs);
             }
         )
@@ -97,7 +97,7 @@ export async function addTestcase(problemID, test, testID) {
             { problemID: problemID, testID: testID, test: test },
             function (err, docs) {
                 if (err) reject(err);
-                else resolve(true);
+                else resolve(docs);
             }
         )
     });
@@ -120,13 +120,13 @@ export async function newUser(username, pass) {
             function (err, docs) {
                 if (err) reject(err);
                 // making sure that the lengths meet the requirements
-                else if (username.length > 32) reject(null);
+                else if (username.length > 32) reject(new Error("this username's length is too long"));
                 // making sure that the lengths meet the requirements
-                else if (pass.length > 32) reject(null);
+                else if (pass.length > 32) reject(new Error("this password's length is too long"));
                 // making sure there isn't any invalid character
-                else if (usernameChecking(username) === false) reject(null);
+                else if (usernameChecking(username) === false) reject(new Error("this username included invalid characters"));
                 // making sure the username hasn't been taken
-                else if (docs !== null) reject(null);
+                else if (docs !== null) reject(new Error("this username has been taken"));
                 // creating new user
                 else db.users.insert(
                     [{ username: username, pass: pass }],
@@ -148,7 +148,7 @@ export async function readUserByUsername(username) {
             function (err, docs) {
                 if (err) reject(err);
                 // making sure that the username is valid
-                if (docs === null) reject(null);
+                else if (docs === null) reject(new Error("invalid username"));
                 // return user's properties
                 else resolve(docs);
             }
@@ -163,8 +163,8 @@ export async function readUserByID(user_id) {
             { _id: user_id },
             function (err, docs) {
                 if (err) reject(err);
-                // making sure that the username is valid
-                if (docs === null) reject(null);
+                // making sure that the user id is valid
+                else if (docs === null) reject(new Error("invalid user ID"));
                 // return user's properties
                 else resolve(docs);
             }
@@ -180,7 +180,7 @@ export async function readSubmission(sub_id) {
             function (err, docs) {
                 if (err) reject(err);
                 // making sure that the id is valid
-                if (docs === null) reject(null);
+                else if (docs === null) reject(new Error("invalid ID"));
                 // return the submission's properties
                 else resolve(docs);
             }
@@ -196,7 +196,7 @@ export async function submitCode(source_code, username, problemID, contest) {
             function (err, docs) {
                 if (err) reject(err);
                 // making sure the username is valid
-                if (docs === null) reject(null);
+                else if (docs === null) reject(new Error("this username doesn't exists"));
                 // submitting the code
                 else db.submissions.insert(
                     [{ source_code: source_code, status: "pending", date: new Date(), username: username, problemID: problemID, contest: contest }],
@@ -226,7 +226,8 @@ export async function getUserSubmissions(username) {
 
 //get problem's submissions
 export async function getProblemSubmissions(problemID) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {if (docs === null) reject(null);
+        else resolve(docs);
         db.submissions.find(
             { problemID: problemID },
             function (err, docs) {
@@ -286,3 +287,4 @@ export async function getProblemSubmissions(problemID) {
 /*
     nodemon --exec npx babel-node .\data\themisdata.js
 */
+
