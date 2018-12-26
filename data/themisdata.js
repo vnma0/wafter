@@ -67,32 +67,19 @@ export async function newUser(username, pass) {
           docs2
         ) {
           if (err2) reject(err2);
-          else resolve(docs2);
+          else resolve("user created");
         });
     });
   });
 }
 
 // get user's properties
-export async function readUserByUsername(username) {
+export async function readUser(username) {
   return new Promise((resolve, reject) => {
     db.users.findOne({ username: username }, function(err, docs) {
       if (err) reject(err);
       // making sure that the username is valid
       else if (docs === null) reject("invalid username");
-      // return user's properties
-      else resolve(docs);
-    });
-  });
-}
-
-// get user's properties by ID
-export async function readUserByID(user_id) {
-  return new Promise((resolve, reject) => {
-    db.users.findOne({ _id: user_id }, function(err, docs) {
-      if (err) reject(err);
-      // making sure that the user id is valid
-      else if (docs === null) reject("invalid user ID");
       // return user's properties
       else resolve(docs);
     });
@@ -133,7 +120,7 @@ export async function submitCode(source_code, username, problemID) {
           ],
           function(err2, docs2) {
             if (err2) reject(err2);
-            else resolve(docs2);
+            else resolve("submitted");
           }
         );
     });
@@ -148,6 +135,7 @@ export async function updateSubmission(sub_id, new_verdict) {
       { multi: false },
       function(err, docs) {
         if (err) reject(err);
+        else if (docs === 0) reject("nothing was submitted");
         else resolve("new verdict applied");
       }
     );
@@ -162,7 +150,7 @@ export async function updateUser(username, old_pass, new_pass) {
       { multi: false },
       function(err, docs) {
         if (err) reject(err);
-        else if (docs) reject("wrong password or username");
+        else if (docs === 0) reject("wrong password or username");
         else resolve("password changed");
       }
     );
