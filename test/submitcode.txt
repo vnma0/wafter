@@ -1,0 +1,2 @@
+This is a sample txt file
+Intended to be sent as submit code
