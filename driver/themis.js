@@ -19,6 +19,7 @@ export async function check(server_address) {
             timeout: 1000
         });
         const status = response.status;
+        if (status === 503) throw "Server is not ready";
         return status === 200;
     } catch (err) {
         throw err;
@@ -41,13 +42,14 @@ export async function clone(server_address, compressed_task_path) {
         const response = await fetch(server_address, {
             method: "POST",
             mode: "no-cors",
-            body: data,
+            body: task,
             timeout: 1000
         });
         const status = response.status;
 
         if (status === 415) throw "Incorrect file type";
         else if (status == 413) throw "File is too large";
+        else if (status == 403) throw "Server has been set up";
 
         return status === 200;
     } catch (err) {

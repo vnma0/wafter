@@ -2,46 +2,58 @@ import { check, send, get, clone } from "../driver/themis";
 
 const host = "http://localhost:30000";
 
-// fetch(host).then(
-//     () => {
-//         console.log("No problem");
-//     },
-//     () => {
-//         console.log("Invalid host");
-//     }
-// );
-
 describe("check", function() {
-    it("should return true if judger is available, or false otherwise", function() {
-        return check(host + "/check");
+    it("should return false when server hasn't been set up", function() {
+        return check(host + "/check").then(
+            () => {
+                throw "Incorrect behaviour";
+            },
+            err => {
+                if (err === "Server is not ready") return Promise.resolve();
+                else throw err;
+            }
+        );
     });
 });
 
 describe("clone", function() {
-    it("should return true when correctly and successfully cloning Task file to judger ...", function() {
-        return clone(host + "/task", "./test/Tasks.rar");
+    it("should return false when clone wrong file", function() {
+        return clone(host + "/task", "./test/LARES.cpp")
+            .then(err => {
+                throw "Incorrect behaviour";
+            })
+            .catch(err => {
+                if (err === "Incorrect file type") return Promise.resolve();
+                else throw err;
+            });
     });
-    it("... and return false when clone wrong file or can't connect to judger", function() {
-        return clone(host + "/task", "./test/LARES.cpp");
+    it("...and return true when correctly and successfully cloning Task file to judger ...", function() {
+        return clone(host + "/task", "./test/Tasks.zip");
+    });
+});
+
+describe("check", function() {
+    it("should return true when server is ready", () => {
+        return check(host + "/check");
     });
 });
 
 describe("send", function() {
-    it("should return true when sending .cpp ...", function() {
+    it("should return true when sending .cpp ...", () => {
         return send(host + "/submit", "./test/submitcode.cpp", "hash sha-256");
     });
-    it("...and return true when sending .pas ...", function() {
+    it("...and return true when sending .pas ...", () => {
         return send(host + "/submit", "./test/submitcode.pas", "hash sha-256");
     });
-    it("...and false when sending .js", function() {
-        return send(
-            host + "/submit",
-            "./test/submitcode.txt",
-            "hash sha-256"
-        ).catch(err => {
-            if (err === "Incorrect file type") return Promise.resolve();
-            else throw err;
-        });
+    it("...and false when sending .js", () => {
+        return send(host + "/submit", "./test/submitcode.txt", "hash sha-256")
+            .then(err => {
+                throw "Incorrect behaviour";
+            })
+            .catch(err => {
+                if (err === "Incorrect file type") return Promise.resolve();
+                else throw err;
+            });
     });
 });
 
