@@ -5,7 +5,7 @@ import {
   readSubmission,
   updateUser,
   updateSubmission
-} from "../data/themisdata";
+} from "../data/database";
 
 const sampleUser = "sampleuser";
 const samplePass = "samplepassword";
@@ -16,79 +16,36 @@ const sampleVer = "sampleverdict";
 
 describe("newUser", function() {
   it("should be adding user", function() {
-    return newUser(sampleUser, samplePass).then(
-      docs => {
-        return Promise.resolve();
-      },
-      err => {
-        throw err;
-      }
-    );
+    return newUser(sampleUser, samplePass);
   });
 });
 
 describe("readUser", function() {
   it("should be returning an object represents user's properties", function() {
-    return readUser(sampleUser).then(
-      docs => {
-        return Promise.resolve();
-      },
-      err => {
-        throw err;
-      }
-    );
+    return readUser(sampleUser);
   });
 });
 
 describe("submitCode", function() {
   it("should be submitting code", function() {
-    return submitCode(sampleCode, sampleUser, sampleProb).then(
-      docs => {
-        return Promise.resolve();
-      },
-      err => {
-        if (err == "submitted") return Promise.resolve();
-        else throw err;
-      }
-    );
+    return submitCode(sampleCode, sampleUser, sampleProb);
   });
 });
 
 describe("readSubmission", function() {
   it("should be returning an object represents submission's props", function() {
-    return readSubmission(sampleID).then(
-      docs => {
-        return Promise.resolve();
-      },
-      err => {
-        throw err;
-      }
-    );
+    return readSubmission(sampleID);
   });
 });
 
 describe("updateSubmission", function() {
   it("should be updating verdict", function() {
-    return updateSubmission(sampleID, sampleVer).then(
-      docs => {
-        return Promise.resolve();
-      },
-      err => {
-        throw err;
-      }
-    );
+    return updateSubmission(sampleID, sampleVer);
   });
 });
 
 describe("updateUser", function() {
   it("should be update user's password", function() {
-    return updateUser(sampleUser, samplePass, samplePass).then(
-      docs => {
-        return Promise.resolve();
-      },
-      err => {
-        throw err;
-      }
-    );
+    return updateUser(sampleUser, samplePass, samplePass);
   });
 });

@@ -29,9 +29,11 @@ export function newUser(username, pass) {
   return new Promise((resolve, reject) => {
     db.users.findOne({ username: username }, function(err, docs) {
       if (err) reject(err);
-      else if (username.length > 32)reject("this username's length is too long");
+      else if (username.length > 32)
+        reject("this username's length is too long");
       else if (pass.length > 32) reject("this password's length is too long");
-      else if (usernameChecking(username) === false) reject("this username included invalid characters");
+      else if (usernameChecking(username) === false)
+        reject("this username included invalid characters");
       else if (docs !== null) reject("this username has been taken");
       else
         db.users.insert([{ username: username, pass: pass }], function(
@@ -119,9 +121,3 @@ export function updateUser(username, old_pass, new_pass) {
     );
   });
 }
-
-/** 
- * npx babel-node data/themisdata.js
- * nodemon --exec npx babel-node .\data\themisdata.js
-*/
-
