@@ -6,7 +6,7 @@ import { createReadStream } from "fs";
 //Supporting Library for Admin-Judger Interface, MIRAI's backend
 
 /**
- * Part 1: checking status of availability of judger
+ * Checking status of availability of judger
  * @param {string} server_address : IP address of judger
  * @return {promise} : true if judger is available, false otherwise
  */
@@ -27,7 +27,7 @@ export async function check(server_address) {
 }
 
 /**
- * Part 2: cloning Task file to judger
+ * Cloning Task file to judger
  * @param {string} server_address : IP address of judger
  * @param {string} compressed_task_path : path to database, linked to compressed Task file
  * @return {promise} : true if Task file is successfully cloned, false otherwise
@@ -58,7 +58,7 @@ export async function clone(server_address, compressed_task_path) {
 }
 
 /**
- * Part 3 : send data to judger
+ * Send data to judger
  * @param {string} server_address : IP address of judger
  * @param {string} source_code_path :
  * Path to the database, linked to submission's source code of contestant,
@@ -91,7 +91,7 @@ export async function send(server_address, source_code_path, encrypted_info) {
 }
 
 /**
- * Part 4 : receive result from judger
+ * Receive result from judger
  * @param {string} server_address : IP address of judger
  * @return {json} : result file, consist of verdicts ans hashes
  */
