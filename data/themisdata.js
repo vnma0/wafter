@@ -12,22 +12,14 @@ db.submissions = new Datastore("data/submissions.db");
 db.users.loadDatabase();
 db.submissions.loadDatabase();
 
-/*
-    code{
-        _id: (hidden)
-        problemID:
-        username:
-        source_code:
-        date:
-        status:
-        // verdict on testcase ?
-    }
-    user{
-        _id: (hidden)
-        username:
-        pass:
-    }
-*/
+/**
+ * newUser(username, pass)
+ * readUser(username)
+ * readSubmission(sub_id)
+ * submitCode(source_code, username, problemID)
+ * updateSubmission(sub_id, new_verdict)
+ * updateUser(username, old_pass, new_pass)
+ */
 
 // checking if an username is valid
 function usernameChecking(username) {
@@ -159,15 +151,6 @@ export async function updateUser(username, old_pass, new_pass) {
   });
 }
 
-// export async function testCode(username) {
-//   return new Promise((resolve, reject) => {
-//     db.submissions.find({ username: username }, function(err, docs) {
-//       console.log(docs.length);
-//     });
-//   });
-// }
-
-// testCode("user1");
 /*
     npx babel-node data/themisdata.js
     nodemon --exec npx babel-node .\data\themisdata.js
