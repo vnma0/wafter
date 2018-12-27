@@ -7,24 +7,26 @@
  */
 
 export function ACM(result, initial_penalty, submission_time) {
-    let ans = new Object(),
+    let ans = {},
         verdict = "AC",
-		partial_result = result.tests;
-		
+        partial_result = result.tests;
+
     ans.id = result.id;
     ans.problem = result.problem;
-	ans.penalty = initial_penalty;
-	
-    for (let i = 0; i < partial_result.size; i++) {
-        if (partial_result[i].verdict != "AC") {
-            verdict = partial_result[i].verdict;
-            break;
-        }
+    ans.penalty = initial_penalty;
+
+    if (
+        partial_result.some((x, i, arr) => {
+            if (x !== "AC") {
+                verdict = arr[i];
+                return true;
+            }
+        })
+    ) {
+        ans.penalty += 20;
+    } else {
+        ans.penalty += submission_time;
     }
-	ans.verdict = verdict;
-	
-    if (verdict === "AC") ans.penalty += submission_time;
-    else ans.penalty += 20;
     return ans;
 }
 
@@ -35,21 +37,20 @@ export function ACM(result, initial_penalty, submission_time) {
  */
 
 export function OI(result) {
-    let ans = new Object(),
+    let ans = {},
         verdict = "AC",
-		partial_result = result.tests;
-		
+        partial_result = result.tests;
+
     ans.id = result.id;
     ans.problem = result.problem;
-	ans.score = result.finalScore;
-	
-    for (let i = 0; i < partial_result.size; i++) {
-        if (partial_result[i].verdict != "AC") {
-            verdict = partial_result[i].verdict;
-            break;
+    ans.score = result.finalScore;
+
+    partial_result.some((x, i, arr) => {
+        if (x !== "AC") {
+            verdict = arr[i];
+            return true;
         }
-    }
-	ans.verdict = verdict;
-	
+    });
+
     return ans;
 }
