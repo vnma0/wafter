@@ -3,7 +3,6 @@ import { isBuffer } from "util";
 
 var Datastore = require("nedb"),
   db = new Datastore({ autoload: true });
-//db.persistence.setAutocompactionInterval(5001);
 
 db = {};
 db.users = new Datastore("data/users.db");
@@ -12,16 +11,6 @@ db.submissions = new Datastore("data/submissions.db");
 db.users.loadDatabase();
 db.submissions.loadDatabase();
 
-/**
- * newUser(username, pass)
- * readUser(username)
- * readSubmission(sub_id)
- * submitCode(source_code, username, problemID)
- * updateSubmission(sub_id, new_verdict)
- * updateUser(username, old_pass, new_pass)
- */
-
-// checking if an username is valid
 function usernameChecking(username) {
   for (let i = 0; i < username.length; i++) {
     var c = username[i];
@@ -39,22 +28,14 @@ function usernameChecking(username) {
   return true;
 }
 
-// adding new user
 export async function newUser(username, pass) {
   return new Promise((resolve, reject) => {
     db.users.findOne({ username: username }, function(err, docs) {
       if (err) reject(err);
-      // making sure that the lengths meet the requirements
-      else if (username.length > 32)
-        reject("this username's length is too long");
-      // making sure that the lengths meet the requirements
+      else if (username.length > 32)reject("this username's length is too long");
       else if (pass.length > 32) reject("this password's length is too long");
-      // making sure there isn't any invalid character
-      else if (usernameChecking(username) === false)
-        reject("this username included invalid characters");
-      // making sure the username hasn't been taken
+      else if (usernameChecking(username) === false) reject("this username included invalid characters");
       else if (docs !== null) reject("this username has been taken");
-      // creating new user
       else
         db.users.insert([{ username: username, pass: pass }], function(
           err2,
@@ -67,40 +48,31 @@ export async function newUser(username, pass) {
   });
 }
 
-// get user's properties
 export async function readUser(username) {
   return new Promise((resolve, reject) => {
     db.users.findOne({ username: username }, function(err, docs) {
       if (err) reject(err);
-      // making sure that the username is valid
       else if (docs === null) reject("invalid username");
-      // return user's properties
       else resolve(docs);
     });
   });
 }
 
-// reading the submission's properties by id
 export async function readSubmission(sub_id) {
   return new Promise((resolve, reject) => {
     db.submissions.findOne({ _id: sub_id }, function(err, docs) {
       if (err) reject(err);
-      // making sure that the id is valid
       else if (docs === null) reject("invalid ID");
-      // return the submission's properties
       else resolve(docs);
     });
   });
 }
 
-// submitting the code
 export async function submitCode(source_code, username, problemID) {
   return new Promise((resolve, reject) => {
     db.users.findOne({ username: username }, function(err, docs) {
       if (err) reject(err);
-      // making sure the username is valid
       else if (docs === null) reject("this username doesn't exists");
-      // submitting the code
       else
         db.submissions.insert(
           [
@@ -151,7 +123,8 @@ export async function updateUser(username, old_pass, new_pass) {
   });
 }
 
-/*
-    npx babel-node data/themisdata.js
-    nodemon --exec npx babel-node .\data\themisdata.js
+/** 
+ * npx babel-node data/themisdata.js
+ * nodemon --exec npx babel-node .\data\themisdata.js
 */
+
