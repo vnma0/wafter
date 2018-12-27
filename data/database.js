@@ -1,6 +1,3 @@
-import { resolve } from "url";
-import { isBuffer } from "util";
-
 var Datastore = require("nedb"),
   db = new Datastore({ autoload: true });
 
