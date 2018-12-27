@@ -37,7 +37,9 @@ function usernameChecking(username) {
       !(
         ("0" <= c && c <= "9") ||
         ("a" <= c && c <= "z") ||
-        ("A" <= c && c <= "Z")
+        ("A" <= c && c <= "Z") ||
+        c == "_" ||
+        c == "-"
       )
     )
       return false;
@@ -157,6 +159,15 @@ export async function updateUser(username, old_pass, new_pass) {
   });
 }
 
+// export async function testCode(username) {
+//   return new Promise((resolve, reject) => {
+//     db.submissions.find({ username: username }, function(err, docs) {
+//       console.log(docs.length);
+//     });
+//   });
+// }
+
+// testCode("user1");
 /*
     npx babel-node data/themisdata.js
     nodemon --exec npx babel-node .\data\themisdata.js
