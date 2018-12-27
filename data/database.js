@@ -25,7 +25,7 @@ function usernameChecking(username) {
   return true;
 }
 
-export async function newUser(username, pass) {
+export function newUser(username, pass) {
   return new Promise((resolve, reject) => {
     db.users.findOne({ username: username }, function(err, docs) {
       if (err) reject(err);
@@ -45,7 +45,7 @@ export async function newUser(username, pass) {
   });
 }
 
-export async function readUser(username) {
+export function readUser(username) {
   return new Promise((resolve, reject) => {
     db.users.findOne({ username: username }, function(err, docs) {
       if (err) reject(err);
@@ -55,7 +55,7 @@ export async function readUser(username) {
   });
 }
 
-export async function readSubmission(sub_id) {
+export function readSubmission(sub_id) {
   return new Promise((resolve, reject) => {
     db.submissions.findOne({ _id: sub_id }, function(err, docs) {
       if (err) reject(err);
@@ -65,7 +65,7 @@ export async function readSubmission(sub_id) {
   });
 }
 
-export async function submitCode(source_code, username, problemID) {
+export function submitCode(source_code, username, problemID) {
   return new Promise((resolve, reject) => {
     db.users.findOne({ username: username }, function(err, docs) {
       if (err) reject(err);
@@ -90,7 +90,7 @@ export async function submitCode(source_code, username, problemID) {
   });
 }
 
-export async function updateSubmission(sub_id, new_verdict) {
+export function updateSubmission(sub_id, new_verdict) {
   return new Promise((resolve, reject) => {
     db.submissions.update(
       { _id: sub_id },
@@ -105,7 +105,7 @@ export async function updateSubmission(sub_id, new_verdict) {
   });
 }
 
-export async function updateUser(username, old_pass, new_pass) {
+export function updateUser(username, old_pass, new_pass) {
   return new Promise((resolve, reject) => {
     db.users.update(
       { username: username, pass: old_pass },
