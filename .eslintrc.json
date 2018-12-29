@@ -6,7 +6,7 @@
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaVersion": 2015,
+        "ecmaVersion": 2018,
         "sourceType": "module"
     },
     "rules": {
@@ -17,7 +17,7 @@
         "require-jsdoc": "error",
         "arrow-parens": "warn",
         "complexity": ["error", 9],
-        "max-depth": ["error", 2],
-        "max-nested-callbacks": ["error", 3]
+        "max-depth": ["error", 3],
+        "max-nested-callbacks": ["error", 4]
     }
 }
