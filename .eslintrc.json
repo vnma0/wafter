@@ -16,7 +16,7 @@
         "semi": ["error", "always"],
         "require-jsdoc": "error",
         "arrow-parens": "warn",
-        "complexity": ["error", 9],
+        "complexity": ["error", 15],
         "max-depth": ["error", 3],
         "max-nested-callbacks": ["error", 4]
     }
