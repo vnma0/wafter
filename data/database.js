@@ -143,8 +143,8 @@ export function updateSubmission(sub_id, new_verdict) {
 export function updateUser(username, old_pass, new_pass) {
     return new Promise((resolve, reject) => {
         db.users.update(
-            { username: username, pass: old_pass },
-            { $set: { pass: new_pass } },
+            { username: username, pass: bcrypt.hashSync(old_pass) },
+            { $set: { pass: bcrypt.hashSync(new_pass) } },
             { multi: false },
             function(err, docs) {
                 if (err) reject(err);
