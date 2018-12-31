@@ -100,6 +100,16 @@ export function readSubmission(sub_id) {
     });
 }
 
+export function readUserSubmission(username) {
+    return new Promise((resolve, reject) => {
+        db.submissions.find({ username }, function(err, docs) {
+            if (err) reject(err);
+            else if (docs === null) reject("Empty result");
+            else resolve(docs);
+        });
+    });
+}
+
 export function submitCode(source_code, username, problemID) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ username: username }, function(err, docs) {
