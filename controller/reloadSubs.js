@@ -14,5 +14,7 @@ export function reloadSubs(calc) {
                 updateSubmission(sub.id, calc(sub));
             });
         })
-        .catch(console.log);
+        .catch((err) => {
+            throw err;
+        });
 }

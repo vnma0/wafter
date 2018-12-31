@@ -10,9 +10,9 @@ export function initJudger(task_folder) {
         judger.clone("../Task.zip");
     });
     // TODO: Handle errors
-    Promise.all(JudgePromise)
-        .then(console.log)
-        .catch(console.log);
+    Promise.all(JudgePromise).catch((err) => {
+        throw err;
+    });
 }
 
 export function sendCode(source_code_path, id) {
@@ -26,5 +26,7 @@ export function sendCode(source_code_path, id) {
                 throw err;
             });
         })
-        .catch(console.log);
+        .catch((err) => {
+            throw err;
+        });
 }
