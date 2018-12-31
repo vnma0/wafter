@@ -48,7 +48,7 @@ export function newUser(username, pass) {
     });
 }
 
-export function readAllUser(username) {
+export function readAllUser() {
     return new Promise((resolve, reject) => {
         db.users.find({}, function(err, docs) {
             if (err) reject(err);
