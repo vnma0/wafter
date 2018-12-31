@@ -1,6 +1,8 @@
 import express from "express";
 import { readSubmission, readAllSubmission } from "../data/database";
 import { auth } from "../middleware/auth";
+import { codeUpload } from "../middleware/upload";
+import { sendCode } from "../controller/submitCode";
 
 const router = express.Router();
 
@@ -26,9 +28,8 @@ router.get("/:id", (req, res) => {
     );
 });
 
-router.post("/", auth, (req, res) => {
-    // TODO: add multer middleware
-    console.log(req.files);
+router.post("/", auth, codeUpload, (req, res) => {
+    sendCode(req.file.path, req.user.id);
     res.sendStatus(200);
 });
 

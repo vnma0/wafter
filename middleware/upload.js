@@ -1,3 +1,7 @@
+import multer from "multer";
+import { cwd } from "../config/cwd";
+import { join } from "path";
+
 /**
  * Multer middleware wrapper to limit upload size
  * If payload is too large, send status 413
@@ -30,14 +34,14 @@ function limitUpload(multerMid) {
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-export const taskUpload = limitUpload(
+export const codeUpload = limitUpload(
     multer({
-        dest: uploadFolder,
+        dest: join(cwd, "upload/"),
         limits: {
-            fileSize: taskSizeLimit,
+            fileSize: 100 * 1024,
             files: 1,
             parts: 1,
             preservePath: true
         }
-    }).single("task")
+    }).single("code")
 );

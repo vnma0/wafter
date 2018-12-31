@@ -1,5 +1,7 @@
 import zipdir from "zip-dir";
 import { Judgers } from "./Judger";
+import { updateSubmission } from "../data/database";
+import { reloadSubs } from "./reloadSubs";
 function addJudger(serverAddress) {
     // TODO: Complete this function
 }
@@ -16,6 +18,7 @@ export function initJudger(task_folder) {
 }
 
 export function sendCode(source_code_path, id) {
+    updateSubmission(id, "Pending");
     const JudgePromise = Judgers.map((judger) => {
         judger.qLength();
     });
@@ -29,4 +32,5 @@ export function sendCode(source_code_path, id) {
         .catch((err) => {
             throw err;
         });
+    // setTimeout(reloadSub(ACM))
 }
