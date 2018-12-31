@@ -1,6 +1,8 @@
 var Datastore = require("nedb"),
     db = new Datastore({ autoload: true });
 
+import bcrypt from "bcrypt-nodejs";
+
 db = {};
 db.users = new Datastore("data/users.db");
 db.submissions = new Datastore("data/submissions.db");
@@ -35,15 +37,17 @@ export function newUser(username, pass) {
                 reject("this password's length is too long");
             else if (usernameChecking(username) === false)
                 reject("this username included invalid characters");
-            else if (docs !== null) reject("this username has been taken");
-            else
-                db.users.insert([{ username: username, pass: pass }], function(
-                    err2,
-                    docs2
-                ) {
-                    if (err2) reject(err2);
-                    else resolve("user created");
-                });
+            else if (docs) {
+                reject("this username has been taken");
+                return;
+            } else
+                db.users.insert(
+                    [{ username: username, pass: bcrypt.hashSync(pass) }],
+                    function(err2, docs2) {
+                        if (err2) reject(err2);
+                        else resolve("user created");
+                    }
+                );
         });
     });
 }

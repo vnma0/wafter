@@ -5,7 +5,6 @@ import passport from "passport";
 
 import session from "express-session";
 import bodyParser from "body-parser";
-import cookieParser from "cookie-parser";
 
 import { readUser, readUserByID } from "./data/database";
 import { Strategy } from "passport-local";
@@ -13,25 +12,30 @@ import bcrypt from "bcrypt-nodejs";
 
 import { subs } from "./routes/subs";
 import { users } from "./routes/users";
+import { auth } from "./middleware/auth";
 
 const app = express();
 
 const PORT = 3000;
 
-const local = new Strategy((username, password, done) => {
-    readUser(username)
-        .then((docs) => {
-            if (docs.pass === password) done(null, docs);
-            else done(null, false);
-            // Encrypt password
-            // bcrypt.compare(password, docs.pass, (err, isValid) => {
-            //     if (err) return done(err);
-            //     if (!isValid) return done(null, false);
-            //     return done(null, docs);
-            // });
-        })
-        .catch((err) => done(err));
-});
+const local = new Strategy(
+    {
+        usernameField: "username",
+        passwordField: "password"
+    },
+    (username, password, done) => {
+        readUser(username)
+            .then((docs) => {
+                // Encrypt password
+                bcrypt.compare(password, docs.pass, (err, isValid) => {
+                    if (err) return done(err);
+                    if (!isValid) return done(null, false);
+                    return done(null, docs);
+                });
+            })
+            .catch((err) => done(err));
+    }
+);
 
 passport.serializeUser(function(user, cb) {
     cb(null, user._id);
@@ -43,14 +47,8 @@ passport.deserializeUser(function(id, cb) {
 
 passport.use("local", local);
 
-function auth(req, res, next) {
-    if (req.isAuthenticated()) return next();
-    else res.sendStatus(401);
-}
-
 app.use(helmet());
 app.use(morgan("tiny"));
-app.use(cookieParser());
 app.use(bodyParser());
 app.use(session({ secret: "keyboard cat" }));
 app.use(passport.initialize());
