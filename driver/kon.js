@@ -107,4 +107,19 @@ export default class Judger {
             throw err;
         }
     }
+
+    async qLength() {
+        try {
+            const response = await fetch(this.serverAddress + "/queue", {
+                mode: "no-cors",
+                cache: "no-cache",
+                timeout: 1000
+            });
+            const text = await response.text();
+            if (isNaN(text)) return 0;
+            else return Number(text);
+        } catch (err) {
+            throw err;
+        }
+    }
 }
