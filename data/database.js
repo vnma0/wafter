@@ -67,6 +67,16 @@ export function readUser(username) {
     });
 }
 
+export function readUserByID(id) {
+    return new Promise((resolve, reject) => {
+        db.users.findOne({ _id: id }, function(err, docs) {
+            if (err) reject(err);
+            else if (docs === null) reject("invalid user_id");
+            else resolve(docs);
+        });
+    });
+}
+
 export function readAllSubmission(sub_id) {
     return new Promise((resolve, reject) => {
         db.submissions.find({}, function(err, docs) {
