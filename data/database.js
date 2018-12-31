@@ -48,11 +48,29 @@ export function newUser(username, pass) {
     });
 }
 
+export function readAllUser(username) {
+    return new Promise((resolve, reject) => {
+        db.users.find({}, function(err, docs) {
+            if (err) reject(err);
+            else resolve(docs);
+        });
+    });
+}
+
 export function readUser(username) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ username: username }, function(err, docs) {
             if (err) reject(err);
             else if (docs === null) reject("invalid username");
+            else resolve(docs);
+        });
+    });
+}
+
+export function readAllSubmission(sub_id) {
+    return new Promise((resolve, reject) => {
+        db.submissions.find({}, function(err, docs) {
+            if (err) reject(err);
             else resolve(docs);
         });
     });
