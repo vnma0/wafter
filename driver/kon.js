@@ -49,8 +49,8 @@ export default class Judger {
             const status = response.status;
 
             if (status === 415) throw "Incorrect file type";
-            else if (status == 413) throw "File is too large";
-            else if (status == 403) throw "Server has been set up";
+            else if (status === 413) throw "File is too large";
+            else if (status === 403) throw "Server has been set up";
 
             return status === 200;
         } catch (err) {
@@ -81,7 +81,8 @@ export default class Judger {
             const status = response.status;
 
             if (status === 415) throw "Incorrect file type";
-            else if (status == 413) throw "File is too large";
+            else if (status === 413) throw "File is too large";
+            else if (status === 503) throw "Server is not ready";
 
             return status === 200;
         } catch (err) {
@@ -101,6 +102,7 @@ export default class Judger {
                 cache: "no-cache",
                 timeout: 1000
             });
+            if (response.status === 503) throw "Server is not ready";
             const json = await response.json();
             return json;
         } catch (err) {
@@ -115,6 +117,8 @@ export default class Judger {
                 cache: "no-cache",
                 timeout: 1000
             });
+            if (response.status === 503) throw "Server is not ready";
+
             const text = await response.text();
             if (isNaN(text)) return 0;
             else return Number(text);
