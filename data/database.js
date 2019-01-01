@@ -127,7 +127,7 @@ export function submitCode(source_code, user_id) {
                     ],
                     function(err2, docs2) {
                         if (err2) reject(err2);
-                        else resolve(docs2._id);
+                        else resolve(docs2[0]._id);
                     }
                 );
         });
