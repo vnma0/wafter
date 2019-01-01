@@ -67,10 +67,10 @@ export default class Judger {
      * @param {String} encrypted_info : Hash of ubmission's info
      * @return {Promise} : true if data is sent successfully, false otherwise
      */
-    async send(source_code_path, encrypted_info) {
+    async send(source_code_path, prob_name, encrypted_info) {
         let data = new FormData();
 
-        data.append("code", createReadStream(source_code_path));
+        data.append("code", createReadStream(source_code_path), prob_name);
         data.append("id", encrypted_info);
 
         try {
