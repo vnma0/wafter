@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
         (docs) => {
             res.send(docs);
         },
-        (err) => {
+        () => {
             res.sendStatus(500);
         }
     );
@@ -22,7 +22,7 @@ router.get("/:id", (req, res) => {
         (docs) => {
             res.send(docs);
         },
-        (err) => {
+        () => {
             res.sendStatus(500);
         }
     );

@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
         (docs) => {
             res.send(docs);
         },
-        (err) => {
+        () => {
             res.sendStatus(500);
         }
     );
@@ -22,7 +22,7 @@ router.get("/:userid", auth, (req, res) => {
         (docs) => {
             res.send(docs);
         },
-        (err) => {
+        () => {
             res.sendStatus(500);
         }
     );
