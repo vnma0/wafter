@@ -110,7 +110,7 @@ export function readUserSubmission(user_id) {
     });
 }
 
-export function submitCode(source_code, user_id) {
+export function submitCode(source_code, user_id, prob_id) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: user_id }, function(err, docs) {
             if (err) reject(err);
@@ -122,7 +122,8 @@ export function submitCode(source_code, user_id) {
                             source_code,
                             status: "Pending",
                             date: new Date(),
-                            user_id
+                            user_id,
+                            prob_id
                         }
                     ],
                     function(err2, docs2) {
