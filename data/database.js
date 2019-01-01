@@ -78,7 +78,7 @@ export function readAllUser() {
  * Retrieve User's data in database by using user's id
  * @param {String} id User's id
  */
-export function readUserByID(id) {
+export function readUser(id) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: id }, function(err, docs) {
             if (err) reject(err);
@@ -91,7 +91,7 @@ export function readUserByID(id) {
 /**
  * Retrieve list of submissions in database
  */
-export function readAllSubmission(sub_id) {
+export function readAllSubmissions() {
     return new Promise((resolve, reject) => {
         db.submissions.find({}, function(err, docs) {
             if (err) reject(err);
