@@ -1,15 +1,25 @@
 import zipdir from "zip-dir";
-import { Judgers } from "./Judger";
-import { submitCode } from "../data/database";
-import { reloadSubs } from "./reloadSubs";
 import { basename, extname } from "path";
+
+import Judger from "../driver/kon";
+import { submitCode } from "../data/database";
+import { updateSubmission } from "../data/database";
+
+const Judgers = ["http://localhost:30000"].map((host) => new Judger(host));
 
 /**
  * Qualify and add new server to Judgers
  * @param {String} serverAddress Exepected address of kon server
  */
 export async function addJudger(serverAddress) {
-    // TODO: Pair with singleton Judgers
+    // TODO: Guarantee valid kon server
+    const newJudger = new Judger(serverAddress);
+    try {
+        await newJudger.check();
+    } catch (err) {
+        // In case server return 503, add server to judgerList
+        if (err === "Server is not ready") Judgers.push(newJudger);
+    }
 }
 
 /**
@@ -25,6 +35,24 @@ export function initJudger(task_folder) {
     Promise.all(JudgePromise).catch((err) => {
         throw err;
     });
+}
+
+/**
+ * Update submission status from log from kons'
+ * @param {function} calc Calculate result, either ACM or OI
+ */
+export function reloadSubs(calc) {
+    const judgerPromise = Judgers.map((judger) => judger.get());
+    Promise.all(judgerPromise)
+        .then((list) => [].concat.apply([], list))
+        .then((subs) => {
+            subs.forEach((sub) => {
+                updateSubmission(sub.id, calc(sub));
+            });
+        })
+        .catch((err) => {
+            throw err;
+        });
 }
 
 /**
