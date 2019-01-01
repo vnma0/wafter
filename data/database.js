@@ -75,21 +75,6 @@ export function readAllUser() {
 }
 
 /**
- * Retrieve User's data in database
- * NOTE: This function will soon be deprecated
- * @param {String} username User's name
- */
-export function readUser(username) {
-    return new Promise((resolve, reject) => {
-        db.users.findOne({ username: username }, function(err, docs) {
-            if (err) reject(err);
-            else if (docs === null) reject("invalid username");
-            else resolve(docs);
-        });
-    });
-}
-
-/**
  * Retrieve User's data in database by using user's id
  * @param {String} id User's id
  */
