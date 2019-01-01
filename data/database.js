@@ -10,6 +10,11 @@ db.submissions = new Datastore("data/submissions.db");
 db.users.loadDatabase();
 db.submissions.loadDatabase();
 
+/**
+ * Validate username
+ * NOTE: This function is being considered to be replaced
+ * @param {String} username User's name
+ */
 function usernameChecking(username) {
     for (let i = 0; i < username.length; i++) {
         var c = username[i];
@@ -27,6 +32,11 @@ function usernameChecking(username) {
     return true;
 }
 
+/**
+ * Add user to database
+ * @param {String} username User's name
+ * @param {String} pass User's password
+ */
 export function newUser(username, pass) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ username: username }, function(err, docs) {
@@ -52,6 +62,9 @@ export function newUser(username, pass) {
     });
 }
 
+/**
+ * Retrieve list of users in database
+ */
 export function readAllUser() {
     return new Promise((resolve, reject) => {
         db.users.find({}, function(err, docs) {
@@ -61,6 +74,11 @@ export function readAllUser() {
     });
 }
 
+/**
+ * Retrieve User's data in database
+ * NOTE: This function will soon be deprecated
+ * @param {String} username User's name
+ */
 export function readUser(username) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ username: username }, function(err, docs) {
@@ -71,6 +89,10 @@ export function readUser(username) {
     });
 }
 
+/**
+ * Retrieve User's data in database by using user's id
+ * @param {String} id User's id
+ */
 export function readUserByID(id) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: id }, function(err, docs) {
@@ -81,6 +103,9 @@ export function readUserByID(id) {
     });
 }
 
+/**
+ * Retrieve list of submissions in database
+ */
 export function readAllSubmission(sub_id) {
     return new Promise((resolve, reject) => {
         db.submissions.find({}, function(err, docs) {
@@ -90,6 +115,10 @@ export function readAllSubmission(sub_id) {
     });
 }
 
+/**
+ * Retrieve submission via sub_id
+ * @param {String} sub_id Submission's ID
+ */
 export function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
         db.submissions.findOne({ _id: sub_id }, function(err, docs) {
@@ -100,6 +129,10 @@ export function readSubmission(sub_id) {
     });
 }
 
+/**
+ * Retrieve list of submission via user_id
+ * @param {String} user_id User's ID
+ */
 export function readUserSubmission(user_id) {
     return new Promise((resolve, reject) => {
         db.submissions.find({ user_id }, function(err, docs) {
@@ -110,6 +143,12 @@ export function readUserSubmission(user_id) {
     });
 }
 
+/**
+ * Add submission to database
+ * @param {String} source_code Source Code
+ * @param {String} user_id User's ID
+ * @param {String} prob_id Problem's ID
+ */
 export function submitCode(source_code, user_id, prob_id) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: user_id }, function(err, docs) {
@@ -135,6 +174,11 @@ export function submitCode(source_code, user_id, prob_id) {
     });
 }
 
+/**
+ * Update submission in database
+ * @param {String} sub_id
+ * @param {Object} new_verdict
+ */
 export function updateSubmission(sub_id, new_verdict) {
     return new Promise((resolve, reject) => {
         db.submissions.update(
@@ -150,6 +194,12 @@ export function updateSubmission(sub_id, new_verdict) {
     });
 }
 
+/**
+ * Update User's data in database
+ * @param {String} user_id User's id
+ * @param {String} old_pass Old password
+ * @param {String} new_pass New password
+ */
 export function updateUser(user_id, old_pass, new_pass) {
     return new Promise((resolve, reject) => {
         db.users.update(

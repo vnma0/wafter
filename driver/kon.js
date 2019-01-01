@@ -64,6 +64,7 @@ export default class Judger {
      * Part 3 : send data to judger
      * @param {string} source_code_path :
      * Path to the database, linked to submission's source code of contestant,
+     * @param {string} prob_name Filename
      * @param {String} encrypted_info : Hash of ubmission's info
      * @return {Promise} : true if data is sent successfully, false otherwise
      */
@@ -115,6 +116,9 @@ export default class Judger {
         }
     }
 
+    /**
+     * Receive queue length from judger
+     */
     async qLength() {
         try {
             const response = await fetch(this.serverAddress + "/queue", {

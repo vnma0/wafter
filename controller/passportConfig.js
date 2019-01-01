@@ -2,6 +2,10 @@ import { readUser, readUserByID } from "../data/database";
 import { Strategy } from "passport-local";
 import bcrypt from "bcrypt-nodejs";
 
+/**
+ * Configure passport to use local Strategy with nedb
+ * @param {PassportStatic} passport put require('passport') here
+ */
 export default function(passport) {
     const local = new Strategy(
         {
