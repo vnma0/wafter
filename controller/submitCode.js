@@ -4,10 +4,18 @@ import { submitCode } from "../data/database";
 import { reloadSubs } from "./reloadSubs";
 import { basename, extname } from "path";
 
-function addJudger(serverAddress) {
-    // TODO: Complete this function
+/**
+ * Qualify and add new server to Judgers
+ * @param {String} serverAddress Exepected address of kon server
+ */
+export async function addJudger(serverAddress) {
+    // TODO: Pair with singleton Judgers
 }
 
+/**
+ * Send zipped task file to Judgers
+ * @param {PathLike} task_folder path to folder contains task file
+ */
 export function initJudger(task_folder) {
     zipdir(task_folder, { saveTo: "../Tasks.zip" });
     const JudgePromise = Judgers.map((judger) => {
@@ -19,6 +27,12 @@ export function initJudger(task_folder) {
     });
 }
 
+/**
+ * Add submission to database then send part of it to Judger
+ * @param {PathLike} source_code_path Path to source code
+ * @param {String} user_id User's ID
+ * @param {String} prob_name file's name
+ */
 export async function sendCode(source_code_path, user_id, prob_name) {
     try {
         prob_name = prob_name.toUpperCase();
