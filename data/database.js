@@ -55,7 +55,7 @@ export function newUser(username, pass) {
                     [{ username: username, pass: bcrypt.hashSync(pass) }],
                     function(err2, docs2) {
                         if (err2) reject(err2);
-                        else resolve("user created");
+                        else resolve(docs2._id);
                     }
                 );
         });
