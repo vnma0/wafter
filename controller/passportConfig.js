@@ -1,4 +1,4 @@
-import { readUser, readUserByID } from "../data/database";
+import { readUser } from "../data/database";
 import { Strategy } from "passport-local";
 import bcrypt from "bcrypt-nodejs";
 
@@ -31,7 +31,7 @@ export default function(passport) {
     });
 
     passport.deserializeUser(function(id, cb) {
-        readUserByID(id).then((docs) => cb(null, docs), (err) => cb(err));
+        readUser(id).then((docs) => cb(null, docs), (err) => cb(err));
     });
 
     passport.use("local", local);

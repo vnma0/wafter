@@ -16,9 +16,9 @@ router.get("/", (req, res) => {
     );
 });
 
-router.get("/:username", auth, (req, res) => {
-    if (req.user.id !== req.params.username) res.sendStatus(403).end();
-    readUser(req.params.username).then(
+router.get("/:userid", auth, (req, res) => {
+    if (req.user.id !== req.params.userid) res.sendStatus(403).end();
+    readUser(req.params.userid).then(
         (docs) => {
             res.send(docs);
         },
