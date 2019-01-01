@@ -1,7 +1,9 @@
 import zipdir from "zip-dir";
 import { Judgers } from "./Judger";
-import { updateSubmission } from "../data/database";
+import { submitCode } from "../data/database";
 import { reloadSubs } from "./reloadSubs";
+import { basename, extname } from "path";
+
 function addJudger(serverAddress) {
     // TODO: Complete this function
 }
@@ -17,20 +19,25 @@ export function initJudger(task_folder) {
     });
 }
 
-export function sendCode(source_code_path, id) {
-    updateSubmission(id, "Pending");
-    const JudgePromise = Judgers.map((judger) => {
-        judger.qLength();
-    });
-    Promise.all(JudgePromise)
-        .then((val) => val.sort().shift())
-        .then((judger) => {
-            judger.send(source_code_path, id).catch((err) => {
-                throw err;
-            });
-        })
-        .catch((err) => {
+export async function sendCode(source_code_path, user_id, prob_name) {
+    try {
+        prob_name = prob_name.toUpperCase();
+        const prob_id = basename(prob_name, extname(prob_name));
+        const sub_id = await submitCode(source_code_path, user_id, prob_id);
+        const qPromise = Judgers.map((judger) => judger.qLength());
+
+        const judgersQ = await Promise.all(qPromise);
+        const judgerNum = judgersQ
+            .map((val, iter) => [val, iter])
+            .sort()
+            .shift()[1];
+        const judger = Judgers[judgerNum];
+
+        judger.send(source_code_path, prob_name, sub_id).catch((err) => {
             throw err;
         });
-    // setTimeout(reloadSub(ACM))
+        // setTimeout(reloadSub(ACM))
+    } catch (err) {
+        throw err;
+    }
 }

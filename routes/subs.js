@@ -1,7 +1,7 @@
 import express from "express";
 import { readSubmission, readAllSubmission } from "../data/database";
 import { auth } from "../middleware/auth";
-import { codeUpload } from "../middleware/upload";
+import { codeUpload, validateCode } from "../middleware/upload";
 import { sendCode } from "../controller/submitCode";
 
 const router = express.Router();
@@ -28,8 +28,8 @@ router.get("/:id", (req, res) => {
     );
 });
 
-router.post("/", auth, codeUpload, (req, res) => {
-    sendCode(req.file.path, req.user.id);
+router.post("/", auth, codeUpload, validateCode, (req, res) => {
+    sendCode(req.file.path, req.user._id, req.file.originalname);
     res.sendStatus(200);
 });
 
