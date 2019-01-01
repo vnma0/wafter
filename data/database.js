@@ -36,6 +36,7 @@ function usernameChecking(username) {
  * Add user to database
  * @param {String} username User's name
  * @param {String} pass User's password
+ * @returns {Promise} User's ID if success
  */
 export function newUser(username, pass) {
     return new Promise((resolve, reject) => {
@@ -64,6 +65,7 @@ export function newUser(username, pass) {
 
 /**
  * Retrieve list of users in database
+ * @returns {Promise} Array of user if success
  */
 export function readAllUser() {
     return new Promise((resolve, reject) => {
@@ -77,6 +79,7 @@ export function readAllUser() {
 /**
  * Retrieve User's data in database by using user's id
  * @param {String} id User's id
+ * @returns {Promise} User's info if success
  */
 export function readUser(id) {
     return new Promise((resolve, reject) => {
@@ -90,6 +93,7 @@ export function readUser(id) {
 
 /**
  * Retrieve list of submissions in database
+ * @returns {Promise} Array of submission if success
  */
 export function readAllSubmissions() {
     return new Promise((resolve, reject) => {
@@ -103,6 +107,7 @@ export function readAllSubmissions() {
 /**
  * Retrieve submission via sub_id
  * @param {String} sub_id Submission's ID
+ * @returns {Promise} Submission's details if success
  */
 export function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
@@ -117,6 +122,7 @@ export function readSubmission(sub_id) {
 /**
  * Retrieve list of submission via user_id
  * @param {String} user_id User's ID
+ * @returns {Promise} Array of user's submissions if success
  */
 export function readUserSubmission(user_id) {
     return new Promise((resolve, reject) => {
@@ -133,6 +139,7 @@ export function readUserSubmission(user_id) {
  * @param {String} source_code Source Code
  * @param {String} user_id User's ID
  * @param {String} prob_id Problem's ID
+ * @returns {Promise} Submission's ID if success
  */
 export function submitCode(source_code, user_id, prob_id) {
     return new Promise((resolve, reject) => {
@@ -161,8 +168,8 @@ export function submitCode(source_code, user_id, prob_id) {
 
 /**
  * Update submission in database
- * @param {String} sub_id
- * @param {Object} new_verdict
+ * @param {String} sub_id Submission's ID
+ * @param {Object} new_verdict new verdict
  */
 export function updateSubmission(sub_id, new_verdict) {
     return new Promise((resolve, reject) => {
