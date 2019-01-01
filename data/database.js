@@ -100,9 +100,9 @@ export function readSubmission(sub_id) {
     });
 }
 
-export function readUserSubmission(username) {
+export function readUserSubmission(user_id) {
     return new Promise((resolve, reject) => {
-        db.submissions.find({ username }, function(err, docs) {
+        db.submissions.find({ user_id }, function(err, docs) {
             if (err) reject(err);
             else if (docs === null) reject("Empty result");
             else resolve(docs);
@@ -110,25 +110,24 @@ export function readUserSubmission(username) {
     });
 }
 
-export function submitCode(source_code, username, problemID) {
+export function submitCode(source_code, user_id) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ username: username }, function(err, docs) {
+        db.users.findOne({ _id: user_id }, function(err, docs) {
             if (err) reject(err);
-            else if (docs === null) reject("this username doesn't exists");
+            else if (!docs) reject("this username doesn't exists");
             else
                 db.submissions.insert(
                     [
                         {
-                            source_code: source_code,
-                            status: "pending",
+                            source_code,
+                            status: "Pending",
                             date: new Date(),
-                            username: username,
-                            problemID: problemID
+                            user_id
                         }
                     ],
                     function(err2, docs2) {
                         if (err2) reject(err2);
-                        else resolve("submitted");
+                        else resolve(docs2._id);
                     }
                 );
         });
@@ -150,10 +149,10 @@ export function updateSubmission(sub_id, new_verdict) {
     });
 }
 
-export function updateUser(username, old_pass, new_pass) {
+export function updateUser(user_id, old_pass, new_pass) {
     return new Promise((resolve, reject) => {
         db.users.update(
-            { username: username, pass: bcrypt.hashSync(old_pass) },
+            { _id: user_id, pass: bcrypt.hashSync(old_pass) },
             { $set: { pass: bcrypt.hashSync(new_pass) } },
             { multi: false },
             function(err, docs) {
