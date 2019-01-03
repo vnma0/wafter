@@ -1,6 +1,9 @@
 import zipdir from "zip-dir";
-import { basename, extname } from "path";
+import isZip from "is-zip";
+import { basename, extname, join } from "path";
+import { readFileSync } from "fs";
 
+import { cwd } from "../config/cwd";
 import Judger from "../driver/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
@@ -23,15 +26,31 @@ export async function addJudger(serverAddress) {
 }
 
 /**
- * Send zipped task file to Judgers
+ * Zip task folder then send it to Judgers
  * @param {PathLike} task_folder path to folder contains task file
  */
-export function initJudger(task_folder) {
-    zipdir(task_folder, { saveTo: "../Tasks.zip" });
-    const JudgePromise = Judgers.map((judger) => {
-        judger.clone("../Task.zip");
+export function initJudgerFolder(task_folder) {
+    const arcPath = join(cwd, "Tasks.zip");
+    zipdir(task_folder, { saveTo: arcPath }, (err, buf) => {
+        if (err) throw err;
+        if (!isZip(buf)) throw Error("Invalid folder");
+        initJudger(arcPath);
     });
-    // TODO: Handle errors
+}
+
+/**
+ * Send zipped task file to Judgers
+ * @param {PathLike} taskZipPath path to folder contains task file
+ */
+export function initJudger(taskZipPath) {
+    if (!isZip(readFileSync(taskZipPath)))
+        throw Error("Given file is not a zip");
+    const JudgePromise = Judgers.map((judger) => {
+        judger.clone(taskZipPath);
+    });
+    // NOTE: This require all server to work
+    // In case one server is down, this function will break
+    // TODO: Safety handling error
     Promise.all(JudgePromise).catch((err) => {
         throw err;
     });
