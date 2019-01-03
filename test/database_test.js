@@ -4,7 +4,9 @@ import {
     submitCode,
     readSubmission,
     updateUser,
-    updateSubmission
+    updateSubmission,
+    readAllUser,
+    readAllSubmissions
 } from "../data/database";
 
 const sampleUser = "sampleuser";
@@ -23,13 +25,19 @@ describe("database", function() {
 
     describe("readUser", function() {
         it("should be returning an object represents user's properties", function() {
-            return readUser(sampleUser);
+            return readUser(sampleID);
         });
+    });
+
+    describe("readAllUser", function() {
+        it("should return an array of users", function(){
+            return readAllUser();
+        })
     });
 
     describe("submitCode", function() {
         it("should be submitting code", function() {
-            return submitCode(sampleCode, sampleUser, sampleProb);
+            return submitCode(sampleCode, sampleID, sampleProb);
         });
     });
 
@@ -37,6 +45,12 @@ describe("database", function() {
         it("should be returning an object represents submission's props", function() {
             return readSubmission(sampleID);
         });
+    });
+
+    describe("readAllSubmissions", function() {
+        it("should return an array of submissions", function(){
+            return readAllSubmissions();
+        })
     });
 
     describe("updateSubmission", function() {
