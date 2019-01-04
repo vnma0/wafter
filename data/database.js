@@ -218,3 +218,26 @@ export function updateSubmission(sub_id, new_verdict) {
         );
     });
 }
+
+/**
+ * Retrieve last Satisfy result
+ * @param {String} sub_id Submission's ID
+ * @returns {Promise} Submission's details if success
+ */
+export async function readLastSatisfy(sub_id) {
+    const { date, user_id, prob_id } = await readSubmission(sub_id);
+    return new Promise((resolve, reject) => {
+        db.submissions.find(
+            {
+                user_id,
+                prob_id,
+                date: { $lt: date },
+                status: { $ne: "Pending" }
+            },
+            function(err, docs) {
+                if (err) reject(err);
+                else resolve(docs);
+            }
+        );
+    });
+}
