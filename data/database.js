@@ -2,10 +2,12 @@ var Datastore = require("nedb"),
     db = new Datastore({ autoload: true });
 
 import bcrypt from "bcrypt-nodejs";
+import { join } from "path";
+import { cwd } from "../config/cwd";
 
 db = {};
-db.users = new Datastore("data/users.db");
-db.submissions = new Datastore("data/submissions.db");
+db.users = new Datastore(join(cwd, "data", "users.db"));
+db.submissions = new Datastore(join(cwd, "data", "submissions.db"));
 
 db.users.loadDatabase();
 db.submissions.loadDatabase();
@@ -90,6 +92,37 @@ export function readUser(id) {
         });
     });
 }
+
+/**
+ * Update User's data in database
+ * @param {String} user_id User's id
+ * @param {String} old_pass Old password
+ * @param {String} new_pass New password
+ */
+export function updateUser(user_id, old_pass, new_pass) {
+    return new Promise((resolve, reject) => {
+        db.users.update(
+            { _id: user_id, pass: bcrypt.hashSync(old_pass) },
+            { $set: { pass: bcrypt.hashSync(new_pass) } },
+            { multi: false },
+            function(err, docs) {
+                if (err) reject(err);
+                else if (docs === 0) reject("wrong password or username");
+                else resolve("password changed");
+            }
+        );
+    });
+}
+
+/**
+ * Submission Schema Object
+ * _id:             Submission's ID
+ * source_code:     Source code path
+ * status:          Submission Status
+ * date:            Submission Date (Db first receive)
+ * user_id:         User's ID of submission
+ * prob_id:         Problem's ID of submission
+ */
 
 /**
  * Retrieve list of submissions in database
@@ -181,27 +214,6 @@ export function updateSubmission(sub_id, new_verdict) {
                 if (err) reject(err);
                 else if (docs === 0) reject("nothing was submitted");
                 else resolve("new verdict applied");
-            }
-        );
-    });
-}
-
-/**
- * Update User's data in database
- * @param {String} user_id User's id
- * @param {String} old_pass Old password
- * @param {String} new_pass New password
- */
-export function updateUser(user_id, old_pass, new_pass) {
-    return new Promise((resolve, reject) => {
-        db.users.update(
-            { _id: user_id, pass: bcrypt.hashSync(old_pass) },
-            { $set: { pass: bcrypt.hashSync(new_pass) } },
-            { multi: false },
-            function(err, docs) {
-                if (err) reject(err);
-                else if (docs === 0) reject("wrong password or username");
-                else resolve("password changed");
             }
         );
     });
