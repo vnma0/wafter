@@ -1,4 +1,9 @@
-import { readUserSubmission, readLastSatisfy, countToSatisfy } from "../data/database";
+import {
+    readUserSubmission,
+    readLastSatisfy,
+    countToSatisfy,
+    readSubmission
+} from "../data/database";
 
 /**
  * Calculate final result from judger's result, ACM style
@@ -7,36 +12,33 @@ import { readUserSubmission, readLastSatisfy, countToSatisfy } from "../data/dat
  */
 
 export async function ACM(result) {
-    let ans = {},
-        sub = await readLastSatisfy(result._id);
+    let lastSub = await readLastSatisfy(result.id);
+    let currSub = await readSubmission(result.id);
 
-    ans.id = result.id;
-    ans.problem = result.problem;
+    let status = {
+        score: result.finalScore
+    };
 
-    if(sub === {}) {
-        ans.penalty = result.date;
-        return ans;
+    if (lastSub === {}) {
+        status.penalty = currSub.date;
+        return status;
     }
-    
-    let cnt1 = countToStatisfy(result.id) * 20, 
-        cnt2 = countToStatisfy(sub.id) * 20;
+
+    let cnt1 = countToSatisfy(result.id) * 20,
+        cnt2 = countToSatisfy(lastSub._id) * 20;
 
     if (result.status === "AC") {
-        if (sub.status === "AC")
-            ans.penalty = min(
-                result.date + cnt1, 
-                sub.date + cnt2
-            );
+        if (lastSub.status === "AC")
+            status.penalty = Math.min(currSub.date + cnt1, lastSub.date + cnt2);
         else {
-            ans.penalty = result.date + cnt1;
+            status.penalty = currSub.date + cnt1;
         }
+    } else {
+        if (lastSub.status === "AC") status.penalty = lastSub.date + cnt2;
+        else status.penalty = Math.max(currSub.date, lastSub.date);
     }
-    else {
-        if(sub.status === "AC") ans.penalty = sub.date + cnt2;
-        else ans.penalty = max(result.date, sub.date);
-    }
-    
-    return ans;
+
+    return status;
 }
 
 /**
@@ -46,13 +48,8 @@ export async function ACM(result) {
  */
 
 export function OI(result) {
-    let ans = {},
-        verdict = "AC",
+    let verdict = "AC",
         partial_result = result.tests;
-
-    ans.id = result.id;
-    ans.problem = result.problem;
-    ans.score = result.finalScore;
 
     partial_result.some((x, i, arr) => {
         if (x !== "AC") {
@@ -61,5 +58,10 @@ export function OI(result) {
         }
     });
 
-    return ans;
+    let status = {
+        score: result.finalScore,
+        verdict: verdict
+    };
+
+    return status;
 }
