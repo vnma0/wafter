@@ -79,11 +79,26 @@ export function readAllUser() {
 }
 
 /**
+ * Retrieve User's data in database by using username
+ * @param {String} username User's id
+ * @returns {Promise} User's info if success
+ */
+export function readUser(username) {
+    return new Promise((resolve, reject) => {
+        db.users.findOne({ username }, function(err, docs) {
+            if (err) reject(err);
+            else if (docs === null) reject("invalid username");
+            else resolve(docs);
+        });
+    });
+}
+
+/**
  * Retrieve User's data in database by using user's id
  * @param {String} id User's id
  * @returns {Promise} User's info if success
  */
-export function readUser(id) {
+export function readUserByID(id) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: id }, function(err, docs) {
             if (err) reject(err);
