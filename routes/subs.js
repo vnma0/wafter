@@ -1,5 +1,5 @@
 import express from "express";
-import { readSubmission, readAllSubmission } from "../data/database";
+import { readSubmission, readAllSubmissions } from "../data/database";
 import { auth } from "../middleware/auth";
 import { codeUpload, validateCode } from "../middleware/upload";
 import { sendCode } from "../controller/submitCode";
@@ -7,7 +7,7 @@ import { sendCode } from "../controller/submitCode";
 const router = express.Router();
 
 router.get("/", (req, res) => {
-    readAllSubmission().then(
+    readAllSubmissions().then(
         (docs) => {
             res.send(docs);
         },
