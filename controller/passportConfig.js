@@ -1,4 +1,4 @@
-import { readUser } from "../data/database";
+import { readUser, readUserByID } from "../data/database";
 import { Strategy } from "passport-local";
 import bcrypt from "bcrypt-nodejs";
 
