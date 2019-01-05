@@ -236,6 +236,30 @@ export async function readLastSatisfy(sub_id) {
             },
             function(err, docs) {
                 if (err) reject(err);
+                else if (!docs.length) resolve({});
+                else resolve(docs.pop());
+            }
+        );
+    });
+}
+
+/**
+ * Retrieve last Satisfy result
+ * @param {String} sub_id Submission's ID
+ * @returns {Promise} Submission's details if success
+ */
+export async function countToSatisfy(sub_id) {
+    const { date, user_id, prob_id } = await readSubmission(sub_id);
+    return new Promise((resolve, reject) => {
+        db.submissions.count(
+            {
+                user_id,
+                prob_id,
+                date: { $lt: date },
+                status: { $ne: "Pending" }
+            },
+            function(err, docs) {
+                if (err) reject(err);
                 else resolve(docs);
             }
         );
