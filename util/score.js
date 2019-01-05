@@ -1,22 +1,26 @@
-import { readUserSubmission } from "../data/database";
+import { readUserSubmission, readLastSatisfy, countToSatisfy } from "../data/database";
 
 /**
  * Calculate final result from judger's result, ACM style
  * @param {JSON} result : judger's result file
- * @param {number} initial_penalty : total penalty from previous submisions
- * @param {number} submmission_time : the moment of submission from the beginning of contest, calculated by minutes
  * @returns {object} : final result
  */
 
 export async function ACM(result) {
     let ans = {},
-        { user_id, prob_id } = result,
-        sub = await getLastSatisfiedSubmission(user_id, prob_id), 
-        cnt1 = countToStatisfied(result.id) * 20, 
-        cnt2 = countToStatisfied(sub.id) * 20;
+        sub = await readLastSatisfy(result._id);
 
     ans.id = result.id;
     ans.problem = result.problem;
+
+    if(sub === {}) {
+        ans.penalty = result.date;
+        return ans;
+    }
+    
+    let cnt1 = countToStatisfy(result.id) * 20, 
+        cnt2 = countToStatisfy(sub.id) * 20;
+
     if (result.status === "AC") {
         if (sub.status === "AC")
             ans.penalty = min(
