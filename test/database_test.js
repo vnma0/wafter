@@ -13,26 +13,33 @@ const sampleUser = "sampleuser";
 const samplePass = "samplepassword";
 const sampleProb = "sampleprob";
 const sampleCode = "samplecode";
-const sampleID = "sampleID";
+let sampleID;
 const sampleVer = "sampleverdict";
 
 describe("database", function() {
     describe("newUser", function() {
         it("should be adding user", function() {
-            return newUser(sampleUser, samplePass);
+            return newUser(sampleUser, samplePass).then(
+                (id) => {
+                    sampleID = id;
+                },
+                (err) => {
+                    throw err;
+                }
+            );
         });
     });
 
     describe("readUser", function() {
         it("should be returning an object represents user's properties", function() {
-            return readUser(sampleID);
+            return readUser(sampleUser);
         });
     });
 
     describe("readAllUser", function() {
-        it("should return an array of users", function(){
+        it("should return an array of users", function() {
             return readAllUser();
-        })
+        });
     });
 
     describe("submitCode", function() {
@@ -48,9 +55,9 @@ describe("database", function() {
     });
 
     describe("readAllSubmissions", function() {
-        it("should return an array of submissions", function(){
+        it("should return an array of submissions", function() {
             return readAllSubmissions();
-        })
+        });
     });
 
     describe("updateSubmission", function() {
