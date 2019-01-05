@@ -31,7 +31,7 @@ export default function(passport) {
     });
 
     passport.deserializeUser(function(id, cb) {
-        readUser(id).then((docs) => cb(null, docs), (err) => cb(err));
+        readUserByID(id).then((docs) => cb(null, docs), (err) => cb(err));
     });
 
     passport.use("local", local);
