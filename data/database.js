@@ -248,7 +248,7 @@ export async function readLastSatisfy(sub_id) {
 }
 
 /**
- * Retrieve last Satisfy result
+ * Count to last Satisfy result
  * @param {String} sub_id Submission's ID
  * @returns {Promise} Submission's details if success
  */
