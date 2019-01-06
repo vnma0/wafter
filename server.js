@@ -10,13 +10,14 @@ import { subs } from "./routes/subs";
 import { users } from "./routes/users";
 import passportConfig from "./controller/passportConfig";
 import { auth } from "./middleware/auth";
+import server from "./config/server";
 
 require("dotenv").config();
 
 passportConfig(passport);
 const app = express();
 
-const PORT = 3000;
+const PORT = server.port;
 
 app.use(helmet());
 app.use(morgan("tiny"));
@@ -25,9 +26,7 @@ app.use(
     session({
         resave: false,
         saveUninitialized: true,
-        secret:
-            process.env.SESSION_SEC ||
-            "You must generate a random session secret"
+        secret: server.secret
     })
 );
 app.use(passport.initialize());

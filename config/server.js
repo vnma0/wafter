@@ -1,4 +1,5 @@
 // TODO: Add more configuration options
+// TODO: Import from .env
 export default {
     displayName: "Wafter - Themis Distributed Server",
     port: 3000,
