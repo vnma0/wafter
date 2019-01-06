@@ -71,6 +71,9 @@ export default class Judger {
     async send(source_code_path, prob_name, encrypted_info) {
         let data = new FormData();
 
+        if (!source_code_path || !prob_name || !encrypted_info)
+            throw new Error("Invalid data");
+
         data.append("code", createReadStream(source_code_path), prob_name);
         data.append("id", encrypted_info);
 
