@@ -40,6 +40,11 @@ app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
 });
 
+app.get("/logout", (req, res) => {
+    req.logout();
+    res.sendStatus(200);
+});
+
 app.get("/", auth, (req, res) => {
     res.json(req.body);
 });
