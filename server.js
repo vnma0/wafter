@@ -8,7 +8,7 @@ import bodyParser from "body-parser";
 
 import { subs } from "./routes/subs";
 import { users } from "./routes/users";
-import { addJudger } from "./controller/submitCode";
+import { addJudger, initJudger } from "./controller/submitCode";
 import passportConfig from "./controller/passportConfig";
 import { auth } from "./middleware/auth";
 import server from "./config/server";
@@ -51,6 +51,10 @@ app.get("/", auth, (req, res) => {
 
 app.get("/kon/:ip", auth, (req, res) => {
     addJudger(req.param.id);
+    res.sendStatus(200);
+});
+app.get("/kon", auth, (req, res) => {
+    initJudger("./test/Tasks.zip");
     res.sendStatus(200);
 });
 
