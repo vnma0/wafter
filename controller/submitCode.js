@@ -8,11 +8,13 @@ import Judger from "../driver/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
 import { ACM } from "../util/score";
+import kon from "../config/kon";
 
-const Judgers = ["http://localhost:30000"].map(host => new Judger(host));
+const Judgers = kon.judgers;
 
 /**
  * Qualify and add new server to Judgers
+ * This function is expected to be deprecated
  * @param {String} serverAddress Exepected address of kon server
  */
 export async function addJudger(serverAddress) {
@@ -22,10 +24,12 @@ export async function addJudger(serverAddress) {
     try {
         await newJudger.check();
         // TODO: Better logging
-        console.log("New kon added: ", serverAddress);
     } catch (err) {
         // In case server return 503, add server to judgerList
-        if (err === "Server is not ready") Judgers.push(newJudger);
+        if (err === "Server is not ready") {
+            Judgers.push(newJudger);
+            console.log("New kon added: ", serverAddress);
+        } else throw new Error(err);
     }
 }
 
@@ -55,9 +59,7 @@ export function initJudger(taskZipPath) {
     // NOTE: This require all server to work
     // In case one server is down, this function will break
     // TODO: Safety handling error
-    Promise.all(JudgePromise).catch(err => {
-        throw err;
-    });
+    Promise.all(JudgePromise);
 }
 
 /**
