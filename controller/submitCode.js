@@ -53,7 +53,7 @@ export function initJudgerFolder(task_folder) {
 export function initJudger(taskZipPath) {
     if (!isZip(readFileSync(taskZipPath)))
         throw Error("Given file is not a zip");
-    const JudgePromise = Judgers.map(judger => {
+    const JudgePromise = Judgers.map((judger) => {
         judger.clone(taskZipPath);
     });
     // NOTE: This require all server to work
@@ -67,15 +67,15 @@ export function initJudger(taskZipPath) {
  * @param {function} calc Calculate result, either ACM or OI
  */
 export function reloadSubs(calc) {
-    const judgerPromise = Judgers.map(judger => judger.get());
+    const judgerPromise = Judgers.map((judger) => judger.get());
     Promise.all(judgerPromise)
-        .then(list => [].concat.apply([], list))
-        .then(subs => {
-            subs.forEach(async sub => {
+        .then((list) => [].concat.apply([], list))
+        .then((subs) => {
+            subs.forEach(async (sub) => {
                 updateSubmission(sub.id, await calc(sub));
             });
         })
-        .catch(err => {
+        .catch((err) => {
             throw err;
         });
 }
@@ -91,7 +91,7 @@ export async function sendCode(source_code_path, user_id, prob_name) {
         prob_name = prob_name.toUpperCase();
         const prob_id = basename(prob_name, extname(prob_name));
         const sub_id = await submitCode(source_code_path, user_id, prob_id);
-        const qPromise = Judgers.map(judger => judger.qLength());
+        const qPromise = Judgers.map((judger) => judger.qLength());
 
         const judgersQ = await Promise.all(qPromise);
         const judgerNum = judgersQ
@@ -100,7 +100,7 @@ export async function sendCode(source_code_path, user_id, prob_name) {
             .shift()[1];
         const judger = Judgers[judgerNum];
 
-        judger.send(source_code_path, prob_name, sub_id).catch(err => {
+        judger.send(source_code_path, prob_name, sub_id).catch((err) => {
             throw err;
         });
         setTimeout(() => reloadSubs(ACM), 100);
