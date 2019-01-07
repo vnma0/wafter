@@ -1,3 +1,1 @@
-import { join } from "path";
-
-export const cwd = join(__dirname, "..");
+export const cwd = process.cwd();
