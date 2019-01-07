@@ -38,14 +38,14 @@ export default class Judger {
     async clone(compressed_task_path) {
         let task = new FormData();
 
-        task.append("task", createReadStream(compressed_task_path));
+        const zip = createReadStream(compressed_task_path);
+        task.append("task", zip);
 
         try {
             const response = await fetch(this.serverAddress + "/task", {
                 method: "POST",
-                mode: "no-cors",
                 body: task,
-                timeout: 1000,
+                timeout: 5000,
                 compress: true
             });
             const status = response.status;

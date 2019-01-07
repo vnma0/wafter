@@ -8,10 +8,12 @@ import bodyParser from "body-parser";
 
 import { subs } from "./routes/subs";
 import { users } from "./routes/users";
-import { addJudger, initJudger } from "./controller/submitCode";
+import { initJudger } from "./controller/submitCode";
 import passportConfig from "./controller/passportConfig";
 import { auth } from "./middleware/auth";
 import server from "./config/server";
+import { cwd } from "./config/cwd";
+import { join } from "path";
 
 require("dotenv").config();
 
@@ -49,15 +51,10 @@ app.get("/", auth, (req, res) => {
     res.json(req.body);
 });
 
-app.get("/kon/:ip", auth, (req, res) => {
-    addJudger(req.params.ip).then(
-        () => res.sendStatus(200),
-        () => res.sendStatus(500)
-    );
-});
 app.get("/kon", auth, (req, res) => {
     try {
-        initJudger("./test/Tasks.zip");
+        // TODO: Replace with real task
+        initJudger(join(cwd, "/test/Tasks.zip"));
         res.sendStatus(200);
     } catch (err) {
         res.sendStatus(500);
