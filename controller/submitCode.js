@@ -21,10 +21,10 @@ export async function addJudger(serverAddress) {
     try {
         await newJudger.check();
         // TODO: Better logging
-        console.log("New kon added: ", serverAddress);
     } catch (err) {
         // In case server return 503, add server to judgerList
         if (err === "Server is not ready") Judgers.push(newJudger);
+        console.log("New kon added: ", serverAddress);
     }
 }
 
