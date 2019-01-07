@@ -1,8 +1,15 @@
 import Judger from "../driver/kon";
-import { readFileSync } from "fs";
+import { readFileSync, existsSync, writeFileSync } from "fs";
 
-const serverList = readFileSync(".konlist", "utf8");
+const konList = ".konlist";
+
+// Setup konList
+if (!existsSync(konList)) writeFileSync(konList);
+
+const serverList = readFileSync(konList, "utf8")
+    .split("\r\n")
+    .map((kon) => new Judger(kon));
 
 export default {
-    judgers: serverList.split("\r\n").map((kon) => new Judger(kon))
+    judgers: serverList
 };
