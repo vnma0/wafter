@@ -7,11 +7,13 @@ import { cwd } from "../config/cwd";
 import Judger from "../driver/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
+import kon from "../config/kon";
 
-const Judgers = [];
+const Judgers = kon.judgers;
 
 /**
  * Qualify and add new server to Judgers
+ * This function is expected to be deprecated
  * @param {String} serverAddress Exepected address of kon server
  */
 export async function addJudger(serverAddress) {
@@ -26,7 +28,7 @@ export async function addJudger(serverAddress) {
         if (err === "Server is not ready") {
             Judgers.push(newJudger);
             console.log("New kon added: ", serverAddress);
-        }
+        } else throw new Error(err);
     }
 }
 
@@ -56,9 +58,7 @@ export function initJudger(taskZipPath) {
     // NOTE: This require all server to work
     // In case one server is down, this function will break
     // TODO: Safety handling error
-    Promise.all(JudgePromise).catch((err) => {
-        throw err;
-    });
+    Promise.all(JudgePromise);
 }
 
 /**
