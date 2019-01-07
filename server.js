@@ -50,12 +50,18 @@ app.get("/", auth, (req, res) => {
 });
 
 app.get("/kon/:ip", auth, (req, res) => {
-    addJudger(req.param.id);
-    res.sendStatus(200);
+    addJudger(req.params.ip).then(
+        () => res.sendStatus(200),
+        () => res.sendStatus(500)
+    );
 });
 app.get("/kon", auth, (req, res) => {
-    initJudger("./test/Tasks.zip");
-    res.sendStatus(200);
+    try {
+        initJudger("./test/Tasks.zip");
+        res.sendStatus(200);
+    } catch (err) {
+        res.sendStatus(500);
+    }
 });
 
 app.listen(PORT, () => {
