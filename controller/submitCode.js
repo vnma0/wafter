@@ -8,7 +8,7 @@ import Judger from "../driver/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
 
-const Judgers = ["http://localhost:30000"].map((host) => new Judger(host));
+const Judgers = [];
 
 /**
  * Qualify and add new server to Judgers
@@ -23,8 +23,10 @@ export async function addJudger(serverAddress) {
         // TODO: Better logging
     } catch (err) {
         // In case server return 503, add server to judgerList
-        if (err === "Server is not ready") Judgers.push(newJudger);
-        console.log("New kon added: ", serverAddress);
+        if (err === "Server is not ready") {
+            Judgers.push(newJudger);
+            console.log("New kon added: ", serverAddress);
+        }
     }
 }
 
