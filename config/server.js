@@ -6,7 +6,7 @@ export default {
     secret: process.env.SECRET || "UUIDGoesHere",
     contest: {
         // Change this to config contest time
-        startTime: new Date("1970", "01", "01", "00", "00", "00"),
-        endTime: new Date("1970", "01", "01", "00", "00", "10")
+        startTime: new Date(1970, 0, 1, 0, 0),
+        endTime: new Date(1970, 0, 1, 1, 0)
     }
 };
