@@ -41,15 +41,16 @@ describe("kon", function() {
     });
 
     describe("send", function() {
+        // TODO: Patch with real test using sample.contest
         it("should return true when sending .cpp ...", () => {
-            return judger.send("./test/submitcode.cpp", "hash sha-256");
+            return judger.send("./test/submitcode.cpp", "submitcode", "hash sha-256");
         });
         it("...and return true when sending .pas ...", () => {
-            return judger.send("./test/submitcode.pas", "hash sha-256");
+            return judger.send("./test/submitcode.pas", "submitcode", "hash sha-256");
         });
-        it("...and false when sending .js", () => {
+        it("...and false when sending .txt", () => {
             return judger
-                .send("./test/submitcode.txt", "hash sha-256")
+                .send("./test/submitcode.txt", "submitcode", "hash sha-256")
                 .then(() => {
                     throw "Incorrect behaviour";
                 })

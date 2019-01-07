@@ -16,10 +16,13 @@ const Judgers = ["http://localhost:30000"].map(host => new Judger(host));
  * @param {String} serverAddress Exepected address of kon server
  */
 export async function addJudger(serverAddress) {
+    if (!serverAddress) throw new Error("Invalid serverAddress");
     // TODO: Guarantee valid kon server
     const newJudger = new Judger(serverAddress);
     try {
         await newJudger.check();
+        // TODO: Better logging
+        console.log("New kon added: ", serverAddress);
     } catch (err) {
         // In case server return 503, add server to judgerList
         if (err === "Server is not ready") Judgers.push(newJudger);

@@ -8,15 +8,17 @@ import bodyParser from "body-parser";
 
 import { subs } from "./routes/subs";
 import { users } from "./routes/users";
+import { addJudger } from "./controller/submitCode";
 import passportConfig from "./controller/passportConfig";
 import { auth } from "./middleware/auth";
+import server from "./config/server";
 
 require("dotenv").config();
 
 passportConfig(passport);
 const app = express();
 
-const PORT = 3000;
+const PORT = server.port;
 
 app.use(helmet());
 app.use(morgan("tiny"));
@@ -25,9 +27,7 @@ app.use(
     session({
         resave: false,
         saveUninitialized: true,
-        secret:
-            process.env.SESSION_SEC ||
-            "You must generate a random session secret"
+        secret: server.secret
     })
 );
 app.use(passport.initialize());
@@ -40,8 +40,18 @@ app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
 });
 
+app.get("/logout", (req, res) => {
+    req.logout();
+    res.sendStatus(200);
+});
+
 app.get("/", auth, (req, res) => {
     res.json(req.body);
+});
+
+app.get("/kon/:ip", auth, (req, res) => {
+    addJudger(req.param.id);
+    res.sendStatus(200);
 });
 
 app.listen(PORT, () => {
