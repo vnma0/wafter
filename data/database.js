@@ -127,7 +127,7 @@ export function updateUser(user_id, old_pass, new_pass) {
                         db.users.update(
                             { _id: user_id, pass: docs.pass },
                             { $set: { pass: bcrypt.hashSync(new_pass) } },
-                            { multi: false },
+                            { multi: true },
                             function (err3, docs3) {
                                 if (err3) reject(err3);
                                 else if (docs3 === 0) reject("nothing changed");
@@ -149,6 +149,11 @@ export function updateUser(user_id, old_pass, new_pass) {
  * date:            Submission Date (Db first receive)
  * user_id:         User's ID of submission
  * prob_id:         Problem's ID of submission
+ * score:           Submission's score (in OI)
+ * penalty          Submission's penalty (in ACM)
+ * ctype:           contest type OI / ACM
+ * 
+ * "Accepted" is the only verdict that will be count 
  */
 
 /**
@@ -199,29 +204,55 @@ export function readUserSubmission(user_id) {
  * @param {String} source_code Source Code
  * @param {String} user_id User's ID
  * @param {String} prob_id Problem's ID
+ * @param {String} ctype ACM / OI
+ * @param {Number} index penalty if ACM 
  * @returns {Promise} Submission's ID if success
  */
-export function submitCode(source_code, user_id, prob_id) {
+export function submitCode(source_code, user_id, prob_id, ctype, index) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: user_id }, function (err, docs) {
             if (err) reject(err);
             else if (!docs) reject("this username doesn't exists");
-            else
-                db.submissions.insert(
-                    [
-                        {
-                            source_code,
-                            status: "Pending",
-                            date: new Date(),
-                            user_id,
-                            prob_id
+            else {
+                if (ctype === "ACM")
+                    db.submissions.insert(
+                        [
+                            {
+                                source_code,
+                                status: "Pending",
+                                date: new Date(),
+                                user_id,
+                                prob_id,
+                                score: null,
+                                penalty: index,
+                                ctype
+                            }
+                        ],
+                        function (err2, docs2) {
+                            if (err2) reject(err2);
+                            else resolve(docs2[0]._id);
                         }
-                    ],
-                    function (err2, docs2) {
-                        if (err2) reject(err2);
-                        else resolve(docs2[0]._id);
-                    }
-                );
+                    );
+                if (ctype === "OI")
+                    db.submissions.insert(
+                        [
+                            {
+                                source_code,
+                                status: "Pending",
+                                date: new Date(),
+                                user_id,
+                                prob_id,
+                                score: null,
+                                penalty: null,
+                                ctype
+                            }
+                        ],
+                        function (err2, docs2) {
+                            if (err2) reject(err2);
+                            else resolve(docs2[0]._id);
+                        }
+                    );
+            }
         });
     });
 }
@@ -230,13 +261,14 @@ export function submitCode(source_code, user_id, prob_id) {
  * Update submission in database
  * @param {String} sub_id Submission's ID
  * @param {Object} new_verdict new verdict
+ * @param {Number} score score if it is OI
  */
-export function updateSubmission(sub_id, new_verdict) {
+export function updateSubmission(sub_id, new_verdict, score) {
     return new Promise((resolve, reject) => {
         db.submissions.update(
             { _id: sub_id },
-            { $set: { status: new_verdict } },
-            { multi: false },
+            { $set: { status: new_verdict, score: score } },
+            { multi: true },
             function (err, docs) {
                 if (err) reject(err);
                 else if (docs === 0) reject("such submission exists");
@@ -247,91 +279,62 @@ export function updateSubmission(sub_id, new_verdict) {
 }
 
 /**
- * Retrieve last Satisfy result
- * @param {String} sub_id Submission's ID
- * @returns {Promise} Submission's details if success
+ * return the number of satisfied submissions
+ * @param {String} user_id 
+ * @param {String} prob_id 
+ * @returns {Promise} number of satisfied submissions if success
  */
-export async function readLastSatisfy(sub_id) {
-    try {
-        const { date, user_id, prob_id } = await readSubmission(sub_id);
-        return new Promise((resolve, reject) => {
-            db.submissions.find(
-                {
-                    user_id,
-                    prob_id,
-                    date: { $lt: date },
-                    status: { $ne: "Pending" }
-                },
-                function (err, docs) {
-                    if (err) reject(err);
-                    else if (!docs.length) resolve({});
-                    else resolve(docs.pop());
-                }
-            );
-        });
-    } catch (err) {
-        throw err;
-    }
-}
-
-/**
- * Count to last Satisfy result
- * @param {String} sub_id Submission's ID
- * @returns {Promise} Submission's details if success
- */
-export async function countToSatisfy(sub_id) {
-    try {
-        const { date, user_id, prob_id } = await readSubmission(sub_id);
-        return new Promise((resolve, reject) => {
-            db.submissions.count(
-                {
-                    user_id,
-                    prob_id,
-                    date: { $lt: date },
-                    status: { $ne: "Pending" }
-                },
-                function (err, docs) {
-                    if (err) reject(err);
-                    else resolve(docs);
-                }
-            );
-        });
-    } catch (err) {
-        throw err;
-    }
-}
-/**
- * Retreive submissions inqueue
- * @param {String} prob_id problem's id
- * @param {String} user_id user's id
- * @returns {Promise} satisfy submissions inqueue
- */
-export function readSatisfy(user_id, prob_id) {
+export function countSatisfy(user_id, prob_id) {
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            { user_id: user_id, prob_id: prob_id, status: "Pending" },
+        db.submissions.count(
+            {
+                user_id,
+                prob_id,
+                status: "Accepted"
+            },
             function (err, docs) {
                 if (err) reject(err);
                 else resolve(docs);
             }
         )
-    });
+    })
 }
 
 /**
- * Retreive the last submission among the list
+ * Retreive the best submission among the list
  * @param {String} user_id user's id
  * @param {String} prob_id problem's id
- * @returns {Promise} the best submission if possible
+ * @param {String} ctype contest's type
+ * @returns {Promise} the best submission if possible, null if none exists
  */
-export function lastSatisfy(user_id, prob_id) {
+export function lastSatisfy(user_id, prob_id, ctype) {
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            { user_id: user_id, prob_id: prob_id },
-            function (err, docs) {
-                if (err) reject(err);
-                else resolve(docs.pop());
-            }
-        )
+        if (ctype === "ACM" || ctype === "OI")
+            db.submissions.find(
+                { user_id, prob_id, status: "Accepted" },
+                function (err, docs) {
+                    if (err) reject(err);
+                    else if (docs === null) resolve(null);
+                    else {
+                        if (ctype === "ACM") {
+                            let best_sub = docs[0];
+                            for (let i = 1; i < docs.length; i++) {
+                                if (best_sub.penalty > docs[i].penalty)
+                                    best_sub = docs[i];
+                            }
+                            resolve(best_sub);
+                        }
+                        else {
+                            let best_sub = docs[0];
+                            for (let i = 1; i < docs.length; i++) {
+                                if (best_sub.score < docs[i].score)
+                                    best_sub = docs[i];
+                            }
+                            resolve(best_sub);
+                        }
+                    }
+                }
+            )
+        else reject("wrong contest type");
     });
 }

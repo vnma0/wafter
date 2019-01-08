@@ -7,11 +7,10 @@ import {
     updateSubmission,
     readAllUser,
     readAllSubmissions,
-    countToSatisfy,
-    readLastSatisfy,
-    readSatisfy,
+    countSatisfy,
     lastSatisfy
 } from "../data/database";
+import { resolve } from "dns";
 
 const sampleUser = Math.random()
     .toString(36)
@@ -24,7 +23,7 @@ const sampleRandom = Math.random()
     .substr(2, 5);
 let sampleID, sampleCodeID;
 
-const sampleVer = "sampleverdict";
+const sampleVer = "Accepted";
 
 describe("database", function () {
     describe("newUser", function () {
@@ -54,7 +53,7 @@ describe("database", function () {
 
     describe("submitCode", function () {
         it("should be submitting code", function () {
-            return submitCode(sampleCode, sampleID, sampleProb).then(
+            return submitCode(sampleCode, sampleID, sampleProb, "OI", null).then(
                 id => {
                     sampleCodeID = id;
                 },
@@ -78,8 +77,27 @@ describe("database", function () {
     });
 
     describe("updateSubmission", function () {
-        it("should be updating verdict", function () {
-            return updateSubmission(sampleCodeID, sampleVer);
+        it("should be updating verdict with a score of 90", function () {
+            return updateSubmission(sampleCodeID, sampleVer, 90);
+        });
+    });
+
+    describe("submitCode", function () {
+        it("should be submitting another code", function () {
+            return submitCode(sampleCode, sampleID, sampleProb, "OI", null).then(
+                id => {
+                    sampleCodeID = id;
+                },
+                err => {
+                    throw err;
+                }
+            );
+        });
+    });
+
+    describe("updateSubmission", function () {
+        it("should be updating verdict with a score of 40", function () {
+            return updateSubmission(sampleCodeID, sampleVer, 40);
         });
     });
 
@@ -89,21 +107,15 @@ describe("database", function () {
         });
     });
 
-    describe("readLastSatisfy", function () {
-        it("should retrieve last satisfy result", function () {
-            return readLastSatisfy(sampleCodeID);
-        });
-    });
-
-    describe("readSatisfy", function () {
-        it("should get satisfy submissions", function () {
-            return readSatisfy(sampleUser, sampleProb);
+    describe("countSatisfy", function () {
+        it("should count satisfy submissions", function () {
+            return countSatisfy(sampleID, sampleProb);
         });
     });
 
     describe("lastSatisfy", function () {
-        it("should retrieve last satisfy result", function () {
-            return readLastSatisfy(sampleUser, sampleProb);
+        it("should retrieve best satisfy result", function () {
+            return lastSatisfy(sampleID, sampleProb, "OI");
         });
     });
 });
