@@ -7,6 +7,7 @@ import { cwd } from "../config/cwd";
 import Judger from "../driver/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
+import { ACM } from "../util/score";
 import kon from "../config/kon";
 
 const Judgers = kon.judgers;
@@ -70,8 +71,8 @@ export function reloadSubs(calc) {
     Promise.all(judgerPromise)
         .then((list) => [].concat.apply([], list))
         .then((subs) => {
-            subs.forEach((sub) => {
-                updateSubmission(sub.id, calc(sub));
+            subs.forEach(async (sub) => {
+                updateSubmission(sub.id, await calc(sub));
             });
         })
         .catch((err) => {
@@ -102,7 +103,7 @@ export async function sendCode(source_code_path, user_id, prob_name) {
         judger.send(source_code_path, prob_name, sub_id).catch((err) => {
             throw err;
         });
-        // setTimeout(reloadSub(ACM))
+        setTimeout(() => reloadSubs(ACM), 100);
     } catch (err) {
         throw err;
     }
