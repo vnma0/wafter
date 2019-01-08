@@ -8,7 +8,9 @@ import {
   readAllUser,
   readAllSubmissions,
   countToSatisfy,
-  readLastSatisfy
+  readLastSatisfy,
+  readSatisfy,
+  lastSatisfy
 } from "../data/database";
 
 const sampleUser = Math.random()
@@ -24,9 +26,9 @@ let sampleID, sampleCodeID;
 
 const sampleVer = "sampleverdict";
 
-describe("database", function() {
-  describe("newUser", function() {
-    it("should be adding user", function() {
+describe("database", function () {
+  describe("newUser", function () {
+    it("should be adding user", function () {
       return newUser(sampleUser, samplePass).then(
         id => {
           sampleID = id;
@@ -38,20 +40,20 @@ describe("database", function() {
     });
   });
 
-  describe("readUser", function() {
-    it("should be returning an object represents user's properties", function() {
+  describe("readUser", function () {
+    it("should be returning an object represents user's properties", function () {
       return readUser(sampleUser);
     });
   });
 
-  describe("readAllUser", function() {
-    it("should return an array of users", function() {
+  describe("readAllUser", function () {
+    it("should return an array of users", function () {
       return readAllUser();
     });
   });
 
-  describe("submitCode", function() {
-    it("should be submitting code", function() {
+  describe("submitCode", function () {
+    it("should be submitting code", function () {
       return submitCode(sampleCode, sampleID, sampleProb).then(
         id => {
           sampleCodeID = id;
@@ -63,39 +65,45 @@ describe("database", function() {
     });
   });
 
-  describe("readSubmission", function() {
-    it("should be returning an object represents submission's props", function() {
+  describe("readSubmission", function () {
+    it("should be returning an object represents submission's props", function () {
       return readSubmission(sampleCodeID);
     });
   });
 
-  describe("readAllSubmissions", function() {
-    it("should return an array of submissions", function() {
+  describe("readAllSubmissions", function () {
+    it("should return an array of submissions", function () {
       return readAllSubmissions();
     });
   });
 
-  describe("updateSubmission", function() {
-    it("should be updating verdict", function() {
+  describe("updateSubmission", function () {
+    it("should be updating verdict", function () {
       return updateSubmission(sampleCodeID, sampleVer);
     });
   });
 
-  describe("updateUser", function() {
-    it("should be update user's password", function() {
+  describe("updateUser", function () {
+    it("should be update user's password", function () {
       return updateUser(sampleID, samplePass, sampleRandom);
     });
   });
 
-  describe("readLastSatisfy", function() {
-    it("should retrieve last satisfy result", function() {
+  describe("readLastSatisfy", function () {
+    it("should retrieve last satisfy result", function () {
       return readLastSatisfy(sampleCodeID);
     });
   });
 
-  describe("countToSatisfy", function() {
-    it("should count to last satisfy result", function() {
-      return countToSatisfy(sampleCodeID);
+  describe("readSatisfy", function () {
+    it("should get satisfy submissions", function () {
+      return readSatisfy(sampleUser, sampleProb);
+    });
+  });
+
+  describe("lastSatisfy", function () {
+    it("should retrieve last satisfy result", function () {
+      return readLastSatisfy(sampleUser, sampleProb);
     });
   });
 });
