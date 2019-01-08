@@ -21,7 +21,8 @@ export async function ACM(result) {
         curr_diff = curr - begin_time;
 
     let status = {
-        score: result.finalScore
+        score: result.finalScore,
+        partial_result: result.tests
     };
 
     if (lastSub === {}) {
@@ -72,6 +73,7 @@ export function OI(result) {
     });
 
     let status = {
+        partial_result: partial_result,
         score: result.finalScore,
         verdict: verdict
     };
