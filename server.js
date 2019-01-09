@@ -15,8 +15,6 @@ import server from "./config/server";
 import { cwd } from "./config/cwd";
 import { join } from "path";
 
-require("dotenv").config();
-
 passportConfig(passport);
 const app = express();
 

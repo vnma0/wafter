@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
+import uuidv4 from "uuid/v4";
 
-// TODO: Add more configuration options
-// TODO: Import from .env
+require("dotenv").config();
 
 const contestConfig = "contest.json";
 
@@ -17,9 +17,9 @@ try {
 }
 
 export default {
-    displayName: "Wafter - Themis Distributed Server",
-    port: 3000,
-    secret: process.env.SECRET || "UUIDGoesHere",
+    displayName: process.env.SERVERNAME || "Wafter - Themis Distributed Server",
+    port: process.env.PORT || 3000,
+    secret: process.env.SECRET || uuidv4(),
     contest: {
         // Change this to config contest time
         name,
