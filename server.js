@@ -14,6 +14,7 @@ import { auth } from "./middleware/auth";
 import server from "./config/server";
 import { cwd } from "./config/cwd";
 import { join } from "path";
+import { info } from "./routes/info";
 
 passportConfig(passport);
 const app = express();
@@ -35,6 +36,7 @@ app.use(passport.session());
 
 app.use("/subs", auth, subs);
 app.use("/users", auth, users);
+app.get("/info", auth, info);
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
@@ -43,10 +45,6 @@ app.post("/login", passport.authenticate("local"), (req, res) => {
 app.get("/logout", (req, res) => {
     req.logout();
     res.sendStatus(200);
-});
-
-app.get("/", auth, (req, res) => {
-    res.json(req.body);
 });
 
 app.get("/kon", auth, (req, res) => {

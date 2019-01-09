@@ -3,7 +3,7 @@ import uuidv4 from "uuid/v4";
 
 require("dotenv").config();
 
-const contestConfig = "contest.json";
+export const contestConfig = "contest.json";
 
 let contestObj = {};
 let name, startTime, endTime;

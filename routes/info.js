@@ -1,9 +1,10 @@
 import express from "express";
-import { cwd } from "../config/cwd";
-import { join } from "path";
+import { contestConfig } from "../config/server";
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-    res.sendFile(join(cwd, "info.md"));
+    res.sendFile(contestConfig);
 });
+
+export { router as info };
