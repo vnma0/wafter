@@ -1,5 +1,12 @@
-node_modules
+# JavaScript
+node_modules/
 package-lock.json
-**/*.db
-.env
+
+# Runtime
 upload/
+**/*.db
+
+# Environment
+.env
+.konlist
+contest.json
