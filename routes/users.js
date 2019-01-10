@@ -14,8 +14,8 @@ router.get("/", (req, res) => {
             (docs) => {
                 res.send(docs);
             },
-            () => {
-                res.sendStatus(500);
+            (err) => {
+                res.status(400).json(err);
             }
         );
     else res.redirect(req.baseUrl + "/" + req.user._id);
@@ -29,7 +29,7 @@ router.get("/:userid", (req, res) => {
             res.send(docs);
         },
         (err) => {
-            res.json(err);
+            res.status(400).json(err);
         }
     );
 });
