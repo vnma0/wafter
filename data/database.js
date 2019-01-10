@@ -342,22 +342,8 @@ export function lastSatisfy(user_id, prob_id, ctype) {
                     if (err) reject(err);
                     else if (docs === null) resolve(null);
                     else {
-                        if (ctype === "ACM") {
-                            let best_sub = docs[0];
-                            for (let i = 1; i < docs.length; i++) {
-                                if (best_sub.penalty > docs[i].penalty)
-                                    best_sub = docs[i];
-                            }
-                            resolve(best_sub);
-                        }
-                        else {
-                            let best_sub = docs[0];
-                            for (let i = 1; i < docs.length; i++) {
-                                if (best_sub.score < docs[i].score)
-                                    best_sub = docs[i];
-                            }
-                            resolve(best_sub);
-                        }
+                        docs.sort(function (a, b) { return (ctype === "ACM" ? a.penalty - b.penalty : b.score - a.score) })
+                        resolve(docs[0]);
                     }
                 }
             )
