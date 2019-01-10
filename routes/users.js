@@ -1,29 +1,36 @@
 import express from "express";
-import { readUser, readAllUser } from "../data/database";
+import { readAllUser, readUserByID } from "../data/database";
 import { auth } from "../middleware/auth";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-    // TODO: Hide this route
-    readAllUser().then(
-        (docs) => {
-            res.send(docs);
-        },
-        () => {
-            res.sendStatus(500);
-        }
-    );
+/**
+ * GET /users
+ * If Admin -> show all user
+ * If user -> redirect to user
+ */
+router.get("/", auth, (req, res) => {
+    if (req.user.isAdmin)
+        readAllUser().then(
+            (docs) => {
+                res.send(docs);
+            },
+            () => {
+                res.sendStatus(500);
+            }
+        );
+    else res.redirect(req.baseUrl + "/" + req.user._id);
 });
 
 router.get("/:userid", auth, (req, res) => {
-    if (req.user.id !== req.params.userid) res.sendStatus(403).end();
-    readUser(req.params.userid).then(
+    const userId = req.user._id;
+    if (userId !== req.params.userid) res.sendStatus(403);
+    readUserByID(userId).then(
         (docs) => {
             res.send(docs);
         },
-        () => {
-            res.sendStatus(500);
+        (err) => {
+            res.json(err);
         }
     );
 });
