@@ -1,7 +1,11 @@
 import Judger from "../driver/kon";
 import { readFileSync, existsSync, writeFileSync } from "fs";
+import { join } from "path";
+import { cwd } from "./cwd";
 
-const konList = ".konlist";
+const konList = join(cwd, ".konlist");
+
+const taskFile = join(cwd, "Tasks.zip")
 
 // Setup konList
 if (!existsSync(konList)) writeFileSync(konList);
@@ -11,5 +15,6 @@ const serverList = readFileSync(konList, "utf8")
     .map((kon) => new Judger(kon));
 
 export default {
-    judgers: serverList
+    judgers: serverList,
+    tasks: taskFile
 };
