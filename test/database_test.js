@@ -39,6 +39,12 @@ describe("database", function () {
         });
     });
 
+    describe("newUser", function () {
+        it("should be adding ontest", function () {
+            return newUser("ontest", samplePass);
+        });
+    });
+
     describe("readUser", function () {
         it("should be returning an object represents user's properties", function () {
             return readUser(sampleUser);
@@ -70,6 +76,19 @@ describe("database", function () {
         });
     });
 
+    describe("readSubmission", function () {
+        it("shouldn't be able to read this", function () {
+            return readSubmission("sampleCodeID").then(
+                () => {
+                    throw "it does";
+                },
+                () => {
+                    return;
+                }
+            );
+        });
+    });
+
     describe("readAllSubmissions", function () {
         it("should return an array of submissions", function () {
             return readAllSubmissions();
@@ -81,6 +100,7 @@ describe("database", function () {
             return updateSubmission(sampleCodeID, sampleVer, 90);
         });
     });
+
 
     describe("submitCode", function () {
         it("should be submitting another code", function () {
@@ -103,7 +123,21 @@ describe("database", function () {
 
     describe("updateUser", function () {
         it("should be update user's password", function () {
-            return updateUser(sampleID, sampleUser, sampleUser, samplePass, sampleRandom);
+            return updateUser(sampleID, sampleUser, sampleUser, samplePass, "newpass");
+        });
+    });
+
+    describe("updateUser", function () {
+        it("should be able to prevent the collision", function () {
+            return updateUser(sampleID, sampleUser, "ontest", "newpass", samplePass)
+                .then(
+                    () => {
+                        throw "it updates to an username which has been used";
+                    },
+                    () => {
+                        return;
+                    }
+                )
         });
     });
 
