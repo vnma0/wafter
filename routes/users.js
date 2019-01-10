@@ -1,6 +1,5 @@
 import express from "express";
 import { readAllUser, readUserByID } from "../data/database";
-import { auth } from "../middleware/auth";
 
 const router = express.Router();
 
