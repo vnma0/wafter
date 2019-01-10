@@ -34,9 +34,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.get("/", info);
 app.use("/subs", auth, subs);
 app.use("/users", auth, users);
-app.get("/info", auth, info);
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
