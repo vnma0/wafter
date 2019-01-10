@@ -110,32 +110,42 @@ export function readUserByID(id) {
 /**
  * Update User's data in database
  * @param {String} user_id User's id
+ * @param {String} username Username
+ * @param {String} new_username New username
  * @param {String} old_pass Old password
  * @param {String} new_pass New password
+ * 
  */
-export function updateUser(user_id, old_pass, new_pass) {
+export function updateUser(user_id, username, new_username, old_pass, new_pass) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ _id: user_id }, function (err, docs) {
+        db.users.findOne({ _id: user_id, username: username }, function (err, docs) {
             if (err) reject(err);
             else if (docs === null) {
                 reject("invalid user");
             } else {
-                bcrypt.compare(old_pass, docs.pass, function (err2, docs2) {
-                    if (err2) reject(err2);
-                    if (docs2 === false) reject("wrong password");
-                    else {
-                        db.users.update(
-                            { _id: user_id, pass: docs.pass },
-                            { $set: { pass: bcrypt.hashSync(new_pass) } },
-                            { multi: true },
-                            function (err3, docs3) {
-                                if (err3) reject(err3);
-                                else if (docs3 === 0) reject("nothing changed");
-                                else resolve("password changed");
+                db.users.findOne(
+                    { username: new_username },
+                    function (err1, docs1) {
+                        if (err1) reject(err1);
+                        else if (docs1 !== null && new_username !== username) reject("this username has been taken");
+                        else bcrypt.compare(old_pass, docs.pass, function (err2, docs2) {
+                            if (err2) reject(err2);
+                            else if (docs2 === false) reject("wrong password");
+                            else {
+                                db.users.update(
+                                    { _id: user_id, pass: docs.pass },
+                                    { username: new_username, pass: bcrypt.hashSync(new_pass) },
+                                    {},
+                                    function (err3, docs3) {
+                                        if (err3) reject(err3);
+                                        else if (docs3 === 0) reject("nothing changed");
+                                        else resolve("password changed");
+                                    }
+                                );
                             }
-                        );
+                        });
                     }
-                });
+                )
             }
         });
     });
@@ -265,16 +275,32 @@ export function submitCode(source_code, user_id, prob_id, ctype, index) {
  */
 export function updateSubmission(sub_id, new_verdict, score) {
     return new Promise((resolve, reject) => {
-        db.submissions.update(
+        db.submissions.findOne(
             { _id: sub_id },
-            { $set: { status: new_verdict, score: score } },
-            { multi: true },
             function (err, docs) {
                 if (err) reject(err);
-                else if (docs === 0) reject("such submission exists");
-                else resolve("new verdict applied");
+                else if (docs === null) reject("no code found");
+                else db.submissions.update(
+                    { _id: sub_id },
+                    {
+                        source_code: docs.source_code,
+                        status: new_verdict,
+                        date: docs.date,
+                        user_id: docs.user_id,
+                        prob_id: docs.prob_id,
+                        score: score,
+                        penalty: docs.penalty,
+                        ctype: docs.ctype
+                    },
+                    {},
+                    function (err2, docs2) {
+                        if (err2) reject(err2);
+                        else if (docs2 === 0) reject("such submission exists");
+                        else resolve("new verdict applied");
+                    }
+                );
             }
-        );
+        )
     });
 }
 

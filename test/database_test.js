@@ -103,7 +103,7 @@ describe("database", function () {
 
     describe("updateUser", function () {
         it("should be update user's password", function () {
-            return updateUser(sampleID, samplePass, sampleRandom);
+            return updateUser(sampleID, sampleUser, sampleUser, samplePass, sampleRandom);
         });
     });
 
