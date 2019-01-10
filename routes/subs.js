@@ -1,15 +1,17 @@
 import express from "express";
+
+import { sendCode } from "../controller/submitCode";
 import {
     readSubmission,
     readAllSubmissions,
     readUserSubmission
 } from "../data/database";
+import { auth } from "../middleware/auth";
 import { codeUpload, validateCode } from "../middleware/upload";
-import { sendCode } from "../controller/submitCode";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", auth, (req, res) => {
     if (req.user.isAdmin)
         readAllSubmissions().then(
             (docs) => {
@@ -30,7 +32,7 @@ router.get("/", (req, res) => {
         );
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", auth, (req, res) => {
     readSubmission(req.params.id).then(
         (docs) => {
             if (docs.user_id === req.user._id) res.send(docs);

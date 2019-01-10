@@ -1,5 +1,7 @@
 import express from "express";
+
 import { readAllUser, readUserByID } from "../data/database";
+import { auth } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -8,7 +10,7 @@ const router = express.Router();
  * If Admin -> show all user
  * If user -> redirect to user
  */
-router.get("/", (req, res) => {
+router.get("/", auth, (req, res) => {
     if (req.user.isAdmin)
         readAllUser().then(
             (docs) => {
@@ -21,7 +23,7 @@ router.get("/", (req, res) => {
     else res.redirect(req.baseUrl + "/" + req.user._id);
 });
 
-router.get("/:userid", (req, res) => {
+router.get("/:userid", auth, (req, res) => {
     const userId = req.user._id;
     if (userId !== req.params.userid) res.sendStatus(403);
     readUserByID(userId).then(
