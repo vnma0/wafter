@@ -7,8 +7,9 @@ import {
     updateSubmission,
     readAllUser,
     readAllSubmissions,
-    countSatisfy,
-    lastSatisfy
+    bestSubmission,
+    countToSatisfy,
+    readLastSatisfy
 } from "../data/database";
 import { resolve } from "dns";
 
@@ -141,15 +142,22 @@ describe("database", function () {
         });
     });
 
-    describe("countSatisfy", function () {
-        it("should count satisfy submissions", function () {
-            return countSatisfy(sampleID, sampleProb);
+    describe("bestSubmission", function () {
+        it("should retrieve best satisfy result", function () {
+            return bestSubmission(sampleID, sampleProb, "OI");
         });
     });
 
-    describe("lastSatisfy", function () {
-        it("should retrieve best satisfy result", function () {
-            return lastSatisfy(sampleID, sampleProb, "OI");
+    describe("countToSatisfy", function () {
+        it("should count to last satisfy result", function () {
+            return countToSatisfy(sampleCodeID);
         });
     });
+
+    describe("readLastSatisfy", function () {
+        it("should count to last satisfy result", function () {
+            return readLastSatisfy(sampleUser, sampleProb, "OI");
+        });
+    });
+
 });

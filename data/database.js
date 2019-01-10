@@ -305,35 +305,13 @@ export function updateSubmission(sub_id, new_verdict, score) {
 }
 
 /**
- * return the number of satisfied submissions
- * @param {String} user_id 
- * @param {String} prob_id 
- * @returns {Promise} number of satisfied submissions if success
- */
-export function countSatisfy(user_id, prob_id) {
-    return new Promise((resolve, reject) => {
-        db.submissions.count(
-            {
-                user_id,
-                prob_id,
-                status: "Accepted"
-            },
-            function (err, docs) {
-                if (err) reject(err);
-                else resolve(docs);
-            }
-        )
-    })
-}
-
-/**
  * Retreive the best submission among the list
  * @param {String} user_id user's id
  * @param {String} prob_id problem's id
  * @param {String} ctype contest's type
  * @returns {Promise} the best submission if possible, null if none exists
  */
-export function lastSatisfy(user_id, prob_id, ctype) {
+export function bestSubmission(user_id, prob_id, ctype) {
     return new Promise((resolve, reject) => {
         if (ctype === "ACM" || ctype === "OI")
             db.submissions.find(
@@ -348,5 +326,60 @@ export function lastSatisfy(user_id, prob_id, ctype) {
                 }
             )
         else reject("wrong contest type");
+    });
+}
+
+/**
+ * Retrieve last Satisfy result
+ * @param {String} sub_id Submission's ID
+ * @returns {Promise} Submission's details if success
+ */
+export async function readLastSatisfy(user_id, prob_id, ctype) {
+    return new Promise((resolve, reject) => {
+        db.submissions.find(
+            {
+                user_id: user_id,
+                prob_id: prob_id,
+                ctype: ctype,
+                status: { $ne: "Pending" }
+            },
+            function (err, docs) {
+                docs.sort(function (a, b) { return a.date - b.date });
+                if (err) reject(err);
+                else if (!docs.length) resolve({});
+                else resolve(docs.pop());
+            }
+        );
+    });
+}
+
+/**
+ * Count to last Satisfy result
+ * @param {String} sub_id Submission's ID
+ * @returns {Promise} Submission's details if success
+ */
+export async function countToSatisfy(sub_id) {
+    return new Promise((resolve, reject) => {
+        readSubmission(sub_id).then(
+            (sub_data) => {
+                db.submissions.count(
+                    {
+                        user_id: sub_data.user_id,
+                        prob_id: sub_data.prob_id,
+                        date: { $lt: sub_data.date },
+                        ctype: sub_data.ctype,
+                        status: { $ne: "Pending" },
+                    },
+                    function (err, docs) {
+                        if (err) reject(err);
+                        else resolve(docs + 1);
+                    }
+                );
+            },
+            (err) => {
+                reject(err);
+            }
+        )
+
     });
 }
