@@ -1,9 +1,12 @@
 import { readFileSync } from "fs";
+import { join } from "path";
 import uuidv4 from "uuid/v4";
+
+import { cwd } from "./cwd";
 
 require("dotenv").config();
 
-export const contestConfig = "contest.json";
+export const contestConfig = join(cwd, "contest.json");
 
 let contestObj = {};
 let name, startTime, endTime;

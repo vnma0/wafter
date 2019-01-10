@@ -1,4 +1,5 @@
 import express from "express";
+
 import { contestConfig } from "../config/server";
 
 const router = express.Router();
