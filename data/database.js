@@ -309,32 +309,26 @@ export async function submitCode(source_code, user_id, prob_id, ctype, index) {
  * @param {Object} new_verdict new verdict
  * @param {Number} score score if it is OI
  */
-export function updateSubmission(sub_id, new_verdict, score) {
+export async function updateSubmission(sub_id, new_verdict, score, tests) {
+    const doc = await readSubmission(sub_id);
+    if (doc.status !== "Pending") throw "Submission was updated";
     return new Promise((resolve, reject) => {
-        db.submissions.findOne({ _id: sub_id }, function(err, docs) {
-            if (err) reject(err);
-            else if (docs === null) reject("no code found");
-            else
-                db.submissions.update(
-                    { _id: sub_id },
-                    {
-                        source_code: docs.source_code,
-                        status: new_verdict,
-                        date: docs.date,
-                        user_id: docs.user_id,
-                        prob_id: docs.prob_id,
-                        score: score,
-                        penalty: docs.penalty,
-                        ctype: docs.ctype
-                    },
-                    {},
-                    function(err2, docs2) {
-                        if (err2) reject(err2);
-                        else if (docs2 === 0) reject("such submission exists");
-                        else resolve("new verdict applied");
-                    }
-                );
-        });
+        db.submissions.update(
+            { _id: sub_id },
+            {
+                $set: {
+                    status: new_verdict,
+                    score: score,
+                    tests: tests
+                }
+            },
+            {},
+            function(err2, numAffected) {
+                if (err2) reject(err2);
+                else if (numAffected === 0) reject("failed to update");
+                else resolve("new verdict applied");
+            }
+        );
     });
 }
 
