@@ -391,7 +391,7 @@ export async function readLastSatisfy(user_id, prob_id, ctype) {
  * @param {String} sub_id Submission's ID
  * @returns {Promise} Submission's details if success
  */
-export async function countToSatisfy(sub_id) {
+export async function countPreviousSatisfy(sub_id) {
     return new Promise((resolve, reject) => {
         readSubmission(sub_id).then(
             (sub_data) => {
