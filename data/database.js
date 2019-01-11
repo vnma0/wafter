@@ -13,13 +13,25 @@ db.users.loadDatabase();
 db.submissions.loadDatabase();
 
 /**
+ * User Schema Object
+ * _id:             User's ID
+ * username:        User's Name
+ * pass:            User's password
+ * isAdmin:         True if user is admin
+ *
+ * "Accepted" is the only verdict that will be count
+ */
+
+/**
  * Validate username
  * NOTE: This function is being considered to be replaced
  * @param {String} username User's name
  */
 function usernameChecking(username) {
+    if (username.length > 32) return false;
     for (let i = 0; i < username.length; i++) {
         var c = username[i];
+        // TODO: Simplify validator
         if (
             !(
                 ("0" <= c && c <= "9") ||
@@ -40,28 +52,29 @@ function usernameChecking(username) {
  * @param {String} pass User's password
  * @returns {Promise} User's ID if success
  */
-export function newUser(username, pass) {
+export async function newUser(username, pass, isAdmin = false) {
+    try {
+        await readUser(username);
+        throw "this username has been taken";
+    } catch (err) {
+        if (err !== "invalid username") throw err;
+    }
     return new Promise((resolve, reject) => {
-        db.users.findOne({ username: username }, function(err, docs) {
-            if (err) reject(err);
-            else if (username.length > 32)
-                reject("this username's length is too long");
-            else if (pass.length > 32)
-                reject("this password's length is too long");
-            else if (usernameChecking(username) === false)
-                reject("this username included invalid characters");
-            else if (docs) {
-                reject("this username has been taken");
-                return;
-            } else
-                db.users.insert(
-                    [{ username: username, pass: bcrypt.hashSync(pass) }],
-                    function(err2, docs2) {
-                        if (err2) reject(err2);
-                        else resolve(docs2[0]._id);
-                    }
-                );
-        });
+        if (pass.length > 32) reject("this password's length is too long");
+        else if (usernameChecking(username) === false)
+            reject("this username included invalid characters");
+        else
+            db.users.insert(
+                {
+                    username: username,
+                    pass: bcrypt.hashSync(pass),
+                    isAdmin
+                },
+                function(err2, docs2) {
+                    if (err2) reject(err2);
+                    else resolve(docs2[0]._id);
+                }
+            );
     });
 }
 
@@ -71,7 +84,7 @@ export function newUser(username, pass) {
  */
 export function readAllUser() {
     return new Promise((resolve, reject) => {
-        db.users.find({}, function(err, docs) {
+        db.users.find({}, { username: 1, isAdmin: 1 }, function(err, docs) {
             if (err) reject(err);
             else resolve(docs);
         });
@@ -85,7 +98,10 @@ export function readAllUser() {
  */
 export function readUser(username) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ username }, function(err, docs) {
+        db.users.findOne({ username }, { username: 1, isAdmin: 1 }, function(
+            err,
+            docs
+        ) {
             if (err) reject(err);
             else if (docs === null) reject("invalid username");
             else resolve(docs);
@@ -100,7 +116,10 @@ export function readUser(username) {
  */
 export function readUserByID(id) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ _id: id }, function(err, docs) {
+        db.users.findOne({ _id: id }, { username: 1, isAdmin: 1 }, function(
+            err,
+            docs
+        ) {
             if (err) reject(err);
             else if (docs === null) reject("invalid user_id");
             else resolve(docs);
@@ -124,6 +143,7 @@ export function updateUser(
     old_pass,
     new_pass
 ) {
+    // TODO: Resolve these callback hells
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: user_id, username: username }, function(
             err,
