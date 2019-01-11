@@ -65,11 +65,13 @@ export async function newUser(username, pass, isAdmin = false) {
             reject("this username included invalid characters");
         else
             db.users.insert(
-                {
-                    username: username,
-                    pass: bcrypt.hashSync(pass),
-                    isAdmin
-                },
+                [
+                    {
+                        username: username,
+                        pass: bcrypt.hashSync(pass),
+                        isAdmin
+                    }
+                ],
                 function(err2, docs2) {
                     if (err2) reject(err2);
                     else resolve(docs2[0]._id);
