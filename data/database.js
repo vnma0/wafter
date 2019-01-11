@@ -237,52 +237,49 @@ export function readUserSubmission(user_id) {
  * @param {Number} index penalty if ACM
  * @returns {Promise} Submission's ID if success
  */
-export function submitCode(source_code, user_id, prob_id, ctype, index) {
+export async function submitCode(source_code, user_id, prob_id, ctype, index) {
+    await readUserByID(user_id);
     return new Promise((resolve, reject) => {
-        db.users.findOne({ _id: user_id }, function(err, docs) {
-            if (err) reject(err);
-            else if (!docs) reject("this username doesn't exists");
-            else {
-                if (ctype === "ACM")
-                    db.submissions.insert(
-                        [
-                            {
-                                source_code,
-                                status: "Pending",
-                                date: new Date(),
-                                user_id,
-                                prob_id,
-                                score: null,
-                                penalty: index,
-                                ctype
-                            }
-                        ],
-                        function(err2, docs2) {
-                            if (err2) reject(err2);
-                            else resolve(docs2[0]._id);
-                        }
-                    );
-                if (ctype === "OI")
-                    db.submissions.insert(
-                        [
-                            {
-                                source_code,
-                                status: "Pending",
-                                date: new Date(),
-                                user_id,
-                                prob_id,
-                                score: null,
-                                penalty: null,
-                                ctype
-                            }
-                        ],
-                        function(err2, docs2) {
-                            if (err2) reject(err2);
-                            else resolve(docs2[0]._id);
-                        }
-                    );
-            }
-        });
+        if (ctype === "ACM")
+            db.submissions.insert(
+                [
+                    {
+                        source_code,
+                        status: "Pending",
+                        date: new Date(),
+                        user_id,
+                        prob_id,
+                        score: null,
+                        penalty: index,
+                        tests: null,
+                        ctype
+                    }
+                ],
+                function(err2, docs2) {
+                    if (err2) reject(err2);
+                    else resolve(docs2[0]._id);
+                }
+            );
+        if (ctype === "OI")
+            db.submissions.insert(
+                [
+                    {
+                        source_code,
+                        status: "Pending",
+                        date: new Date(),
+                        user_id,
+                        prob_id,
+                        score: null,
+                        penalty: null,
+                        tests: null,
+                        ctype
+                    }
+                ],
+                function(err2, docs2) {
+                    if (err2) reject(err2);
+                    else resolve(docs2[0]._id);
+                }
+            );
     });
 }
 
