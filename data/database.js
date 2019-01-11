@@ -42,11 +42,12 @@ function usernameChecking(username) {
  */
 export function newUser(username, pass) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ username: username }, function (err, docs) {
+        db.users.findOne({ username: username }, function(err, docs) {
             if (err) reject(err);
             else if (username.length > 32)
                 reject("this username's length is too long");
-            else if (pass.length > 32) reject("this password's length is too long");
+            else if (pass.length > 32)
+                reject("this password's length is too long");
             else if (usernameChecking(username) === false)
                 reject("this username included invalid characters");
             else if (docs) {
@@ -55,7 +56,7 @@ export function newUser(username, pass) {
             } else
                 db.users.insert(
                     [{ username: username, pass: bcrypt.hashSync(pass) }],
-                    function (err2, docs2) {
+                    function(err2, docs2) {
                         if (err2) reject(err2);
                         else resolve(docs2[0]._id);
                     }
@@ -70,7 +71,7 @@ export function newUser(username, pass) {
  */
 export function readAllUser() {
     return new Promise((resolve, reject) => {
-        db.users.find({}, function (err, docs) {
+        db.users.find({}, function(err, docs) {
             if (err) reject(err);
             else resolve(docs);
         });
@@ -84,7 +85,7 @@ export function readAllUser() {
  */
 export function readUser(username) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ username }, function (err, docs) {
+        db.users.findOne({ username }, function(err, docs) {
             if (err) reject(err);
             else if (docs === null) reject("invalid username");
             else resolve(docs);
@@ -99,7 +100,7 @@ export function readUser(username) {
  */
 export function readUserByID(id) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ _id: id }, function (err, docs) {
+        db.users.findOne({ _id: id }, function(err, docs) {
             if (err) reject(err);
             else if (docs === null) reject("invalid user_id");
             else resolve(docs);
@@ -114,38 +115,56 @@ export function readUserByID(id) {
  * @param {String} new_username New username
  * @param {String} old_pass Old password
  * @param {String} new_pass New password
- * 
+ *
  */
-export function updateUser(user_id, username, new_username, old_pass, new_pass) {
+export function updateUser(
+    user_id,
+    username,
+    new_username,
+    old_pass,
+    new_pass
+) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ _id: user_id, username: username }, function (err, docs) {
+        db.users.findOne({ _id: user_id, username: username }, function(
+            err,
+            docs
+        ) {
             if (err) reject(err);
             else if (docs === null) {
                 reject("invalid user");
             } else {
-                db.users.findOne(
-                    { username: new_username },
-                    function (err1, docs1) {
-                        if (err1) reject(err1);
-                        else if (docs1 !== null && new_username !== username) reject("this username has been taken");
-                        else bcrypt.compare(old_pass, docs.pass, function (err2, docs2) {
+                db.users.findOne({ username: new_username }, function(
+                    err1,
+                    docs1
+                ) {
+                    if (err1) reject(err1);
+                    else if (docs1 !== null && new_username !== username)
+                        reject("this username has been taken");
+                    else
+                        bcrypt.compare(old_pass, docs.pass, function(
+                            err2,
+                            docs2
+                        ) {
                             if (err2) reject(err2);
                             else if (docs2 === false) reject("wrong password");
                             else {
                                 db.users.update(
                                     { _id: user_id, pass: docs.pass },
-                                    { username: new_username, pass: bcrypt.hashSync(new_pass) },
+                                    {
+                                        username: new_username,
+                                        pass: bcrypt.hashSync(new_pass)
+                                    },
                                     {},
-                                    function (err3, docs3) {
+                                    function(err3, docs3) {
                                         if (err3) reject(err3);
-                                        else if (docs3 === 0) reject("nothing changed");
+                                        else if (docs3 === 0)
+                                            reject("nothing changed");
                                         else resolve("password changed");
                                     }
                                 );
                             }
                         });
-                    }
-                )
+                });
             }
         });
     });
@@ -162,8 +181,8 @@ export function updateUser(user_id, username, new_username, old_pass, new_pass) 
  * score:           Submission's score (in OI)
  * penalty          Submission's penalty (in ACM)
  * ctype:           contest type OI / ACM
- * 
- * "Accepted" is the only verdict that will be count 
+ *
+ * "Accepted" is the only verdict that will be count
  */
 
 /**
@@ -172,7 +191,7 @@ export function updateUser(user_id, username, new_username, old_pass, new_pass) 
  */
 export function readAllSubmissions() {
     return new Promise((resolve, reject) => {
-        db.submissions.find({}, function (err, docs) {
+        db.submissions.find({}, function(err, docs) {
             if (err) reject(err);
             else resolve(docs);
         });
@@ -186,7 +205,7 @@ export function readAllSubmissions() {
  */
 export function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
-        db.submissions.findOne({ _id: sub_id }, function (err, docs) {
+        db.submissions.findOne({ _id: sub_id }, function(err, docs) {
             if (err) reject(err);
             else if (docs === null) reject("invalid ID");
             else resolve(docs);
@@ -201,7 +220,7 @@ export function readSubmission(sub_id) {
  */
 export function readUserSubmission(user_id) {
     return new Promise((resolve, reject) => {
-        db.submissions.find({ user_id }, function (err, docs) {
+        db.submissions.find({ user_id }, function(err, docs) {
             if (err) reject(err);
             else if (docs === null) reject("Empty result");
             else resolve(docs);
@@ -215,12 +234,12 @@ export function readUserSubmission(user_id) {
  * @param {String} user_id User's ID
  * @param {String} prob_id Problem's ID
  * @param {String} ctype ACM / OI
- * @param {Number} index penalty if ACM 
+ * @param {Number} index penalty if ACM
  * @returns {Promise} Submission's ID if success
  */
 export function submitCode(source_code, user_id, prob_id, ctype, index) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ _id: user_id }, function (err, docs) {
+        db.users.findOne({ _id: user_id }, function(err, docs) {
             if (err) reject(err);
             else if (!docs) reject("this username doesn't exists");
             else {
@@ -238,7 +257,7 @@ export function submitCode(source_code, user_id, prob_id, ctype, index) {
                                 ctype
                             }
                         ],
-                        function (err2, docs2) {
+                        function(err2, docs2) {
                             if (err2) reject(err2);
                             else resolve(docs2[0]._id);
                         }
@@ -257,7 +276,7 @@ export function submitCode(source_code, user_id, prob_id, ctype, index) {
                                 ctype
                             }
                         ],
-                        function (err2, docs2) {
+                        function(err2, docs2) {
                             if (err2) reject(err2);
                             else resolve(docs2[0]._id);
                         }
@@ -275,12 +294,11 @@ export function submitCode(source_code, user_id, prob_id, ctype, index) {
  */
 export function updateSubmission(sub_id, new_verdict, score) {
     return new Promise((resolve, reject) => {
-        db.submissions.findOne(
-            { _id: sub_id },
-            function (err, docs) {
-                if (err) reject(err);
-                else if (docs === null) reject("no code found");
-                else db.submissions.update(
+        db.submissions.findOne({ _id: sub_id }, function(err, docs) {
+            if (err) reject(err);
+            else if (docs === null) reject("no code found");
+            else
+                db.submissions.update(
                     { _id: sub_id },
                     {
                         source_code: docs.source_code,
@@ -293,14 +311,13 @@ export function updateSubmission(sub_id, new_verdict, score) {
                         ctype: docs.ctype
                     },
                     {},
-                    function (err2, docs2) {
+                    function(err2, docs2) {
                         if (err2) reject(err2);
                         else if (docs2 === 0) reject("such submission exists");
                         else resolve("new verdict applied");
                     }
                 );
-            }
-        )
+        });
     });
 }
 
@@ -316,15 +333,19 @@ export function bestSubmission(user_id, prob_id, ctype) {
         if (ctype === "ACM" || ctype === "OI")
             db.submissions.find(
                 { user_id, prob_id, status: "Accepted" },
-                function (err, docs) {
+                function(err, docs) {
                     if (err) reject(err);
                     else if (docs === null) resolve(null);
                     else {
-                        docs.sort(function (a, b) { return (ctype === "ACM" ? a.penalty - b.penalty : b.score - a.score) })
+                        docs.sort(function(a, b) {
+                            return ctype === "ACM"
+                                ? a.penalty - b.penalty
+                                : b.score - a.score;
+                        });
                         resolve(docs[0]);
                     }
                 }
-            )
+            );
         else reject("wrong contest type");
     });
 }
@@ -343,8 +364,10 @@ export async function readLastSatisfy(user_id, prob_id, ctype) {
                 ctype: ctype,
                 status: { $ne: "Pending" }
             },
-            function (err, docs) {
-                docs.sort(function (a, b) { return a.date - b.date });
+            function(err, docs) {
+                docs.sort(function(a, b) {
+                    return a.date - b.date;
+                });
                 if (err) reject(err);
                 else if (!docs.length) resolve({});
                 else resolve(docs.pop());
@@ -368,9 +391,9 @@ export async function countToSatisfy(sub_id) {
                         prob_id: sub_data.prob_id,
                         date: { $lt: sub_data.date },
                         ctype: sub_data.ctype,
-                        status: { $ne: "Pending" },
+                        status: { $ne: "Pending" }
                     },
-                    function (err, docs) {
+                    function(err, docs) {
                         if (err) reject(err);
                         else resolve(docs + 1);
                     }
@@ -379,7 +402,6 @@ export async function countToSatisfy(sub_id) {
             (err) => {
                 reject(err);
             }
-        )
-
+        );
     });
 }
