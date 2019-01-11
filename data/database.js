@@ -335,7 +335,15 @@ export function bestSubmission(user_id, prob_id, ctype) {
                 { user_id, prob_id, status: "Accepted" },
                 function(err, docs) {
                     if (err) reject(err);
-                    else if (docs === null) resolve(null);
+                    else if (!docs)
+                        readLastSatisfy(user_id, prob_id, ctype).then(
+                            (docs) => {
+                                resolve(docs);
+                            },
+                            (err) => {
+                                throw err;
+                            }
+                        );
                     else {
                         docs.sort(function(a, b) {
                             return ctype === "ACM"
