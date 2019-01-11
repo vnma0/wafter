@@ -360,7 +360,9 @@ export function bestSubmission(user_id, prob_id, ctype) {
 
 /**
  * Retrieve last Satisfy result
- * @param {String} sub_id Submission's ID
+ * @param {String} user_id user's id
+ * @param {String} prob_id problem's id
+ * @param {String} ctype contest's type
  * @returns {Promise} Submission's details if success
  */
 export async function readLastSatisfy(user_id, prob_id, ctype) {
