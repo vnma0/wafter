@@ -9,7 +9,8 @@ import {
     readAllSubmissions,
     bestSubmission,
     countPreviousSatisfy,
-    readLastSatisfy
+    readLastSatisfy,
+    readUserPassHash
 } from "../data/database";
 
 const sampleUser = Math.random()
@@ -50,6 +51,12 @@ describe("database", function() {
             return readAllUser();
         });
     });
+
+    describe("readUserPassHash", function() {
+        it("should return password hash", function() {
+            return readUserPassHash(sampleID);
+        })
+    })
 
     describe("submitCode", function() {
         it("should be submitting code", function() {
