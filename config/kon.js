@@ -19,8 +19,6 @@ const serverList = readFileSync(konList, "utf8")
     .filter((s) => validUrl.isWebUri(s))
     .map((kon) => new Judger(kon));
 
-console.log(serverList);
-
 export default {
     judgers: serverList,
     tasks: taskFile
