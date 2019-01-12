@@ -7,20 +7,10 @@ const router = express.Router();
 
 /**
  * GET /users
- * If Admin -> show all user
  * If user -> redirect to user
  */
 router.get("/", auth, (req, res) => {
-    if (req.user.isAdmin)
-        readAllUser().then(
-            (docs) => {
-                res.send(docs);
-            },
-            (err) => {
-                res.status(400).json(err);
-            }
-        );
-    else res.redirect(req.baseUrl + "/" + req.user._id);
+    res.redirect(req.baseUrl + "/" + req.user._id);
 });
 
 router.get("/:userid", auth, (req, res) => {
