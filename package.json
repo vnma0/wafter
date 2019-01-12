@@ -38,6 +38,7 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "uuid": "^3.3.2",
+    "valid-url": "^1.0.9",
     "zip-dir": "^1.0.2"
   },
   "devDependencies": {
