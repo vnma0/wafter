@@ -1,11 +1,11 @@
 import express from "express";
 
-import { contestConfig } from "../config/server";
+import server from "../config/server";
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-    res.sendFile(contestConfig);
+    res.json(server.contest);
 });
 
 export { router as info };
