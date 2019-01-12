@@ -21,6 +21,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "bcrypt-nodejs": "0.0.3",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "dotenv": "^6.2.0",

@@ -6,15 +6,22 @@ import {
     updateUser,
     updateSubmission,
     readAllUser,
-    readAllSubmissions
+    readAllSubmissions,
+    bestSubmission,
+    countPreviousSatisfy,
+    readLastSatisfy,
+    readUserPassHash
 } from "../data/database";
 
-const sampleUser = "sampleuser";
+const sampleUser = Math.random()
+    .toString(36)
+    .substr(2, 5);
 const samplePass = "samplepassword";
 const sampleProb = "sampleprob";
 const sampleCode = "samplecode";
-let sampleID;
-const sampleVer = "sampleverdict";
+let sampleID, sampleCodeID;
+
+const sampleVer = "Accepted";
 
 describe("database", function() {
     describe("newUser", function() {
@@ -27,6 +34,9 @@ describe("database", function() {
                     throw err;
                 }
             );
+        });
+        it("should be adding ontest", function() {
+            return newUser("ontest", samplePass);
         });
     });
 
@@ -42,15 +52,45 @@ describe("database", function() {
         });
     });
 
+    describe("readUserPassHash", function() {
+        it("should return password hash", function() {
+            return readUserPassHash(sampleID);
+        })
+    })
+
     describe("submitCode", function() {
         it("should be submitting code", function() {
-            return submitCode(sampleCode, sampleID, sampleProb);
+            return submitCode(
+                sampleCode,
+                sampleID,
+                sampleProb,
+                "OI",
+                null
+            ).then(
+                (id) => {
+                    sampleCodeID = id;
+                },
+                (err) => {
+                    throw err;
+                }
+            );
         });
     });
 
     describe("readSubmission", function() {
         it("should be returning an object represents submission's props", function() {
-            return readSubmission(sampleID);
+            return readSubmission(sampleCodeID);
+        });
+
+        it("shouldn't be able to read this", function() {
+            return readSubmission("sampleCodeID").then(
+                () => {
+                    throw "it does";
+                },
+                () => {
+                    return;
+                }
+            );
         });
     });
 
@@ -61,14 +101,80 @@ describe("database", function() {
     });
 
     describe("updateSubmission", function() {
-        it("should be updating verdict", function() {
-            return updateSubmission(sampleID, sampleVer);
+        it("should be updating verdict with a score of 90", function() {
+            return updateSubmission(sampleCodeID, sampleVer, 90);
+        });
+    });
+
+    describe("submitCode", function() {
+        it("should be submitting another code", function() {
+            return submitCode(
+                sampleCode,
+                sampleID,
+                sampleProb,
+                "OI",
+                null
+            ).then(
+                (id) => {
+                    sampleCodeID = id;
+                },
+                (err) => {
+                    throw err;
+                }
+            );
+        });
+    });
+
+    describe("updateSubmission", function() {
+        it("should be updating verdict with a score of 40", function() {
+            return updateSubmission(sampleCodeID, sampleVer, 40);
         });
     });
 
     describe("updateUser", function() {
         it("should be update user's password", function() {
-            return updateUser(sampleUser, samplePass, samplePass);
+            return updateUser(
+                sampleID,
+                sampleUser,
+                sampleUser,
+                samplePass,
+                "newpass"
+            );
+        });
+
+        it("should be able to prevent the collision", function() {
+            return updateUser(
+                sampleID,
+                sampleUser,
+                "ontest",
+                "newpass",
+                samplePass
+            ).then(
+                () => {
+                    throw "it updates to an username which has been used";
+                },
+                () => {
+                    return;
+                }
+            );
+        });
+    });
+
+    describe("bestSubmission", function() {
+        it("should retrieve best satisfy result", function() {
+            return bestSubmission(sampleID, sampleProb, "OI");
+        });
+    });
+
+    describe("countPreviousSatisfy", function() {
+        it("should count to last satisfy result", function() {
+            return countPreviousSatisfy(sampleCodeID);
+        });
+    });
+
+    describe("readLastSatisfy", function() {
+        it("should count to last satisfy result", function() {
+            return readLastSatisfy(sampleUser, sampleProb, "OI");
         });
     });
 });
