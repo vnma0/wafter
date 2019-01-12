@@ -215,7 +215,15 @@ export function readAllSubmissions() {
     return new Promise((resolve, reject) => {
         db.submissions.find(
             {},
-            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1, tpen: 1 },
+            {
+                status: 1,
+                date: 1,
+                user_id: 1,
+                prob_id: 1,
+                score: 1,
+                ctype: 1,
+                tpen: 1
+            },
             function(err, docs) {
                 if (err) reject(err);
                 else resolve(docs);
@@ -233,7 +241,15 @@ export function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
         db.submissions.findOne(
             { _id: sub_id },
-            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1, tpen: 1 },
+            {
+                status: 1,
+                date: 1,
+                user_id: 1,
+                prob_id: 1,
+                score: 1,
+                ctype: 1,
+                tpen: 1
+            },
             function(err, docs) {
                 if (err) reject(err);
                 else if (docs === null) reject("invalid ID");
@@ -252,7 +268,15 @@ export function readUserSubmission(user_id) {
     return new Promise((resolve, reject) => {
         db.submissions.find(
             { user_id },
-            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1 , tpen: 1},
+            {
+                status: 1,
+                date: 1,
+                user_id: 1,
+                prob_id: 1,
+                score: 1,
+                ctype: 1,
+                tpen: 1
+            },
             function(err, docs) {
                 if (err) reject(err);
                 else if (docs === null) reject("Empty result");
