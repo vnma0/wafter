@@ -201,7 +201,7 @@ export function updateUser(
  * user_id:         User's ID of submission
  * prob_id:         Problem's ID of submission
  * score:           Submission's score (in OI)
- * penalty          Submission's penalty (in ACM)
+ * tpen             Submission's penalty (in ACM)
  * ctype:           contest type OI / ACM
  *
  * "Accepted" is the only verdict that will be count
@@ -215,7 +215,7 @@ export function readAllSubmissions() {
     return new Promise((resolve, reject) => {
         db.submissions.find(
             {},
-            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1 },
+            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1, tpen: 1 },
             function(err, docs) {
                 if (err) reject(err);
                 else resolve(docs);
@@ -233,7 +233,7 @@ export function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
         db.submissions.findOne(
             { _id: sub_id },
-            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1 },
+            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1, tpen: 1 },
             function(err, docs) {
                 if (err) reject(err);
                 else if (docs === null) reject("invalid ID");
@@ -252,7 +252,7 @@ export function readUserSubmission(user_id) {
     return new Promise((resolve, reject) => {
         db.submissions.find(
             { user_id },
-            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1 },
+            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1 , tpen: 1},
             function(err, docs) {
                 if (err) reject(err);
                 else if (docs === null) reject("Empty result");
@@ -268,7 +268,7 @@ export function readUserSubmission(user_id) {
  * @param {String} user_id User's ID
  * @param {String} prob_id Problem's ID
  * @param {String} ctype ACM / OI
- * @param {Number} index penalty if ACM
+ * @param {Number} index tpen if ACM
  * @returns {Promise} Submission's ID if success
  */
 export async function submitCode(source_code, user_id, prob_id, ctype, index) {
@@ -284,7 +284,7 @@ export async function submitCode(source_code, user_id, prob_id, ctype, index) {
                         user_id,
                         prob_id,
                         score: null,
-                        penalty: index,
+                        tpen: index,
                         tests: null,
                         ctype
                     }
@@ -304,7 +304,7 @@ export async function submitCode(source_code, user_id, prob_id, ctype, index) {
                         user_id,
                         prob_id,
                         score: null,
-                        penalty: null,
+                        tpen: null,
                         tests: null,
                         ctype
                     }
@@ -372,7 +372,7 @@ export function bestSubmission(user_id, prob_id, ctype) {
                     else {
                         docs.sort(function(a, b) {
                             return ctype === "ACM"
-                                ? a.penalty - b.penalty
+                                ? a.tpen - b.tpen
                                 : b.score - a.score;
                         });
                         resolve(docs[0]);
