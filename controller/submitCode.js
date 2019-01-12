@@ -7,7 +7,6 @@ import { cwd } from "../config/cwd";
 import Judger from "../driver/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
-import { ACM } from "../util/score";
 import kon from "../config/kon";
 
 const Judgers = kon.judgers;
@@ -64,15 +63,16 @@ export function initJudger(taskZipPath) {
 
 /**
  * Update submission status from log from kons'
- * @param {function} calc Calculate result, either ACM or OI
+ * @param {function} parse Parse result, either ACM or OI
  */
-export function reloadSubs(calc) {
+export function reloadSubs(parse) {
     const judgerPromise = Judgers.map((judger) => judger.get());
     Promise.all(judgerPromise)
         .then((list) => [].concat.apply([], list))
         .then((subs) => {
-            subs.forEach(async (sub) => {
-                updateSubmission(sub.id, await calc(sub));
+            subs.forEach((sub) => {
+                const { newVerdict, score, tests } = parse(sub);
+                updateSubmission(sub.id, newVerdict, score, tests);
             });
         })
         .catch((err) => {
@@ -103,7 +103,7 @@ export async function sendCode(source_code_path, user_id, prob_name) {
         judger.send(source_code_path, prob_name, sub_id).catch((err) => {
             throw err;
         });
-        setTimeout(() => reloadSubs(ACM), 100);
+        setTimeout(() => reloadSubs(), 100);
     } catch (err) {
         throw err;
     }
