@@ -1,7 +1,7 @@
 var Datastore = require("nedb"),
     db = new Datastore({ autoload: true });
 
-import bcrypt from "bcrypt-nodejs";
+import bcrypt from "bcryptjs";
 import { join } from "path";
 import { cwd } from "../config/cwd";
 
@@ -53,23 +53,26 @@ function usernameChecking(username) {
  * @returns {Promise} User's ID if success
  */
 export async function newUser(username, pass, isAdmin = false) {
+    // TODO: Simplify these code
+    const passHash = bcrypt.hash(pass, bcrypt.genSaltSync(10));
     try {
         await readUser(username);
         throw "this username has been taken";
     } catch (err) {
         if (err !== "invalid username") throw err;
     }
-    return new Promise((resolve, reject) => {
-        if (pass.length > 32) reject("this password's length is too long");
-        else if (usernameChecking(username) === false)
-            reject("this username included invalid characters");
-        else
+    if (pass.length > 32) throw "this password's length is too long";
+    else if (!usernameChecking(username))
+        throw "this username included invalid characters";
+    else {
+        const hashedPass = await passHash;
+        return new Promise((resolve, reject) => {
             db.users.insert(
                 [
                     {
                         username: username,
-                        pass: bcrypt.hashSync(pass),
-                        isAdmin
+                        pass: hashedPass,
+                        isAdmin: isAdmin
                     }
                 ],
                 function(err2, docs2) {
@@ -77,7 +80,8 @@ export async function newUser(username, pass, isAdmin = false) {
                     else resolve(docs2[0]._id);
                 }
             );
-    });
+        });
+    }
 }
 
 /**
@@ -130,6 +134,21 @@ export function readUserByID(id) {
 }
 
 /**
+ * Retrieve User's hash in database by using user's id
+ * @param {String} id User's id
+ * @returns {Promise} User's info if success
+ */
+export function readUserPassHash(id) {
+    return new Promise((resolve, reject) => {
+        db.users.findOne({ _id: id }, { pass: 1 }, function(err, docs) {
+            if (err) reject(err);
+            else if (docs === null) reject("invalid user_id");
+            else resolve(docs.pass);
+        });
+    });
+}
+
+/**
  * Update User's data in database
  * @param {String} user_id User's id
  * @param {String} username Username
@@ -138,57 +157,49 @@ export function readUserByID(id) {
  * @param {String} new_pass New password
  *
  */
-export function updateUser(
+export async function updateUser(
     user_id,
     username,
     new_username,
     old_pass,
     new_pass
 ) {
-    // TODO: Resolve these callback hells
+    const dbUserID = await readUserByID(user_id);
+    const dbUserPassHash = await readUserPassHash(user_id);
+
+    // TODO: Carefully qualify so no memory leak happen
+    const isHashMatch = bcrypt.compare(old_pass, dbUserPassHash);
+    const newHashPass = bcrypt.hash(new_pass, bcrypt.genSaltSync(10));
+
+    if (dbUserID.username !== username) throw "Invalid user";
+
+    if (username !== new_username)
+        try {
+            await readUser(new_username);
+            throw "this username has been taken";
+        } catch (err) {
+            if (err !== "invalid username") throw err;
+        }
+
+    if (!(await isHashMatch)) throw "Wrong password";
+
+    const newHash = await newHashPass;
     return new Promise((resolve, reject) => {
-        db.users.findOne({ _id: user_id, username: username }, function(
-            err,
-            docs
-        ) {
-            if (err) reject(err);
-            else if (docs === null) {
-                reject("invalid user");
-            } else {
-                db.users.findOne({ username: new_username }, function(
-                    err1,
-                    docs1
-                ) {
-                    if (err1) reject(err1);
-                    else if (docs1 !== null && new_username !== username)
-                        reject("this username has been taken");
-                    else
-                        bcrypt.compare(old_pass, docs.pass, function(
-                            err2,
-                            docs2
-                        ) {
-                            if (err2) reject(err2);
-                            else if (docs2 === false) reject("wrong password");
-                            else {
-                                db.users.update(
-                                    { _id: user_id, pass: docs.pass },
-                                    {
-                                        username: new_username,
-                                        pass: bcrypt.hashSync(new_pass)
-                                    },
-                                    {},
-                                    function(err3, docs3) {
-                                        if (err3) reject(err3);
-                                        else if (docs3 === 0)
-                                            reject("nothing changed");
-                                        else resolve("password changed");
-                                    }
-                                );
-                            }
-                        });
-                });
+        db.users.update(
+            { _id: user_id, pass: dbUserPassHash, username: username },
+            {
+                $set: {
+                    username: new_username,
+                    pass: newHash
+                }
+            },
+            {},
+            function(err, numAffected) {
+                if (err) reject(err);
+                else if (numAffected === 0) reject("nothing changed");
+                else resolve("password changed");
             }
-        });
+        );
     });
 }
 
