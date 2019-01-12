@@ -42,25 +42,21 @@ describe("database", function() {
     describe("readUserPassHash", function() {
         it("should return password hash", function() {
             return db.readUserPassHash(sampleID);
-        })
-    })
+        });
+    });
 
     describe("submitCode", function() {
         it("should be submitting code", function() {
-            return db.submitCode(
-                sampleCode,
-                sampleID,
-                sampleProb,
-                "OI",
-                null
-            ).then(
-                (id) => {
-                    sampleCodeID = id;
-                },
-                (err) => {
-                    throw err;
-                }
-            );
+            return db
+                .submitCode(sampleCode, sampleID, sampleProb, "OI", null)
+                .then(
+                    (id) => {
+                        sampleCodeID = id;
+                    },
+                    (err) => {
+                        throw err;
+                    }
+                );
         });
     });
 
@@ -95,20 +91,16 @@ describe("database", function() {
 
     describe("submitCode", function() {
         it("should be submitting another code", function() {
-            return db.submitCode(
-                sampleCode,
-                sampleID,
-                sampleProb,
-                "OI",
-                null
-            ).then(
-                (id) => {
-                    sampleCodeID = id;
-                },
-                (err) => {
-                    throw err;
-                }
-            );
+            return db
+                .submitCode(sampleCode, sampleID, sampleProb, "OI", null)
+                .then(
+                    (id) => {
+                        sampleCodeID = id;
+                    },
+                    (err) => {
+                        throw err;
+                    }
+                );
         });
     });
 
@@ -130,20 +122,22 @@ describe("database", function() {
         });
 
         it("should be able to prevent the collision", function() {
-            return db.updateUser(
-                sampleID,
-                sampleUser,
-                "ontest",
-                "newpass",
-                samplePass
-            ).then(
-                () => {
-                    throw "it updates to an username which has been used";
-                },
-                () => {
-                    return;
-                }
-            );
+            return db
+                .updateUser(
+                    sampleID,
+                    sampleUser,
+                    "ontest",
+                    "newpass",
+                    samplePass
+                )
+                .then(
+                    () => {
+                        throw "it updates to an username which has been used";
+                    },
+                    () => {
+                        return;
+                    }
+                );
         });
     });
 
