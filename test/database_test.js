@@ -1,17 +1,4 @@
-import {
-    newUser,
-    readUser,
-    submitCode,
-    readSubmission,
-    updateUser,
-    updateSubmission,
-    readAllUser,
-    readAllSubmissions,
-    bestSubmission,
-    countPreviousSatisfy,
-    readLastSatisfy,
-    readUserPassHash
-} from "../data/database";
+import * as db from "../data/database";
 
 const sampleUser = Math.random()
     .toString(36)
@@ -26,7 +13,7 @@ const sampleVer = "Accepted";
 describe("database", function() {
     describe("newUser", function() {
         it("should be adding user", function() {
-            return newUser(sampleUser, samplePass).then(
+            return db.newUser(sampleUser, samplePass).then(
                 (id) => {
                     sampleID = id;
                 },
@@ -36,31 +23,31 @@ describe("database", function() {
             );
         });
         it("should be adding ontest", function() {
-            return newUser("ontest", samplePass);
+            return db.newUser("ontest", samplePass);
         });
     });
 
     describe("readUser", function() {
         it("should be returning an object represents user's properties", function() {
-            return readUser(sampleUser);
+            return db.readUser(sampleUser);
         });
     });
 
     describe("readAllUser", function() {
         it("should return an array of users", function() {
-            return readAllUser();
+            return db.readAllUser();
         });
     });
 
     describe("readUserPassHash", function() {
         it("should return password hash", function() {
-            return readUserPassHash(sampleID);
+            return db.readUserPassHash(sampleID);
         })
     })
 
     describe("submitCode", function() {
         it("should be submitting code", function() {
-            return submitCode(
+            return db.submitCode(
                 sampleCode,
                 sampleID,
                 sampleProb,
@@ -79,11 +66,11 @@ describe("database", function() {
 
     describe("readSubmission", function() {
         it("should be returning an object represents submission's props", function() {
-            return readSubmission(sampleCodeID);
+            return db.readSubmission(sampleCodeID);
         });
 
         it("shouldn't be able to read this", function() {
-            return readSubmission("sampleCodeID").then(
+            return db.readSubmission("sampleCodeID").then(
                 () => {
                     throw "it does";
                 },
@@ -96,19 +83,19 @@ describe("database", function() {
 
     describe("readAllSubmissions", function() {
         it("should return an array of submissions", function() {
-            return readAllSubmissions();
+            return db.readAllSubmissions();
         });
     });
 
     describe("updateSubmission", function() {
         it("should be updating verdict with a score of 90", function() {
-            return updateSubmission(sampleCodeID, sampleVer, 90);
+            return db.updateSubmission(sampleCodeID, sampleVer, 90);
         });
     });
 
     describe("submitCode", function() {
         it("should be submitting another code", function() {
-            return submitCode(
+            return db.submitCode(
                 sampleCode,
                 sampleID,
                 sampleProb,
@@ -127,13 +114,13 @@ describe("database", function() {
 
     describe("updateSubmission", function() {
         it("should be updating verdict with a score of 40", function() {
-            return updateSubmission(sampleCodeID, sampleVer, 40);
+            return db.updateSubmission(sampleCodeID, sampleVer, 40);
         });
     });
 
     describe("updateUser", function() {
         it("should be update user's password", function() {
-            return updateUser(
+            return db.updateUser(
                 sampleID,
                 sampleUser,
                 sampleUser,
@@ -143,7 +130,7 @@ describe("database", function() {
         });
 
         it("should be able to prevent the collision", function() {
-            return updateUser(
+            return db.updateUser(
                 sampleID,
                 sampleUser,
                 "ontest",
@@ -162,19 +149,19 @@ describe("database", function() {
 
     describe("bestSubmission", function() {
         it("should retrieve best satisfy result", function() {
-            return bestSubmission(sampleID, sampleProb, "OI");
+            return db.bestSubmission(sampleID, sampleProb, "OI");
         });
     });
 
     describe("countPreviousSatisfy", function() {
         it("should count to last satisfy result", function() {
-            return countPreviousSatisfy(sampleCodeID);
+            return db.countPreviousSatisfy(sampleCodeID);
         });
     });
 
     describe("readLastSatisfy", function() {
         it("should count to last satisfy result", function() {
-            return readLastSatisfy(sampleUser, sampleProb, "OI");
+            return db.readLastSatisfy(sampleUser, sampleProb, "OI");
         });
     });
 });
