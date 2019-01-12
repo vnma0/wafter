@@ -50,6 +50,7 @@ function usernameChecking(username) {
  * Add user to database
  * @param {String} username User's name
  * @param {String} pass User's password
+ * @param {Boolean} isAdmin Is user's an admin
  * @returns {Promise} User's ID if success
  */
 export async function newUser(username, pass, isAdmin = false) {
@@ -72,7 +73,7 @@ export async function newUser(username, pass, isAdmin = false) {
                     {
                         username: username,
                         pass: hashedPass,
-                        isAdmin: isAdmin
+                        isAdmin: !!isAdmin
                     }
                 ],
                 function(err2, docs2) {
