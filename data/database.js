@@ -104,14 +104,15 @@ export function readAllUser() {
  */
 export function readUser(username) {
     return new Promise((resolve, reject) => {
-        db.users.findOne({ username }, { username: 1, isAdmin: 1 }, function(
-            err,
-            docs
-        ) {
-            if (err) reject(err);
-            else if (docs === null) reject("invalid username");
-            else resolve(docs);
-        });
+        db.users.findOne(
+            { username: username },
+            { username: 1, isAdmin: 1 },
+            function(err, docs) {
+                if (err) reject(err);
+                else if (docs === null) reject("invalid username");
+                else resolve(docs);
+            }
+        );
     });
 }
 
@@ -278,7 +279,7 @@ export function readSubmission(sub_id) {
 export function readUserSubmission(user_id) {
     return new Promise((resolve, reject) => {
         db.submissions.find(
-            { user_id },
+            { user_id: user_id },
             {
                 status: 1,
                 date: 1,
@@ -392,7 +393,7 @@ export function bestSubmission(user_id, prob_id, ctype) {
     return new Promise((resolve, reject) => {
         if (ctype === "ACM" || ctype === "OI")
             db.submissions.find(
-                { user_id, prob_id, status: "Accepted" },
+                { user_id: user_id, prob_id: prob_id, status: "Accepted" },
                 function(err, docs) {
                     if (err) reject(err);
                     else if (docs === null) resolve(null);
