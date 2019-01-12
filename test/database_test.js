@@ -74,9 +74,7 @@ describe("database", function() {
         it("should be returning an object represents submission's props", function() {
             return readSubmission(sampleCodeID);
         });
-    });
 
-    describe("readSubmission", function() {
         it("shouldn't be able to read this", function() {
             return readSubmission("sampleCodeID").then(
                 () => {
@@ -136,9 +134,7 @@ describe("database", function() {
                 "newpass"
             );
         });
-    });
 
-    describe("updateUser", function() {
         it("should be able to prevent the collision", function() {
             return updateUser(
                 sampleID,
