@@ -6,7 +6,7 @@ import passport from "passport";
 import session from "express-session";
 import bodyParser from "body-parser";
 
-import server from "./config/server";
+import server, { staticFolder } from "./config/server";
 
 import { info } from "./routes/info";
 import { konInit } from "./routes/konInit";
@@ -37,6 +37,7 @@ app.get("/", info);
 app.use("/subs", subs);
 app.use("/users", users);
 app.use("/kon", konInit);
+app.use("/static", express.static(staticFolder));
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);

@@ -1,10 +1,13 @@
-import { readFileSync } from "fs";
+import { readFileSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
 import uuidv4 from "uuid/v4";
 
 import { cwd } from "./cwd";
 
 require("dotenv").config();
+
+export const staticFolder = "static";
+if (!existsSync(staticFolder)) mkdirSync(staticFolder);
 
 export const contestConfig = join(cwd, "contest.json");
 
