@@ -213,10 +213,14 @@ export function updateUser(
  */
 export function readAllSubmissions() {
     return new Promise((resolve, reject) => {
-        db.submissions.find({}, function(err, docs) {
-            if (err) reject(err);
-            else resolve(docs);
-        });
+        db.submissions.find(
+            {},
+            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1 },
+            function(err, docs) {
+                if (err) reject(err);
+                else resolve(docs);
+            }
+        );
     });
 }
 
@@ -227,11 +231,15 @@ export function readAllSubmissions() {
  */
 export function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
-        db.submissions.findOne({ _id: sub_id }, function(err, docs) {
-            if (err) reject(err);
-            else if (docs === null) reject("invalid ID");
-            else resolve(docs);
-        });
+        db.submissions.findOne(
+            { _id: sub_id },
+            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1 },
+            function(err, docs) {
+                if (err) reject(err);
+                else if (docs === null) reject("invalid ID");
+                else resolve(docs);
+            }
+        );
     });
 }
 
@@ -242,11 +250,15 @@ export function readSubmission(sub_id) {
  */
 export function readUserSubmission(user_id) {
     return new Promise((resolve, reject) => {
-        db.submissions.find({ user_id }, function(err, docs) {
-            if (err) reject(err);
-            else if (docs === null) reject("Empty result");
-            else resolve(docs);
-        });
+        db.submissions.find(
+            { user_id },
+            { status: 1, date: 1, user_id: 1, prob_id: 1, score: 1, ctype: 1 },
+            function(err, docs) {
+                if (err) reject(err);
+                else if (docs === null) reject("Empty result");
+                else resolve(docs);
+            }
+        );
     });
 }
 
