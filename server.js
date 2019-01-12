@@ -15,6 +15,8 @@ import { users } from "./routes/users";
 
 import passportConfig from "./controller/passportConfig";
 
+import Console from "console";
+
 passportConfig(passport);
 const app = express();
 
@@ -48,6 +50,6 @@ app.get("/logout", (req, res) => {
     res.sendStatus(200);
 });
 
-app.listen(PORT, () => {
-    console.log(`Wafter is running on port ${PORT}`);
+let serv = app.listen(PORT, () => {
+    Console.log(`Wafter is running on port ${serv.address().port}`);
 });
