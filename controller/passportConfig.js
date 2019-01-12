@@ -1,6 +1,6 @@
-import { readUser, readUserByID } from "../data/database";
+import { readUser, readUserByID, readUserPassHash } from "../data/database";
 import { Strategy } from "passport-local";
-import bcrypt from "bcrypt-nodejs";
+import bcrypt from "bcryptjs";
 
 /**
  * Configure passport to use local Strategy with nedb
@@ -12,17 +12,16 @@ export default function(passport) {
             usernameField: "username",
             passwordField: "password"
         },
-        (username, password, done) => {
-            readUser(username)
-                .then((docs) => {
-                    // Encrypt password
-                    bcrypt.compare(password, docs.pass, (err, isValid) => {
-                        if (err) return done(err);
-                        if (!isValid) return done(null, false);
-                        return done(null, docs);
-                    });
-                })
-                .catch((err) => done(err));
+        async (username, password, done) => {
+            try {
+                const dbUser = await readUser(username);
+                const passHash = await readUserPassHash(dbUser._id);
+                const isMatch = await bcrypt.compare(password, passHash);
+                if (isMatch) return done(null, dbUser);
+                else done(null, false);
+            } catch (err) {
+                done(err);
+            }
         }
     );
 
