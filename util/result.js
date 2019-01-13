@@ -11,7 +11,10 @@ import server from "../config/server";
 export async function GetProblemBestResult(user_id, prob_id) {
     const ctype = score[server.contest.mode];
     const bestResult = await bestSubmission(user_id, prob_id, ctype);
-    return bestResult ? ctype.calc(bestResult) : null;
+    const result = bestResult
+        ? ctype.calc(bestResult)
+        : { pri: null, sec: null };
+    return result;
 }
 
 /**
