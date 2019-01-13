@@ -310,7 +310,6 @@ export function readUserSubmission(user_id) {
  * @param {String} source_code Source Code
  * @param {String} user_id User's ID
  * @param {String} prob_id Problem's ID
- * @param {String} ctype Contest's type
  * @param {Number} tpen Submission's penalty
  * @returns {Promise<String>} Submission's ID if success
  */
@@ -368,37 +367,6 @@ export async function updateSubmission(sub_id, new_verdict, score, tests) {
 }
 
 /**
- * Retreive the best submission among the list
- * @param {String} user_id user's id
- * @param {String} prob_id problem's id
- * @param {ContestType} ctype contest's type
- * @returns {Promise<ReturnSubmission>} the best submission if possible, null if none exists
- */
-export function bestSubmission(user_id, prob_id, ctype) {
-    return new Promise((resolve, reject) => {
-        db.submissions.find(
-            {
-                user_id: user_id,
-                prob_id: prob_id,
-                status: { $in: ctype.acceptedStatus }
-            },
-            function(err, docs) {
-                if (err) reject(err);
-                else if (!docs.length) resolve(null);
-                else {
-                    docs.sort(ctype.sort);
-                    let doc = docs[0];
-                    countPreviousSatisfy(doc._id).then((atmp) => {
-                        doc.attempt = atmp + 1;
-                        resolve(doc);
-                    });
-                }
-            }
-        );
-    });
-}
-
-/**
  * Retrieve last Satisfy result
  * @deprecated
  * @param {String} user_id user's id
@@ -449,6 +417,37 @@ export async function countPreviousSatisfy(sub_id) {
             },
             (err) => {
                 reject(err);
+            }
+        );
+    });
+}
+
+/**
+ * Retreive the best submission among the list
+ * @param {String} user_id user's id
+ * @param {String} prob_id problem's id
+ * @param {ContestType} ctype contest's type
+ * @returns {Promise<ReturnSubmission>} the best submission if possible, null if none exists
+ */
+export function bestSubmission(user_id, prob_id, ctype) {
+    return new Promise((resolve, reject) => {
+        db.submissions.find(
+            {
+                user_id: user_id,
+                prob_id: prob_id,
+                status: { $in: ctype.acceptedStatus }
+            },
+            function(err, docs) {
+                if (err) reject(err);
+                else if (!docs.length) resolve(null);
+                else {
+                    docs.sort(ctype.sort);
+                    let doc = docs[0];
+                    countPreviousSatisfy(doc._id).then((atmp) => {
+                        doc.attempt = atmp + 1;
+                        resolve(doc);
+                    });
+                }
             }
         );
     });

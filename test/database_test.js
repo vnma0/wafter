@@ -91,7 +91,7 @@ describe("database", function() {
 
     describe("submitCode", function() {
         it("should be submitting another code", function() {
-            return db.submitCode(sampleCode, sampleID, sampleProb, "101").then(
+            return db.submitCode(sampleCode, sampleID, sampleProb, 101).then(
                 (id) => {
                     sampleCodeID = id;
                 },
