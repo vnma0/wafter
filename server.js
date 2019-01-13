@@ -6,7 +6,7 @@ import passport from "passport";
 import session from "express-session";
 import bodyParser from "body-parser";
 
-import server, { staticFolder } from "./config/server";
+import server from "./config/server";
 
 import { info } from "./routes/info";
 import { subs } from "./routes/subs";
@@ -39,7 +39,7 @@ app.use("/info", info);
 app.use("/subs", subs);
 app.use("/users", users);
 app.use("/score", score);
-app.use("/static", express.static(staticFolder));
+app.use("/static", express.static(server.staticFolder));
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);

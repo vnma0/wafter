@@ -7,16 +7,15 @@ import score from "../util/score";
 
 require("dotenv").config();
 
-export const staticFolder = "static";
+const staticFolder = "static";
 if (!existsSync(staticFolder)) mkdirSync(staticFolder);
 
 export const contestConfig = join(cwd, "contest.json");
 
-let contestObj = {};
 let name, startTime, endTime, mode, probList;
 
 try {
-    contestObj = JSON.parse(readFileSync(contestConfig));
+    const contestObj = JSON.parse(readFileSync(contestConfig));
     ({ name, startTime, endTime, mode, probList } = contestObj);
 
     if (
@@ -41,6 +40,7 @@ export default {
         startTime: new Date(...startTime),
         endTime: new Date(...endTime),
         mode: mode,
-        probList: probList
+        probList: probList,
+        staticFolder: staticFolder
     }
 };
