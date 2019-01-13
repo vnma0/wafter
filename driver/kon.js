@@ -112,7 +112,8 @@ export default class Judger {
                 compress: true
             });
             if (response.status === 503) throw "Server is not ready";
-            const json = response.status === 200 ? await response.json() : "{}";
+            const json =
+                response.status === 200 ? await response.json() : [];
             return json;
         } catch (err) {
             throw err;
