@@ -9,13 +9,13 @@ import bodyParser from "body-parser";
 import server, { staticFolder } from "./config/server";
 
 import { info } from "./routes/info";
-import { konInit } from "./routes/konInit";
 import { subs } from "./routes/subs";
 import { users } from "./routes/users";
 
 import passportConfig from "./controller/passportConfig";
 
 import Console from "console";
+import { initJudger } from "./controller/submitCode";
 
 passportConfig(passport);
 const app = express();
@@ -38,8 +38,6 @@ app.use(passport.session());
 app.use("/info", info);
 app.use("/subs", subs);
 app.use("/users", users);
-// TODO: Block this route ?
-app.use("/kon", konInit);
 app.use("/static", express.static(staticFolder));
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
@@ -52,5 +50,6 @@ app.get("/logout", (req, res) => {
 });
 
 let serv = app.listen(PORT, () => {
+    initJudger();
     Console.log(`Wafter is running on port ${serv.address().port}`);
 });

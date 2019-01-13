@@ -1,4 +1,4 @@
-import { readFileSync, existsSync, writeFileSync } from "fs";
+import { readFileSync, existsSync, writeFileSync, mkdir } from "fs";
 import { join } from "path";
 
 import validUrl from "valid-url";
@@ -8,7 +8,11 @@ import Judger from "../driver/kon";
 
 const konList = join(cwd, ".konlist");
 
-const taskFile = join(cwd, "Tasks.zip");
+// Require valid folder to work
+const taskFolder = join(cwd, "Tasks");
+mkdir(taskFolder, (err) => {
+    if (err) throw new Error("Cannot access task folder");
+});
 
 // Setup konList
 if (!existsSync(konList)) writeFileSync(konList, "");
@@ -21,5 +25,5 @@ const serverList = readFileSync(konList, "utf8")
 
 export default {
     judgers: serverList,
-    tasks: taskFile
+    tasks: taskFolder
 };

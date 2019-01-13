@@ -1,9 +1,8 @@
 import zipdir from "zip-dir";
 import isZip from "is-zip";
+import Console from "console";
 import { basename, extname, join } from "path";
-import { readFileSync } from "fs";
 
-import { cwd } from "../config/cwd";
 import kon from "../config/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
@@ -12,31 +11,24 @@ const Judgers = kon.judgers;
 
 /**
  * Zip task folder then send it to Judgers
- * @param {PathLike} task_folder path to folder contains task file
  */
-export function initJudgerFolder(task_folder) {
-    const arcPath = join(cwd, "Tasks.zip");
-    zipdir(task_folder, { saveTo: arcPath }, (err, buf) => {
+export function initJudger() {
+    const arcPath = "Tasks.zip";
+    zipdir(kon.tasks, { saveTo: arcPath }, (err, buf) => {
         if (err) throw err;
         if (!isZip(buf)) throw Error("Invalid folder");
-        initJudger(arcPath);
+        Judgers.forEach((judger) => {
+            judger.clone(arcPath).then(
+                (boo) => {
+                    if (!boo) throw Error();
+                    Console.log(`Sucessfully cloned ${judger.serverAddress}]`);
+                },
+                () => {
+                    Console.log(`Failed to clone ${judger.serverAddress}`);
+                }
+            );
+        });
     });
-}
-
-/**
- * Send zipped task file to Judgers
- * @param {PathLike} taskZipPath path to folder contains task file
- */
-export function initJudger(taskZipPath) {
-    if (!isZip(readFileSync(taskZipPath)))
-        throw Error("Given file is not a zip");
-    const JudgePromise = Judgers.map((judger) => {
-        judger.clone(taskZipPath);
-    });
-    // NOTE: This require all server to work
-    // In case one server is down, this function will break
-    // TODO: Safety handling error
-    Promise.all(JudgePromise);
 }
 
 /**
