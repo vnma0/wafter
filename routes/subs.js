@@ -57,4 +57,4 @@ router.post(
     }
 );
 
-export { router as subs };
+export default router;

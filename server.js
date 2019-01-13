@@ -1,21 +1,18 @@
+import Console from "console";
 import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import passport from "passport";
-
 import session from "express-session";
 import bodyParser from "body-parser";
 
 import server from "./config/server";
-
-import { info } from "./routes/info";
-import { subs } from "./routes/subs";
-import { users } from "./routes/users";
-import { score } from "./routes/score";
-
 import passportConfig from "./controller/passportConfig";
 
-import Console from "console";
+import info from "./routes/info";
+import subs from "./routes/subs";
+import users from "./routes/users";
+import score from "./routes/score";
 
 passportConfig(passport);
 const app = express();

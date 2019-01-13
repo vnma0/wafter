@@ -8,4 +8,4 @@ router.get("/", (req, res) => {
     res.json(server.contest);
 });
 
-export { router as info };
+export default router;
