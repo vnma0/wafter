@@ -1,8 +1,6 @@
 import { readFileSync, existsSync, mkdirSync } from "fs";
-import { join } from "path";
 import uuidv4 from "uuid/v4";
 
-import { cwd } from "./cwd";
 import score from "../util/score";
 
 require("dotenv").config();
@@ -10,7 +8,7 @@ require("dotenv").config();
 const staticFolder = "static";
 if (!existsSync(staticFolder)) mkdirSync(staticFolder);
 
-export const contestConfig = join(cwd, "contest.json");
+const contestConfig = "contest.json";
 
 let name, startTime, endTime, mode, probList;
 
