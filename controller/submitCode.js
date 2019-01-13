@@ -62,17 +62,37 @@ export function initJudger(taskZipPath) {
 }
 
 /**
- * Update submission status from log from kons'
- * @param {function} parse Parse result, either ACM or OI
+ * Parse Submission from kon.js for verdict
+ * @param {Submission} sub Submission from kon.js
+ * @returns {String} verdict
  */
-export function reloadSubs(parse) {
+function getVerdict(sub) {
+    const tests = sub.tests;
+
+    let verdict = "AC";
+    if (tests)
+        tests.some((x, i, arr) => {
+            if (x.verdict !== "AC") {
+                verdict = arr[i];
+                return true;
+            }
+        });
+    else verdict = "CE";
+
+    return verdict;
+}
+
+/**
+ * Update submission status from log from kons'
+ */
+export function reloadSubs() {
     const judgerPromise = Judgers.map((judger) => judger.get());
     Promise.all(judgerPromise)
         .then((list) => [].concat.apply([], list))
         .then((subs) => {
             subs.forEach((sub) => {
-                const { newVerdict, score, tests } = parse(sub);
-                updateSubmission(sub.id, newVerdict, score, tests);
+                const verdict = getVerdict(sub);
+                updateSubmission(sub.id, verdict, sub.finalScore, sub.tests);
             });
         })
         .catch((err) => {

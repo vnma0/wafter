@@ -1,4 +1,6 @@
 import * as db from "../data/database";
+import score from "../util/score";
+import { GetProblemBestResult } from "../util/result";
 
 const sampleUser = Math.random()
     .toString(36)
@@ -8,7 +10,7 @@ const sampleProb = "sampleprob";
 const sampleCode = "samplecode";
 let sampleID, sampleCodeID;
 
-const sampleVer = "Accepted";
+const sampleVer = "AC";
 
 describe("database", function() {
     describe("newUser", function() {
@@ -47,16 +49,14 @@ describe("database", function() {
 
     describe("submitCode", function() {
         it("should be submitting code", function() {
-            return db
-                .submitCode(sampleCode, sampleID, sampleProb, "OI", null)
-                .then(
-                    (id) => {
-                        sampleCodeID = id;
-                    },
-                    (err) => {
-                        throw err;
-                    }
-                );
+            return db.submitCode(sampleCode, sampleID, sampleProb, 96).then(
+                (id) => {
+                    sampleCodeID = id;
+                },
+                (err) => {
+                    throw err;
+                }
+            );
         });
     });
 
@@ -91,16 +91,14 @@ describe("database", function() {
 
     describe("submitCode", function() {
         it("should be submitting another code", function() {
-            return db
-                .submitCode(sampleCode, sampleID, sampleProb, "OI", null)
-                .then(
-                    (id) => {
-                        sampleCodeID = id;
-                    },
-                    (err) => {
-                        throw err;
-                    }
-                );
+            return db.submitCode(sampleCode, sampleID, sampleProb, "101").then(
+                (id) => {
+                    sampleCodeID = id;
+                },
+                (err) => {
+                    throw err;
+                }
+            );
         });
     });
 
@@ -143,7 +141,7 @@ describe("database", function() {
 
     describe("bestSubmission", function() {
         it("should retrieve best satisfy result", function() {
-            return db.bestSubmission(sampleID, sampleProb, "OI");
+            return db.bestSubmission(sampleID, sampleProb, score.OI);
         });
     });
 
@@ -155,7 +153,15 @@ describe("database", function() {
 
     describe("readLastSatisfy", function() {
         it("should count to last satisfy result", function() {
-            return db.readLastSatisfy(sampleUser, sampleProb, "OI");
+            return db.readLastSatisfy(sampleUser, sampleProb, score.OI);
+        });
+    });
+});
+
+describe("score", function() {
+    describe("GetProblemBestResult", function() {
+        it("should return best result", function() {
+            return GetProblemBestResult(sampleID, sampleProb, score.OI);
         });
     });
 });
