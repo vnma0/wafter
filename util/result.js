@@ -7,7 +7,6 @@ import server from "../config/server";
  * Score and Scoreboard use this
  * @param {String} user_id User's ID
  * @param {String} prob_id Problem's ID
- * @param {ContestType} ctype Contest type
  */
 export async function GetProblemBestResult(user_id, prob_id) {
     const ctype = score[server.contest.mode];
@@ -19,7 +18,6 @@ export async function GetProblemBestResult(user_id, prob_id) {
  *
  * @param {String} user_id User's ID
  * @param {Array} prob_list Problem list
- * @param {ContestType} ctype Contest type
  */
 export async function GetTotalResult(user_id, prob_list) {
     const resultPromises = prob_list.map((prob_id) =>
