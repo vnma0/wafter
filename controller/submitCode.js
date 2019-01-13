@@ -49,9 +49,9 @@ function getVerdict(sub) {
 
     let verdict = "AC";
     if (tests)
-        tests.some((x, i, arr) => {
+        tests.some((x) => {
             if (x.verdict !== "AC") {
-                verdict = arr[i];
+                verdict = x.verdict;
                 return true;
             }
         });
