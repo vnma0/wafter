@@ -19,7 +19,8 @@ export default class Judger {
             const response = await fetch(this.serverAddress + "/check", {
                 cache: "no-cache",
                 mode: "no-cors",
-                timeout: 1000
+                timeout: 1000,
+                compress: true
             });
             const status = response.status;
             if (status === 503) throw "Server is not ready";
@@ -37,20 +38,21 @@ export default class Judger {
     async clone(compressed_task_path) {
         let task = new FormData();
 
-        task.append("task", createReadStream(compressed_task_path));
+        const zip = createReadStream(compressed_task_path);
+        task.append("task", zip);
 
         try {
             const response = await fetch(this.serverAddress + "/task", {
                 method: "POST",
-                mode: "no-cors",
                 body: task,
-                timeout: 1000
+                timeout: 5000,
+                compress: true
             });
             const status = response.status;
 
             if (status === 415) throw "Incorrect file type";
-            else if (status == 413) throw "File is too large";
-            else if (status == 403) throw "Server has been set up";
+            else if (status === 413) throw "File is too large";
+            else if (status === 403) throw "Server has been set up";
 
             return status === 200;
         } catch (err) {
@@ -62,13 +64,17 @@ export default class Judger {
      * Part 3 : send data to judger
      * @param {string} source_code_path :
      * Path to the database, linked to submission's source code of contestant,
+     * @param {string} prob_name Filename
      * @param {String} encrypted_info : Hash of ubmission's info
      * @return {Promise} : true if data is sent successfully, false otherwise
      */
-    async send(source_code_path, encrypted_info) {
+    async send(source_code_path, prob_name, encrypted_info) {
         let data = new FormData();
 
-        data.append("code", createReadStream(source_code_path));
+        if (!source_code_path || !prob_name || !encrypted_info)
+            throw new Error("Invalid data");
+
+        data.append("code", createReadStream(source_code_path), prob_name);
         data.append("id", encrypted_info);
 
         try {
@@ -76,12 +82,15 @@ export default class Judger {
                 method: "POST",
                 mode: "no-cors",
                 body: data,
-                timeout: 1000
+                timeout: 1000,
+                compress: true
             });
             const status = response.status;
 
             if (status === 415) throw "Incorrect file type";
-            else if (status == 413) throw "File is too large";
+            else if (status === 413) throw "File is too large";
+            else if (status === 503) throw "Server is not ready";
+            else if (status === 400) throw "Bad request";
 
             return status === 200;
         } catch (err) {
@@ -99,10 +108,33 @@ export default class Judger {
             const response = await fetch(this.serverAddress + "/get", {
                 mode: "no-cors",
                 cache: "no-cache",
-                timeout: 1000
+                timeout: 1000,
+                compress: true
             });
-            const json = await response.json();
+            if (response.status === 503) throw "Server is not ready";
+            const json =
+                response.status === 200 ? await response.json() : [];
             return json;
+        } catch (err) {
+            throw err;
+        }
+    }
+
+    /**
+     * Receive queue length from judger
+     */
+    async qLength() {
+        try {
+            const response = await fetch(this.serverAddress + "/queue", {
+                mode: "no-cors",
+                cache: "no-cache",
+                timeout: 1000,
+                compress: true
+            });
+            if (response.status === 503) throw "Server is not ready";
+            const text = await response.text();
+            const num = Number(text);
+            return isNaN(num) ? -1 : num;
         } catch (err) {
             throw err;
         }
