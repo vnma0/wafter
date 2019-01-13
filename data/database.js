@@ -244,7 +244,8 @@ export function readAllSubmissions() {
                 user_id: 1,
                 prob_id: 1,
                 score: 1,
-                tpen: 1
+                tpen: 1,
+                tests: 1
             },
             function(err, docs) {
                 if (err) reject(err);
@@ -269,7 +270,8 @@ export function readSubmission(sub_id) {
                 user_id: 1,
                 prob_id: 1,
                 score: 1,
-                tpen: 1
+                tpen: 1,
+                tests: 1
             },
             function(err, docs) {
                 if (err) reject(err);
@@ -295,7 +297,8 @@ export function readUserSubmission(user_id) {
                 user_id: 1,
                 prob_id: 1,
                 score: 1,
-                tpen: 1
+                tpen: 1,
+                tests: 1
             },
             function(err, docs) {
                 if (err) reject(err);
