@@ -1,4 +1,6 @@
 import { bestSubmission } from "../data/database";
+import score from "./score";
+import server from "../config/server";
 
 /**
  * Output correct result
@@ -7,7 +9,8 @@ import { bestSubmission } from "../data/database";
  * @param {String} prob_id Problem's ID
  * @param {ContestType} ctype Contest type
  */
-export async function GetProblemBestResult(user_id, prob_id, ctype) {
+export async function GetProblemBestResult(user_id, prob_id) {
+    const ctype = score[server.contest.mode];
     const bestResult = await bestSubmission(user_id, prob_id, ctype);
     return bestResult ? ctype.calc(bestResult) : null;
 }
@@ -18,9 +21,9 @@ export async function GetProblemBestResult(user_id, prob_id, ctype) {
  * @param {Array} prob_list Problem list
  * @param {ContestType} ctype Contest type
  */
-export async function GetTotalResult(user_id, prob_list, ctype) {
+export async function GetTotalResult(user_id, prob_list) {
     const resultPromises = prob_list.map((prob_id) =>
-        GetProblemBestResult(user_id, prob_id, ctype)
+        GetProblemBestResult(user_id, prob_id)
     );
     const totalResult = await Promise.all(resultPromises);
     return totalResult;
