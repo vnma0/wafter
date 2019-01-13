@@ -1,7 +1,8 @@
 import server from "../config/server";
 
 /**
- * Check if connected session is authenticated
+ * Check if contest í running
+ * Use this to restrict route in contest running time
  * @param {Request} req Express request object
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
