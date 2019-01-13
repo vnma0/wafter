@@ -40,7 +40,7 @@ export default {
         startTime: new Date(...startTime),
         endTime: new Date(...endTime),
         mode: mode,
-        probList: probList,
-        staticFolder: staticFolder
-    }
+        probList: probList
+    },
+    staticFolder: staticFolder
 };
