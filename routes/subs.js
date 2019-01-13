@@ -44,7 +44,7 @@ router.get("/:id", auth, (req, res) => {
     );
 });
 
-router.post("/", codeUpload, validateCode, (req, res) => {
+router.post("/", auth, codeUpload, validateCode, (req, res) => {
     sendCode(req.file.path, req.user._id, req.file.originalname);
     res.sendStatus(200);
 });
