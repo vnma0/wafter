@@ -4,33 +4,11 @@ import { basename, extname, join } from "path";
 import { readFileSync } from "fs";
 
 import { cwd } from "../config/cwd";
-import Judger from "../driver/kon";
+import kon from "../config/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
-import kon from "../config/kon";
 
 const Judgers = kon.judgers;
-
-/**
- * Qualify and add new server to Judgers
- * This function is expected to be deprecated
- * @param {String} serverAddress Exepected address of kon server
- */
-export async function addJudger(serverAddress) {
-    if (!serverAddress) throw new Error("Invalid serverAddress");
-    // TODO: Guarantee valid kon server
-    const newJudger = new Judger(serverAddress);
-    try {
-        await newJudger.check();
-        // TODO: Better logging
-    } catch (err) {
-        // In case server return 503, add server to judgerList
-        if (err === "Server is not ready") {
-            Judgers.push(newJudger);
-            console.log("New kon added: ", serverAddress);
-        } else throw new Error(err);
-    }
-}
 
 /**
  * Zip task folder then send it to Judgers
