@@ -9,9 +9,9 @@ import bodyParser from "body-parser";
 import server, { staticFolder } from "./config/server";
 
 import { info } from "./routes/info";
-import { konInit } from "./routes/konInit";
 import { subs } from "./routes/subs";
 import { users } from "./routes/users";
+import { score } from "./routes/score";
 
 import passportConfig from "./controller/passportConfig";
 
@@ -38,8 +38,7 @@ app.use(passport.session());
 app.use("/info", info);
 app.use("/subs", subs);
 app.use("/users", users);
-// TODO: Block this route ?
-app.use("/kon", konInit);
+app.use("/score", score);
 app.use("/static", express.static(staticFolder));
 
 app.post("/login", passport.authenticate("local"), (req, res) => {

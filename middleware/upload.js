@@ -52,7 +52,7 @@ export const codeUpload = limitUpload(
  * @param {Object} file source code blob
  */
 function checkCodeType(file) {
-    return acceptMIME.indexOf(file.mimetype) !== -1;
+    return acceptMIME.includes(file.mimetype);
 }
 
 /**

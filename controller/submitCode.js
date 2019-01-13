@@ -4,33 +4,11 @@ import { basename, extname, join } from "path";
 import { readFileSync } from "fs";
 
 import { cwd } from "../config/cwd";
-import Judger from "../driver/kon";
+import kon from "../config/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
-import kon from "../config/kon";
 
 const Judgers = kon.judgers;
-
-/**
- * Qualify and add new server to Judgers
- * This function is expected to be deprecated
- * @param {String} serverAddress Exepected address of kon server
- */
-export async function addJudger(serverAddress) {
-    if (!serverAddress) throw new Error("Invalid serverAddress");
-    // TODO: Guarantee valid kon server
-    const newJudger = new Judger(serverAddress);
-    try {
-        await newJudger.check();
-        // TODO: Better logging
-    } catch (err) {
-        // In case server return 503, add server to judgerList
-        if (err === "Server is not ready") {
-            Judgers.push(newJudger);
-            console.log("New kon added: ", serverAddress);
-        } else throw new Error(err);
-    }
-}
 
 /**
  * Zip task folder then send it to Judgers
@@ -62,17 +40,37 @@ export function initJudger(taskZipPath) {
 }
 
 /**
- * Update submission status from log from kons'
- * @param {function} parse Parse result, either ACM or OI
+ * Parse Submission from kon.js for verdict
+ * @param {Submission} sub Submission from kon.js
+ * @returns {String} verdict
  */
-export function reloadSubs(parse) {
+function getVerdict(sub) {
+    const tests = sub.tests;
+
+    let verdict = "AC";
+    if (tests)
+        tests.some((x) => {
+            if (x.verdict !== "AC") {
+                verdict = x.verdict;
+                return true;
+            }
+        });
+    else verdict = "CE";
+
+    return verdict;
+}
+
+/**
+ * Update submission status from log from kons'
+ */
+export function reloadSubs() {
     const judgerPromise = Judgers.map((judger) => judger.get());
     Promise.all(judgerPromise)
         .then((list) => [].concat.apply([], list))
         .then((subs) => {
             subs.forEach((sub) => {
-                const { newVerdict, score, tests } = parse(sub);
-                updateSubmission(sub.id, newVerdict, score, tests);
+                const verdict = getVerdict(sub);
+                updateSubmission(sub.id, verdict, sub.finalScore, sub.tests);
             });
         })
         .catch((err) => {

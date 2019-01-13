@@ -205,24 +205,34 @@ export async function updateUser(
     });
 }
 
+// /**
+//  * Submission Schema Object
+//  * _id:             Submission's ID
+//  * source_code:     Source code path
+//  * status:          Submission Status
+//  * date:            Submission Date (Db first receive)
+//  * user_id:         User's ID of submission
+//  * prob_id:         Problem's ID of submission
+//  * score:           Submission's score (like in OI)
+//  * tpen:            Submission's penalty (like in ACM)
+//  * tests:           Submission's tests result
+//  */
+
 /**
- * Submission Schema Object
- * _id:             Submission's ID
- * source_code:     Source code path
- * status:          Submission Status
- * date:            Submission Date (Db first receive)
- * user_id:         User's ID of submission
- * prob_id:         Problem's ID of submission
- * score:           Submission's score (in OI)
- * tpen             Submission's penalty (in ACM)
- * ctype:           contest type OI / ACM
- *
- * "Accepted" is the only verdict that will be count
+ * @typedef {Object} ReturnSubmission
+ * @property {String} _id Submission's ID
+ * @property {String} status Submission's Status
+ * @property {Date} date Submission's Date
+ * @property {String} user_id Submission's User's ID
+ * @property {String} prob_id Submission's Problem ID
+ * @property {Number} score Submission's score
+ * @property {Number} tpen Submission's penalty
+ * @property {Array<TestCase>} tests Submission's tests result
  */
 
 /**
  * Retrieve list of submissions in database
- * @returns {Promise} Array of submission if success
+ * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
 export function readAllSubmissions() {
     return new Promise((resolve, reject) => {
@@ -234,8 +244,8 @@ export function readAllSubmissions() {
                 user_id: 1,
                 prob_id: 1,
                 score: 1,
-                ctype: 1,
-                tpen: 1
+                tpen: 1,
+                tests: 1
             },
             function(err, docs) {
                 if (err) reject(err);
@@ -248,7 +258,7 @@ export function readAllSubmissions() {
 /**
  * Retrieve submission via sub_id
  * @param {String} sub_id Submission's ID
- * @returns {Promise} Submission's details if success
+ * @returns {Promise<ReturnSubmission>} Submission's details if success
  */
 export function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
@@ -260,8 +270,8 @@ export function readSubmission(sub_id) {
                 user_id: 1,
                 prob_id: 1,
                 score: 1,
-                ctype: 1,
-                tpen: 1
+                tpen: 1,
+                tests: 1
             },
             function(err, docs) {
                 if (err) reject(err);
@@ -275,7 +285,7 @@ export function readSubmission(sub_id) {
 /**
  * Retrieve list of submission via user_id
  * @param {String} user_id User's ID
- * @returns {Promise} Array of user's submissions if success
+ * @returns {Promise<Array<ReturnSubmission>>} Array of user's submissions if success
  */
 export function readUserSubmission(user_id) {
     return new Promise((resolve, reject) => {
@@ -287,12 +297,11 @@ export function readUserSubmission(user_id) {
                 user_id: 1,
                 prob_id: 1,
                 score: 1,
-                ctype: 1,
-                tpen: 1
+                tpen: 1,
+                tests: 1
             },
             function(err, docs) {
                 if (err) reject(err);
-                else if (docs === null) reject("Empty result");
                 else resolve(docs);
             }
         );
@@ -304,53 +313,30 @@ export function readUserSubmission(user_id) {
  * @param {String} source_code Source Code
  * @param {String} user_id User's ID
  * @param {String} prob_id Problem's ID
- * @param {String} ctype ACM / OI
- * @param {Number} index tpen if ACM
- * @returns {Promise} Submission's ID if success
+ * @param {Number} tpen Submission's penalty
+ * @returns {Promise<String>} Submission's ID if success
  */
-export async function submitCode(source_code, user_id, prob_id, ctype, index) {
+export async function submitCode(source_code, user_id, prob_id, tpen) {
     await readUserByID(user_id);
     return new Promise((resolve, reject) => {
-        if (ctype === "ACM")
-            db.submissions.insert(
-                [
-                    {
-                        source_code,
-                        status: "Pending",
-                        date: new Date(),
-                        user_id,
-                        prob_id,
-                        score: null,
-                        tpen: index,
-                        tests: null,
-                        ctype
-                    }
-                ],
-                function(err2, docs2) {
-                    if (err2) reject(err2);
-                    else resolve(docs2[0]._id);
+        db.submissions.insert(
+            [
+                {
+                    source_code,
+                    status: "Pending",
+                    date: new Date(),
+                    user_id,
+                    prob_id,
+                    tpen,
+                    score: null,
+                    tests: null
                 }
-            );
-        if (ctype === "OI")
-            db.submissions.insert(
-                [
-                    {
-                        source_code,
-                        status: "Pending",
-                        date: new Date(),
-                        user_id,
-                        prob_id,
-                        score: null,
-                        tpen: null,
-                        tests: null,
-                        ctype
-                    }
-                ],
-                function(err2, docs2) {
-                    if (err2) reject(err2);
-                    else resolve(docs2[0]._id);
-                }
-            );
+            ],
+            function(err2, docs2) {
+                if (err2) reject(err2);
+                else resolve(docs2[0]._id);
+            }
+        );
     });
 }
 
@@ -358,7 +344,7 @@ export async function submitCode(source_code, user_id, prob_id, ctype, index) {
  * Update submission in database
  * @param {String} sub_id Submission's ID
  * @param {Object} new_verdict new verdict
- * @param {Number} score score if it is OI
+ * @param {Number} score score
  */
 export async function updateSubmission(sub_id, new_verdict, score, tests) {
     const doc = await readSubmission(sub_id);
@@ -384,48 +370,18 @@ export async function updateSubmission(sub_id, new_verdict, score, tests) {
 }
 
 /**
- * Retreive the best submission among the list
- * @param {String} user_id user's id
- * @param {String} prob_id problem's id
- * @param {String} ctype contest's type
- * @returns {Promise} the best submission if possible, null if none exists
- */
-export function bestSubmission(user_id, prob_id, ctype) {
-    return new Promise((resolve, reject) => {
-        if (ctype === "ACM" || ctype === "OI")
-            db.submissions.find(
-                { user_id: user_id, prob_id: prob_id, status: "Accepted" },
-                function(err, docs) {
-                    if (err) reject(err);
-                    else if (docs === null) resolve(null);
-                    else {
-                        docs.sort(function(a, b) {
-                            return ctype === "ACM"
-                                ? a.tpen - b.tpen
-                                : b.score - a.score;
-                        });
-                        resolve(docs[0]);
-                    }
-                }
-            );
-        else reject("wrong contest type");
-    });
-}
-
-/**
  * Retrieve last Satisfy result
+ * @deprecated
  * @param {String} user_id user's id
  * @param {String} prob_id problem's id
- * @param {String} ctype contest's type
  * @returns {Promise} Submission's details if success
  */
-export async function readLastSatisfy(user_id, prob_id, ctype) {
+export async function readLastSatisfy(user_id, prob_id) {
     return new Promise((resolve, reject) => {
         db.submissions.find(
             {
                 user_id: user_id,
                 prob_id: prob_id,
-                ctype: ctype,
                 status: { $ne: "Pending" }
             },
             function(err, docs) {
@@ -443,7 +399,7 @@ export async function readLastSatisfy(user_id, prob_id, ctype) {
 /**
  * Count to last Satisfy result
  * @param {String} sub_id Submission's ID
- * @returns {Promise} Submission's details if success
+ * @returns {Promise<Number>} Number of satisfy submissions
  */
 export async function countPreviousSatisfy(sub_id) {
     return new Promise((resolve, reject) => {
@@ -454,17 +410,47 @@ export async function countPreviousSatisfy(sub_id) {
                         user_id: sub_data.user_id,
                         prob_id: sub_data.prob_id,
                         date: { $lt: sub_data.date },
-                        ctype: sub_data.ctype,
                         status: { $ne: "Pending" }
                     },
                     function(err, docs) {
                         if (err) reject(err);
-                        else resolve(docs + 1);
+                        else resolve(docs);
                     }
                 );
             },
             (err) => {
                 reject(err);
+            }
+        );
+    });
+}
+
+/**
+ * Retreive the best submission among the list
+ * @param {String} user_id user's id
+ * @param {String} prob_id problem's id
+ * @param {ContestType} ctype contest's type
+ * @returns {Promise<ReturnSubmission>} the best submission if possible, null if none exists
+ */
+export function bestSubmission(user_id, prob_id, ctype) {
+    return new Promise((resolve, reject) => {
+        db.submissions.find(
+            {
+                user_id: user_id,
+                prob_id: prob_id,
+                status: { $in: ctype.acceptedStatus }
+            },
+            function(err, docs) {
+                if (err) reject(err);
+                else if (!docs.length) resolve(null);
+                else {
+                    docs.sort(ctype.sort);
+                    let doc = docs[0];
+                    countPreviousSatisfy(doc._id).then((atmp) => {
+                        doc.attempt = atmp + 1;
+                        resolve(doc);
+                    });
+                }
             }
         );
     });
