@@ -35,7 +35,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/info", info);
+app.use("/info", info);
 app.use("/subs", subs);
 app.use("/users", users);
 // TODO: Block this route ?
