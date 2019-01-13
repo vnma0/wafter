@@ -1,5 +1,6 @@
 {
     "name": "Sample Contest",
     "startTime": [1970, 0, 1, 0, 0],
-    "endTime": [1970, 0, 1, 1, 0]
+    "endTime": [1970, 0, 1, 1, 0],
+    "mode": "OI"
 }
