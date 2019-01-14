@@ -1,6 +1,6 @@
 import express from "express";
 
-import { readAllUser, readUserByID } from "../data/database";
+import { readUserByID } from "../data/database";
 import { auth } from "../middleware/auth";
 
 const router = express.Router();
@@ -26,4 +26,5 @@ router.get("/:userid", auth, (req, res) => {
     );
 });
 
-export { router as users };
+export default router;
+
