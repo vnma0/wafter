@@ -10,9 +10,10 @@ let name, startTime, endTime, mode, probList, acceptMIME;
 try {
     contestObj = JSON.parse(readFileSync(contestConfig));
 } catch (err) {
-    if (err.code === "ENOENT") {
+    if (err.code === "ENOENT")
         writeFileSync(contestConfig, JSON.stringify(sampleContest, null, 4));
-    } else throw new Error(`Cannot read contest file (${contestConfig}).`);
+
+    throw new Error(`Cannot read contest file (${contestConfig}).`);
 }
 
 try {
