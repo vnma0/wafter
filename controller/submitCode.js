@@ -1,34 +1,9 @@
-import zipdir from "zip-dir";
-import isZip from "is-zip";
 import Console from "console";
 import { basename, extname } from "path";
 
 import kon from "../config/kon";
-import { submitCode } from "../data/database";
-import { updateSubmission } from "../data/database";
 import server from "../config/server";
-
-/**
- * Zip task folder then send it to Judgers
- */
-export function initJudger() {
-    const arcPath = "Tasks.zip";
-    zipdir(kon.tasks, { saveTo: arcPath }, (err, buf) => {
-        if (err) throw err;
-        if (!isZip(buf)) throw Error("Invalid folder");
-        kon.judgers.forEach((judger) => {
-            judger
-                .clone(arcPath)
-                .then((boo) => {
-                    if (!boo) throw Error();
-                    Console.log(`Sucessfully cloned ${judger.serverAddress}]`);
-                })
-                .catch(() => {
-                    Console.log(`Failed to clone ${judger.serverAddress}`);
-                });
-        });
-    });
-}
+import { submitCode, updateSubmission } from "../data/database";
 
 /**
  * Parse Submission from kon.js for verdict
