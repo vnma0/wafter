@@ -1,21 +1,18 @@
+import Console from "console";
 import express from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import passport from "passport";
-
 import session from "express-session";
 import bodyParser from "body-parser";
 
-import server, { staticFolder } from "./config/server";
-
-import { info } from "./routes/info";
-import { subs } from "./routes/subs";
-import { users } from "./routes/users";
-import { score } from "./routes/score";
-
+import server from "./config/server";
 import passportConfig from "./controller/passportConfig";
 
-import Console from "console";
+import info from "./routes/info";
+import subs from "./routes/subs";
+import users from "./routes/users";
+import score from "./routes/score";
 
 passportConfig(passport);
 const app = express();
@@ -39,7 +36,7 @@ app.use("/info", info);
 app.use("/subs", subs);
 app.use("/users", users);
 app.use("/score", score);
-app.use("/static", express.static(staticFolder));
+app.use("/static", express.static(server.staticFolder));
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
