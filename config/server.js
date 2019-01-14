@@ -28,9 +28,11 @@ try {
     throw new Error("Invalid contest file. See contest.sample.json");
 }
 
+const serverPORT = Number(process.env.PORT);
+
 export default {
     displayName: process.env.SERVERNAME || "Wafter - Themis Distributed Server",
-    port: process.env.PORT || 3000,
+    port: isNaN(serverPORT) ? 3000 : serverPORT,
     secret: process.env.SECRET || uuidv4(),
     contest: {
         // Change this to config contest time
