@@ -1,4 +1,5 @@
 import multer from "multer";
+import mime from "mime";
 import { cwd } from "../config/cwd";
 import { join } from "path";
 import { codeSizeLimit, acceptMIME } from "../config/code";
@@ -52,7 +53,8 @@ export const codeUpload = limitUpload(
  * @param {Object} file source code blob
  */
 function checkCodeType(file) {
-    return acceptMIME.includes(file.mimetype);
+    const mimetype = mime.getType(file.originalname);
+    return acceptMIME.includes(file.mimetype) && mimetype === file.mimetype;
 }
 
 /**
