@@ -24,8 +24,10 @@ export default class Judger {
                 compress: true
             });
             const status = response.status;
-            if (status === 503) throw "Server is not ready";
-            return status === 200;
+            if (status === 200) return true;
+            else if (status === 503) return false;
+            // `${this.serverAddress} has inappropriate return.`
+            else return null;
         } catch (err) {
             throw err;
         }
@@ -131,10 +133,8 @@ export default class Judger {
                 timeout: 1000,
                 compress: true
             });
-            if (response.status === 503) throw "Server is not ready";
             const text = await response.text();
-            const num = Number(text);
-            return isNaN(num) ? -1 : num;
+            return Number(text);
         } catch (err) {
             throw err;
         }
