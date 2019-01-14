@@ -28,7 +28,8 @@ export default class Judger {
             else if (status === 503) return false;
             else throw `${this.serverAddress} has inappropriate return.`;
         } catch (err) {
-            throw err;
+            if (err.name === "FetchError") return undefined;
+            else throw err;
         }
     }
 
@@ -135,7 +136,8 @@ export default class Judger {
             const text = await response.text();
             return Number(text);
         } catch (err) {
-            throw err;
+            if (err.name === "FetchError") return undefined;
+            else throw err;
         }
     }
 }
