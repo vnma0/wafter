@@ -1,8 +1,6 @@
 import multer from "multer";
 import mime from "mime";
-import { join } from "path";
 
-import { cwd } from "../config/cwd";
 import code from "../config/code";
 import contest from "../config/contest";
 
@@ -40,12 +38,11 @@ function limitUpload(multerMid) {
  */
 export const codeUpload = limitUpload(
     multer({
-        dest: join(cwd, "upload/"),
+        dest: code.uploadFolder,
         limits: {
             fileSize: code.sizeLimit,
             files: 1,
-            parts: 1,
-            preservePath: true
+            parts: 1
         }
     }).single("code")
 );

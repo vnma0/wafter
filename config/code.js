@@ -3,5 +3,6 @@
  * This will make sure server can easily handle code without many problems
  */
 export default {
-    sizeLimit: 10000
+    sizeLimit: 10000,
+    uploadFolder: "upload/"
 };
