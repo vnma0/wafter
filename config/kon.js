@@ -25,8 +25,7 @@ if (!Array.isArray(rawServerList)) rawServerList = [rawServerList];
 
 const konList = rawServerList
     .filter((kon) => validUrl.isWebUri(kon.url))
-    .map((kon) => ({ url: kon.url, prob: parseProbList(kon.prob) }))
-    .map((kon) => new Judger(kon.url, kon.prob));
+    .map((kon) => new Judger(kon.url, parseProbList(kon.prob)));
 
 export default {
     judgers: konList,
