@@ -1,5 +1,6 @@
 import multer from "multer";
 import mime from "mime";
+import { extname } from "path";
 
 import code from "../config/code";
 import contest from "../config/contest";
@@ -52,7 +53,7 @@ export const codeUpload = limitUpload(
  * @param {Object} file source code blob
  */
 function checkCodeType(file) {
-    const mimetype = mime.getType(file.originalname);
+    const mimetype = mime.getType(extname(file.originalname));
     return (
         contest.acceptMIME.includes(file.mimetype) && mimetype === file.mimetype
     );
