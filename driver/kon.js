@@ -26,8 +26,7 @@ export default class Judger {
             const status = response.status;
             if (status === 200) return true;
             else if (status === 503) return false;
-            // `${this.serverAddress} has inappropriate return.`
-            else return null;
+            else throw `${this.serverAddress} has inappropriate return.`;
         } catch (err) {
             throw err;
         }
@@ -130,7 +129,7 @@ export default class Judger {
             const response = await fetch(this.serverAddress + "/queue", {
                 mode: "no-cors",
                 cache: "no-cache",
-                timeout: 1000,
+                timeout: 500,
                 compress: true
             });
             const text = await response.text();
