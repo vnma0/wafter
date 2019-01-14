@@ -7,8 +7,9 @@ import { createReadStream } from "fs";
 
 // TODO: Make parent class
 export default class Judger {
-    constructor(serverAddress) {
-        this.serverAddress = serverAddress;
+    constructor(server_address, prob_list) {
+        this.serverAddress = server_address;
+        this.probList = prob_list;
     }
     /**
      * Part 1: checking status of availability of judger
@@ -112,8 +113,7 @@ export default class Judger {
                 compress: true
             });
             if (response.status === 503) throw "Server is not ready";
-            const json =
-                response.status === 200 ? await response.json() : [];
+            const json = response.status === 200 ? await response.json() : [];
             return json;
         } catch (err) {
             throw err;
