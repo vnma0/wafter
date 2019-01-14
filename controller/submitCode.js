@@ -120,5 +120,3 @@ export async function sendCode(source_code_path, user_id, prob_name) {
         throw err;
     }
 }
-
-console.log(getMinuteSpan());
