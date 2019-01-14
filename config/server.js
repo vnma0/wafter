@@ -33,6 +33,7 @@ try {
     throw new Error("Invalid contest file. See contest.sample.json");
 }
 
+probList = probList.map((x) => String(x).toUpperCase());
 const serverPORT = Number(process.env.PORT);
 
 export default {
