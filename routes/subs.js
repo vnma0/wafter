@@ -52,7 +52,8 @@ router.post(
     codeUpload,
     validateCode,
     (req, res) => {
-        sendCode(req.file.path, req.user._id, req.file.originalname);
+        const file = req.file;
+        sendCode(file.path, req.user._id, file.originalname, file.mimetype);
         res.sendStatus(200);
     }
 );

@@ -3,7 +3,7 @@ import { basename, extname } from "path";
 
 import kon from "../config/kon";
 import server from "../config/server";
-import { submitCode, updateSubmission } from "../data/database";
+import { newSubmission, updateSubmission } from "../data/database";
 
 /**
  * Parse Submission from kon.js for verdict
@@ -66,7 +66,7 @@ function getMinuteSpan() {
  * @param {String} user_id User's ID
  * @param {String} prob_name file's name
  */
-export async function sendCode(source_code_path, user_id, prob_name) {
+export async function sendCode(source_code_path, user_id, prob_name, mime) {
     prob_name = prob_name.toUpperCase();
 
     // TODO: Create lang map
@@ -82,11 +82,12 @@ export async function sendCode(source_code_path, user_id, prob_name) {
     // TODO: Handle empty availJudger
 
     try {
-        const sub_id = await submitCode(
+        const sub_id = await newSubmission(
             source_code_path,
             user_id,
             prob_id,
-            getMinuteSpan()
+            getMinuteSpan(),
+            mime
         );
 
         if (availJudger.length === 1)
