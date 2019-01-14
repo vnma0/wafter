@@ -57,18 +57,24 @@ function getVerdict(sub) {
  * Update submission status from log from kons'
  */
 export function reloadSubs() {
-    const judgerPromise = Judgers.map((judger) => judger.get());
-    Promise.all(judgerPromise)
-        .then((list) => [].concat.apply([], list))
-        .then((subs) => {
-            subs.forEach((sub) => {
-                const verdict = getVerdict(sub);
-                updateSubmission(sub.id, verdict, sub.finalScore, sub.tests);
-            });
-        })
-        .catch((err) => {
-            throw err;
-        });
+    Judgers.forEach((judger) => {
+        judger.get().then(
+            (coll) => {
+                coll.forEach((sub) => {
+                    const verdict = getVerdict(sub);
+                    updateSubmission(
+                        sub.id,
+                        verdict,
+                        sub.finalScore,
+                        sub.tests
+                    );
+                });
+            },
+            () => {
+                Console.log("Cannot get result");
+            }
+        );
+    });
 }
 
 /**
