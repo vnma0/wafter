@@ -7,8 +7,9 @@ import { createReadStream } from "fs";
 
 // TODO: Make parent class
 export default class Judger {
-    constructor(serverAddress) {
-        this.serverAddress = serverAddress;
+    constructor(server_address, prob_list) {
+        this.serverAddress = server_address;
+        this.probList = prob_list;
     }
     /**
      * Part 1: checking status of availability of judger
@@ -23,10 +24,12 @@ export default class Judger {
                 compress: true
             });
             const status = response.status;
-            if (status === 503) throw "Server is not ready";
-            return status === 200;
+            if (status === 200) return true;
+            else if (status === 503) return false;
+            else throw `${this.serverAddress} has inappropriate return.`;
         } catch (err) {
-            throw err;
+            if (err.name === "FetchError") return undefined;
+            else throw err;
         }
     }
 
@@ -112,8 +115,7 @@ export default class Judger {
                 compress: true
             });
             if (response.status === 503) throw "Server is not ready";
-            const json =
-                response.status === 200 ? await response.json() : [];
+            const json = response.status === 200 ? await response.json() : [];
             return json;
         } catch (err) {
             throw err;
@@ -128,15 +130,14 @@ export default class Judger {
             const response = await fetch(this.serverAddress + "/queue", {
                 mode: "no-cors",
                 cache: "no-cache",
-                timeout: 1000,
+                timeout: 500,
                 compress: true
             });
-            if (response.status === 503) throw "Server is not ready";
             const text = await response.text();
-            const num = Number(text);
-            return isNaN(num) ? -1 : num;
+            return Number(text);
         } catch (err) {
-            throw err;
+            if (err.name === "FetchError") return undefined;
+            else throw err;
         }
     }
 }

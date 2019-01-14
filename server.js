@@ -8,6 +8,7 @@ import bodyParser from "body-parser";
 
 import server from "./config/server";
 import passportConfig from "./controller/passportConfig";
+import initJudger from "./controller/initJudger";
 
 import info from "./routes/info";
 import subs from "./routes/subs";
@@ -15,6 +16,8 @@ import users from "./routes/users";
 import score from "./routes/score";
 
 passportConfig(passport);
+initJudger();
+
 const app = express();
 
 const PORT = server.port;

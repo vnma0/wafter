@@ -1,25 +1,33 @@
-import { readFileSync, existsSync, writeFileSync } from "fs";
+import { readFileSync, existsSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 
 import validUrl from "valid-url";
 
 import { cwd } from "./cwd";
 import Judger from "../driver/kon";
+import parseProbList from "../util/parseProbList";
 
-const konList = join(cwd, ".konlist");
+const konListFile = join(cwd, "kon.json");
 
-const taskFile = join(cwd, "Tasks.zip");
+// Require valid folder to work
+const taskFolder = join(cwd, "Tasks");
+
+if (!existsSync(konListFile)) mkdirSync(taskFolder);
 
 // Setup konList
-if (!existsSync(konList)) writeFileSync(konList, "");
+if (!existsSync(konListFile)) writeFileSync(konListFile, "[]");
 
 // TODO: Validate
-const serverList = readFileSync(konList, "utf8")
-    .split(/\r\n|\n|\r/)
-    .filter((s) => validUrl.isWebUri(s))
-    .map((kon) => new Judger(kon));
+let rawServerList = JSON.parse(readFileSync(konListFile, "utf8"));
+
+// Try manage error
+if (!Array.isArray(rawServerList)) rawServerList = [rawServerList];
+
+const konList = rawServerList
+    .filter((kon) => validUrl.isWebUri(kon.url))
+    .map((kon) => new Judger(kon.url, parseProbList(kon.prob)));
 
 export default {
-    judgers: serverList,
-    tasks: taskFile
+    judgers: konList,
+    tasks: taskFolder
 };

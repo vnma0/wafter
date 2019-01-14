@@ -6,9 +6,9 @@ import {
     readAllSubmissions,
     readUserSubmission
 } from "../data/database";
-import { auth } from "../middleware/auth";
+import auth from "../middleware/auth";
 import { codeUpload, validateCode } from "../middleware/upload";
-import { contestIsRunning } from "../middleware/time";
+import contestIsRunning from "../middleware/time";
 
 const router = express.Router();
 

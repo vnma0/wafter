@@ -1,43 +1,9 @@
-import zipdir from "zip-dir";
-import isZip from "is-zip";
-import { basename, extname, join } from "path";
-import { readFileSync } from "fs";
+import Console from "console";
+import { basename, extname } from "path";
 
-import { cwd } from "../config/cwd";
 import kon from "../config/kon";
-import { submitCode } from "../data/database";
-import { updateSubmission } from "../data/database";
-
-const Judgers = kon.judgers;
-
-/**
- * Zip task folder then send it to Judgers
- * @param {PathLike} task_folder path to folder contains task file
- */
-export function initJudgerFolder(task_folder) {
-    const arcPath = join(cwd, "Tasks.zip");
-    zipdir(task_folder, { saveTo: arcPath }, (err, buf) => {
-        if (err) throw err;
-        if (!isZip(buf)) throw Error("Invalid folder");
-        initJudger(arcPath);
-    });
-}
-
-/**
- * Send zipped task file to Judgers
- * @param {PathLike} taskZipPath path to folder contains task file
- */
-export function initJudger(taskZipPath) {
-    if (!isZip(readFileSync(taskZipPath)))
-        throw Error("Given file is not a zip");
-    const JudgePromise = Judgers.map((judger) => {
-        judger.clone(taskZipPath);
-    });
-    // NOTE: This require all server to work
-    // In case one server is down, this function will break
-    // TODO: Safety handling error
-    Promise.all(JudgePromise);
-}
+import server from "../config/server";
+import { submitCode, updateSubmission } from "../data/database";
 
 /**
  * Parse Submission from kon.js for verdict
@@ -64,18 +30,34 @@ function getVerdict(sub) {
  * Update submission status from log from kons'
  */
 export function reloadSubs() {
-    const judgerPromise = Judgers.map((judger) => judger.get());
-    Promise.all(judgerPromise)
-        .then((list) => [].concat.apply([], list))
-        .then((subs) => {
-            subs.forEach((sub) => {
-                const verdict = getVerdict(sub);
-                updateSubmission(sub.id, verdict, sub.finalScore, sub.tests);
-            });
-        })
-        .catch((err) => {
-            throw err;
-        });
+    kon.judgers.forEach((judger) => {
+        judger.get().then(
+            (coll) => {
+                coll.forEach((sub) => {
+                    const verdict = getVerdict(sub);
+                    updateSubmission(
+                        sub.id,
+                        verdict,
+                        sub.finalScore,
+                        sub.tests
+                    );
+                });
+            },
+            () => {
+                Console.log("Cannot get result");
+            }
+        );
+    });
+}
+
+/**
+ * Calculate minutes between startTime and now
+ * Especially used for calculating ACM
+ * @returns {Number} Minutes
+ */
+function getMinuteSpan() {
+    const diff = new Date() - server.contest.startTime;
+    return Math.floor(diff / 1000 / 60);
 }
 
 /**
@@ -85,22 +67,45 @@ export function reloadSubs() {
  * @param {String} prob_name file's name
  */
 export async function sendCode(source_code_path, user_id, prob_name) {
+    prob_name = prob_name.toUpperCase();
+
+    // TODO: Create lang map
+    const prob_ext = extname(prob_name);
+    const prob_id = basename(prob_name, prob_ext);
+
+    if (!server.contest.probList.includes(prob_name)) throw "Invalid prob_id";
+
+    const availJudger = kon.judgers.filter((kon) =>
+        kon.probList.includes(prob_name)
+    );
+
+    // TODO: Handle empty availJudger
+
     try {
-        prob_name = prob_name.toUpperCase();
-        const prob_id = basename(prob_name, extname(prob_name));
-        const sub_id = await submitCode(source_code_path, user_id, prob_id);
-        const qPromise = Judgers.map((judger) => judger.qLength());
+        const sub_id = await submitCode(
+            source_code_path,
+            user_id,
+            prob_id,
+            getMinuteSpan()
+        );
 
-        const judgersQ = await Promise.all(qPromise);
-        const judgerNum = judgersQ
-            .map((val, iter) => [val, iter])
-            .sort()
-            .shift()[1];
-        const judger = Judgers[judgerNum];
+        if (availJudger.length === 1)
+            availJudger[0].send(source_code_path, prob_name, sub_id);
+        else {
+            const qPromise = availJudger.map((judger) => judger.qLength());
 
-        judger.send(source_code_path, prob_name, sub_id).catch((err) => {
-            throw err;
-        });
+            const judgersQ = await Promise.all(qPromise);
+            const judgerNum = judgersQ
+                .map((val, iter) => [val, iter])
+                .filter((v) => v[0])
+                .sort()
+                .shift()[1];
+            const judger = kon.judgers[judgerNum];
+
+            judger.send(source_code_path, prob_name, sub_id);
+        }
+
+        // Temporary trigger
         setTimeout(() => reloadSubs(), 100);
     } catch (err) {
         throw err;

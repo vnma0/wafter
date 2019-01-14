@@ -8,5 +8,5 @@ upload/
 
 # Environment
 .env
-.konlist
+kon.json
 contest.json
