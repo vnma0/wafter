@@ -1,11 +1,12 @@
 import zipdir from "zip-dir";
 import isZip from "is-zip";
 import Console from "console";
-import { basename, extname, join } from "path";
+import { basename, extname } from "path";
 
 import kon from "../config/kon";
 import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
+import server from "../config/server";
 
 const Judgers = kon.judgers;
 
@@ -71,6 +72,16 @@ export function reloadSubs() {
 }
 
 /**
+ * Calculate minutes between startTime and now
+ * Especially used for calculating ACM
+ * @returns {Number} Minutes
+ */
+function getMinuteSpan() {
+    const diff = new Date() - server.contest.startTime;
+    return Math.floor(diff / 1000 / 60);
+}
+
+/**
  * Add submission to database then send part of it to Judger
  * @param {PathLike} source_code_path Path to source code
  * @param {String} user_id User's ID
@@ -80,7 +91,12 @@ export async function sendCode(source_code_path, user_id, prob_name) {
     try {
         prob_name = prob_name.toUpperCase();
         const prob_id = basename(prob_name, extname(prob_name));
-        const sub_id = await submitCode(source_code_path, user_id, prob_id);
+        const sub_id = await submitCode(
+            source_code_path,
+            user_id,
+            prob_id,
+            getMinuteSpan()
+        );
         const qPromise = Judgers.map((judger) => judger.qLength());
 
         const judgersQ = await Promise.all(qPromise);
@@ -98,3 +114,5 @@ export async function sendCode(source_code_path, user_id, prob_name) {
         throw err;
     }
 }
+
+console.log(getMinuteSpan());
