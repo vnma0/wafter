@@ -1,6 +1,6 @@
 import express from "express";
 
-import { auth } from "../middleware/auth";
+import auth from "../middleware/auth";
 import { GetProblemBestResult, GetTotalResult } from "../util/result";
 import server from "../config/server";
 

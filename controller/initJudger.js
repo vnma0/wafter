@@ -6,7 +6,7 @@ import kon from "../config/kon";
 /**
  * Zip task folder then send it to Judgers
  */
-function initJudger() {
+export default function initJudger() {
     const arcPath = "Tasks.zip";
     zipdir(kon.tasks, { saveTo: arcPath }, (err, buf) => {
         if (err) throw err;
@@ -24,5 +24,3 @@ function initJudger() {
         });
     });
 }
-
-export default initJudger;
