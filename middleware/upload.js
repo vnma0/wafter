@@ -4,7 +4,7 @@ import { join } from "path";
 
 import { cwd } from "../config/cwd";
 import code from "../config/code";
-import server from "../config/server";
+import contest from "../config/contest";
 
 /**
  * Multer middleware wrapper to limit upload size
@@ -57,7 +57,7 @@ export const codeUpload = limitUpload(
 function checkCodeType(file) {
     const mimetype = mime.getType(file.originalname);
     return (
-        server.acceptMIME.includes(file.mimetype) && mimetype === file.mimetype
+        contest.acceptMIME.includes(file.mimetype) && mimetype === file.mimetype
     );
 }
 

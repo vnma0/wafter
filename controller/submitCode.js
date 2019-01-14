@@ -2,7 +2,7 @@ import Console from "console";
 import { basename, extname } from "path";
 
 import kon from "../config/kon";
-import server from "../config/server";
+import contest from "../config/contest";
 import { newSubmission, updateSubmission } from "../data/database";
 
 /**
@@ -56,7 +56,7 @@ export function reloadSubs() {
  * @returns {Number} Minutes
  */
 function getMinuteSpan() {
-    const diff = new Date() - server.contest.startTime;
+    const diff = new Date() - contest.startTime;
     return Math.floor(diff / 1000 / 60);
 }
 
@@ -73,7 +73,7 @@ export async function sendCode(source_code_path, user_id, prob_name, mime) {
     const prob_ext = extname(prob_name);
     const prob_id = basename(prob_name, prob_ext);
 
-    if (!server.contest.probList.includes(prob_name)) throw "Invalid prob_id";
+    if (!contest.probList.includes(prob_name)) throw "Invalid prob_id";
 
     const availJudger = kon.judgers.filter((kon) =>
         kon.probList.includes(prob_name)

@@ -1,6 +1,6 @@
 import { bestSubmission } from "../data/database";
 import score from "./score";
-import server from "../config/server";
+import contest from "../config/contest";
 
 /**
  * Output correct result
@@ -9,7 +9,7 @@ import server from "../config/server";
  * @param {String} prob_id Problem's ID
  */
 export async function GetProblemBestResult(user_id, prob_id) {
-    const ctype = score[server.contest.mode];
+    const ctype = score[contest.mode];
     const bestResult = await bestSubmission(user_id, prob_id, ctype);
     const result = bestResult
         ? ctype.calc(bestResult)
