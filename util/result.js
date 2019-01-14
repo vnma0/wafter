@@ -27,5 +27,10 @@ export async function GetTotalResult(user_id, prob_list) {
         GetProblemBestResult(user_id, prob_id)
     );
     const totalResult = await Promise.all(resultPromises);
-    return totalResult;
+    const result = totalResult.reduce((map, obj, idx) => {
+        map[prob_list[idx]] = obj;
+        return map;
+    }, {});
+
+    return result;
 }
