@@ -24,6 +24,11 @@ try {
         throw new Error();
     if (!name || !mode) throw new Error();
     if (!score.hasOwnProperty(mode)) throw new Error();
+
+    startTime = new Date(...startTime);
+    endTime = new Date(...endTime);
+
+    if (startTime >= endTime) throw new Error();
 } catch (err) {
     throw new Error("Invalid contest file. See contest.sample.json");
 }
@@ -37,8 +42,8 @@ export default {
     contest: {
         // Change this to config contest time
         name: name,
-        startTime: new Date(...startTime),
-        endTime: new Date(...endTime),
+        startTime: startTime,
+        endTime: endTime,
         mode: mode,
         probList: probList
     },
