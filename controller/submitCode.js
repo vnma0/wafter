@@ -8,8 +8,6 @@ import { submitCode } from "../data/database";
 import { updateSubmission } from "../data/database";
 import server from "../config/server";
 
-const Judgers = kon.judgers;
-
 /**
  * Zip task folder then send it to Judgers
  */
@@ -18,7 +16,7 @@ export function initJudger() {
     zipdir(kon.tasks, { saveTo: arcPath }, (err, buf) => {
         if (err) throw err;
         if (!isZip(buf)) throw Error("Invalid folder");
-        Judgers.forEach((judger) => {
+        kon.judgers.forEach((judger) => {
             judger
                 .clone(arcPath)
                 .then((boo) => {
@@ -57,7 +55,7 @@ function getVerdict(sub) {
  * Update submission status from log from kons'
  */
 export function reloadSubs() {
-    Judgers.forEach((judger) => {
+    kon.judgers.forEach((judger) => {
         judger.get().then(
             (coll) => {
                 coll.forEach((sub) => {
@@ -102,7 +100,7 @@ export async function sendCode(source_code_path, user_id, prob_name) {
 
     if (!server.contest.probList.includes(prob_name)) throw "Invalid prob_id";
 
-    const availJudger = Judgers.filter((kon) =>
+    const availJudger = kon.judgers.filter((kon) =>
         kon.probList.includes(prob_name)
     );
 
@@ -127,7 +125,7 @@ export async function sendCode(source_code_path, user_id, prob_name) {
                 .filter((v) => v[0])
                 .sort()
                 .shift()[1];
-            const judger = Judgers[judgerNum];
+            const judger = kon.judgers[judgerNum];
 
             judger.send(source_code_path, prob_name, sub_id);
         }
