@@ -10,16 +10,26 @@ if (!existsSync(staticFolder)) mkdirSync(staticFolder);
 
 const contestConfig = "contest.json";
 
-let name, startTime, endTime, mode, probList;
+let name, startTime, endTime, mode, probList, acceptMIME;
 
 try {
     const contestObj = JSON.parse(readFileSync(contestConfig));
-    ({ name, startTime, endTime, mode, probList } = contestObj);
+    ({ name, startTime, endTime, mode, probList, acceptMIME } = contestObj);
+
+    // TODO: Move condition outside ?
+    if (acceptMIME === undefined)
+        acceptMIME = [
+            "text/x-c",
+            "text/x-pascal",
+            "text/x-java-source",
+            "text/x-script.python"
+        ];
 
     if (
         !Array.isArray(startTime) ||
         !Array.isArray(endTime) ||
-        !Array.isArray(probList)
+        !Array.isArray(probList) ||
+        !Array.isArray(acceptMIME)
     )
         throw new Error();
     if (!name || !mode) throw new Error();
@@ -46,7 +56,8 @@ export default {
         startTime: startTime,
         endTime: endTime,
         mode: mode,
-        probList: probList
+        probList: probList,
+        acceptMIME: acceptMIME
     },
     staticFolder: staticFolder
 };

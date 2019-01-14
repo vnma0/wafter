@@ -1,8 +1,10 @@
 import multer from "multer";
 import mime from "mime";
-import { cwd } from "../config/cwd";
 import { join } from "path";
-import { codeSizeLimit, acceptMIME } from "../config/code";
+
+import { cwd } from "../config/cwd";
+import code from "../config/code";
+import server from "../config/server";
 
 /**
  * Multer middleware wrapper to limit upload size
@@ -40,7 +42,7 @@ export const codeUpload = limitUpload(
     multer({
         dest: join(cwd, "upload/"),
         limits: {
-            fileSize: codeSizeLimit,
+            fileSize: code.sizeLimit,
             files: 1,
             parts: 1,
             preservePath: true
@@ -54,7 +56,9 @@ export const codeUpload = limitUpload(
  */
 function checkCodeType(file) {
     const mimetype = mime.getType(file.originalname);
-    return acceptMIME.includes(file.mimetype) && mimetype === file.mimetype;
+    return (
+        server.acceptMIME.includes(file.mimetype) && mimetype === file.mimetype
+    );
 }
 
 /**
