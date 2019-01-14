@@ -19,15 +19,15 @@ export function initJudger() {
         if (err) throw err;
         if (!isZip(buf)) throw Error("Invalid folder");
         Judgers.forEach((judger) => {
-            judger.clone(arcPath).then(
-                (boo) => {
+            judger
+                .clone(arcPath)
+                .then((boo) => {
                     if (!boo) throw Error();
                     Console.log(`Sucessfully cloned ${judger.serverAddress}]`);
-                },
-                () => {
+                })
+                .catch(() => {
                     Console.log(`Failed to clone ${judger.serverAddress}`);
-                }
-            );
+                });
         });
     });
 }
@@ -94,27 +94,45 @@ function getMinuteSpan() {
  * @param {String} prob_name file's name
  */
 export async function sendCode(source_code_path, user_id, prob_name) {
+    prob_name = prob_name.toUpperCase();
+
+    // TODO: Create lang map
+    const prob_ext = extname(prob_name);
+    const prob_id = basename(prob_name, prob_ext);
+
+    if (!server.contest.probList.includes(prob_name)) throw "Invalid prob_id";
+
+    const availJudger = Judgers.filter((kon) =>
+        kon.probList.includes(prob_name)
+    );
+
+    // TODO: Handle empty availJudger
+
     try {
-        prob_name = prob_name.toUpperCase();
-        const prob_id = basename(prob_name, extname(prob_name));
         const sub_id = await submitCode(
             source_code_path,
             user_id,
             prob_id,
             getMinuteSpan()
         );
-        const qPromise = Judgers.map((judger) => judger.qLength());
 
-        const judgersQ = await Promise.all(qPromise);
-        const judgerNum = judgersQ
-            .map((val, iter) => [val, iter])
-            .sort()
-            .shift()[1];
-        const judger = Judgers[judgerNum];
+        if (availJudger.length === 1)
+            availJudger[0].send(source_code_path, prob_name, sub_id);
+        else {
+            const qPromise = availJudger.map((judger) => judger.qLength());
 
-        judger.send(source_code_path, prob_name, sub_id).catch((err) => {
-            throw err;
-        });
+            const judgersQ = await Promise.all(qPromise);
+            const judgerNum = judgersQ
+                .map((val, iter) => [val, iter])
+                .filter((v) => v[0])
+                .sort()
+                .shift()[1];
+            const judger = Judgers[judgerNum];
+
+            judger.send(source_code_path, prob_name, sub_id);
+        }
+
+        // Temporary trigger
         setTimeout(() => reloadSubs(), 100);
     } catch (err) {
         throw err;
