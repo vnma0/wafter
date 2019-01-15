@@ -1,4 +1,4 @@
-import { bestSubmission, readAllUser } from "../data/database";
+import { bestSubmission, readAllUser, readUserByID } from "../data/database";
 import score from "./score";
 import contest from "../config/contest";
 
@@ -22,15 +22,20 @@ async function GetProblemBestResult(user_id, prob_id) {
  * @param {String} user_id User's ID
  * @param {Array} prob_list Problem list
  */
-async function GetTotalResult(user_id, prob_list) {
+async function GetUserResult(user_id, prob_list) {
+    const user = readUserByID(user_id);
     const resultPromises = prob_list.map((prob_id) =>
         GetProblemBestResult(user_id, prob_id)
     );
     const totalResult = await Promise.all(resultPromises);
-    const result = totalResult.reduce((map, obj, idx) => {
+    const getAll = totalResult.reduce((map, obj, idx) => {
         map[prob_list[idx]] = obj;
         return map;
     }, {});
+
+    const result = {};
+    const username = (await user).username;
+    result[username] = getAll;
 
     return result;
 }
@@ -43,20 +48,22 @@ async function GetTotalResult(user_id, prob_list) {
  */
 async function GetAllResult(prob_list) {
     const users = await readAllUser();
-    const getAll = await Promise.all(
-        users.map((x) => GetTotalResult(x.username, prob_list))
+    const result = await Promise.all(
+        users.map((x) => GetUserResult(x.user_id, prob_list))
     );
-
-    const result = getAll.reduce((map, obj, idx) => {
-        map[users[idx].username] = obj;
-        return map;
-    }, {});
 
     return result;
 }
 
-export default {
-    GetAllResult,
-    GetTotalResult,
-    GetProblemBestResult
-};
+/**
+ * Generate scoreboard
+ * @param {String} user_id User's ID
+ * @param {Array} prob_list Problem list
+ */
+async function scoreboard(user_id) {
+    const ctype = score[contest.mode];
+    if (ctype.allowScoreboard) return GetAllResult(contest.probList);
+    else return GetUserResult(user_id, contest.probList).then((v) => [v]);
+}
+
+export default scoreboard;
