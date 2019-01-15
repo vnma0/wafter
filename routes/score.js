@@ -2,12 +2,12 @@ import express from "express";
 
 import auth from "../middleware/auth";
 import { GetProblemBestResult, GetTotalResult } from "../util/result";
-import server from "../config/server";
+import contest from "../config/contest";
 
 const router = express.Router();
 
 router.get("/", auth, (req, res) => {
-    GetTotalResult(req.user._id, server.contest.probList).then(
+    GetTotalResult(req.user._id, contest.probList).then(
         (result) => res.send(result),
         () => res.sendStatus(400)
     );

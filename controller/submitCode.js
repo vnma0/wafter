@@ -2,8 +2,8 @@ import Console from "console";
 import { basename, extname } from "path";
 
 import kon from "../config/kon";
-import server from "../config/server";
-import { submitCode, updateSubmission } from "../data/database";
+import contest from "../config/contest";
+import { newSubmission, updateSubmission } from "../data/database";
 
 /**
  * Parse Submission from kon.js for verdict
@@ -56,7 +56,7 @@ export function reloadSubs() {
  * @returns {Number} Minutes
  */
 function getMinuteSpan() {
-    const diff = new Date() - server.contest.startTime;
+    const diff = new Date() - contest.startTime;
     return Math.floor(diff / 1000 / 60);
 }
 
@@ -66,14 +66,14 @@ function getMinuteSpan() {
  * @param {String} user_id User's ID
  * @param {String} prob_name file's name
  */
-export async function sendCode(source_code_path, user_id, prob_name) {
+export async function sendCode(source_code_path, user_id, prob_name, mime) {
     prob_name = prob_name.toUpperCase();
 
     // TODO: Create lang map
     const prob_ext = extname(prob_name);
     const prob_id = basename(prob_name, prob_ext);
 
-    if (!server.contest.probList.includes(prob_name)) throw "Invalid prob_id";
+    if (!contest.probList.includes(prob_id)) throw "Invalid prob_id";
 
     const availJudger = kon.judgers.filter((kon) =>
         kon.probList.includes(prob_name)
@@ -82,11 +82,12 @@ export async function sendCode(source_code_path, user_id, prob_name) {
     // TODO: Handle empty availJudger
 
     try {
-        const sub_id = await submitCode(
+        const sub_id = await newSubmission(
             source_code_path,
             user_id,
             prob_id,
-            getMinuteSpan()
+            getMinuteSpan(),
+            mime
         );
 
         if (availJudger.length === 1)
@@ -95,11 +96,14 @@ export async function sendCode(source_code_path, user_id, prob_name) {
             const qPromise = availJudger.map((judger) => judger.qLength());
 
             const judgersQ = await Promise.all(qPromise);
-            const judgerNum = judgersQ
+
+            const availKon = judgersQ
                 .map((val, iter) => [val, iter])
-                .filter((v) => v[0])
-                .sort()
-                .shift()[1];
+                .filter((v) => v[0]);
+
+            if (!availKon.length) throw new Error("No available Kon");
+
+            const judgerNum = availKon.sort().shift()[1];
             const judger = kon.judgers[judgerNum];
 
             judger.send(source_code_path, prob_name, sub_id);

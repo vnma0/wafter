@@ -1,11 +1,11 @@
 import express from "express";
 
-import server from "../config/server";
+import contest from "../config/contest";
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-    res.json(server.contest);
+    res.json(contest);
 });
 
 export default router;

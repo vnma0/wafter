@@ -1,7 +1,9 @@
 import multer from "multer";
-import { cwd } from "../config/cwd";
-import { join } from "path";
-import { codeSizeLimit, acceptMIME } from "../config/code";
+import mime from "mime";
+import { extname } from "path";
+
+import code from "../config/code";
+import contest from "../config/contest";
 
 /**
  * Multer middleware wrapper to limit upload size
@@ -35,14 +37,13 @@ function limitUpload(multerMid) {
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-export const codeUpload = limitUpload(
+const codeUpload = limitUpload(
     multer({
-        dest: join(cwd, "upload/"),
+        dest: code.uploadFolder,
         limits: {
-            fileSize: codeSizeLimit,
+            fileSize: code.sizeLimit,
             files: 1,
-            parts: 1,
-            preservePath: true
+            parts: 1
         }
     }).single("code")
 );
@@ -52,7 +53,10 @@ export const codeUpload = limitUpload(
  * @param {Object} file source code blob
  */
 function checkCodeType(file) {
-    return acceptMIME.includes(file.mimetype);
+    const mimetype = mime.getType(extname(file.originalname));
+    return (
+        contest.acceptMIME.includes(file.mimetype) && mimetype === file.mimetype
+    );
 }
 
 /**
@@ -64,7 +68,7 @@ function checkCodeType(file) {
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-export function validateCode(req, res, next) {
+function validateCode(req, res, next) {
     const code = req.file;
     // Check for invalid code
     if (!code) res.sendStatus(400);
@@ -73,3 +77,5 @@ export function validateCode(req, res, next) {
         else next();
     }
 }
+
+export default [codeUpload, validateCode];

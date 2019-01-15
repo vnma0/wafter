@@ -47,9 +47,9 @@ describe("database", function() {
         });
     });
 
-    describe("submitCode", function() {
+    describe("newSubmission", function() {
         it("should be submitting code", function() {
-            return db.submitCode(sampleCode, sampleID, sampleProb, 96).then(
+            return db.newSubmission(sampleCode, sampleID, sampleProb, 96).then(
                 (id) => {
                     sampleCodeID = id;
                 },
@@ -89,9 +89,9 @@ describe("database", function() {
         });
     });
 
-    describe("submitCode", function() {
+    describe("newSubmission", function() {
         it("should be submitting another code", function() {
-            return db.submitCode(sampleCode, sampleID, sampleProb, 101).then(
+            return db.newSubmission(sampleCode, sampleID, sampleProb, 101).then(
                 (id) => {
                     sampleCodeID = id;
                 },

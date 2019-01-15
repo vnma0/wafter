@@ -1,11 +1,11 @@
-import server from "../config/server";
+import contest from "../config/contest";
 
 /**
  * parseProbList
  * @param {Array} obj Array of problem included in kon.json
  */
 function parseProbList(obj) {
-    const probList = server.contest.probList;
+    const probList = contest.probList;
     if (obj === undefined) return probList;
 
     if (!Array.isArray(obj) || !obj) return [];
