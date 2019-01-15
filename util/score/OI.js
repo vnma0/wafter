@@ -29,5 +29,6 @@ const acceptedStatus = ["AC", "MLE", "TLE", "RTE", "WA"];
 export default {
     calc,
     sort,
-    acceptedStatus
+    acceptedStatus,
+    allowScoreboard: false
 };
