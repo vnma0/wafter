@@ -10,10 +10,14 @@ let name, startTime, endTime, mode, probList, acceptMIME;
 try {
     contestObj = JSON.parse(readFileSync(contestConfig));
 } catch (err) {
-    if (err.code === "ENOENT")
+    if (err.code === "ENOENT") {
         writeFileSync(contestConfig, JSON.stringify(sampleContest, null, 4));
+        throw new Error(
+            "No contest file found. Wafter just created a sample one for you"
+        );
+    }
 
-    throw new Error(`Cannot read contest file (${contestConfig}).`);
+    throw new Error(`Cannot read contest file. (${contestConfig}).`);
 }
 
 try {
