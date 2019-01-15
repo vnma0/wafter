@@ -7,7 +7,7 @@ import {
     readUserSubmission
 } from "../data/database";
 import auth from "../middleware/auth";
-import { codeUpload, validateCode } from "../middleware/upload";
+import upload from "../middleware/upload";
 import contestIsRunning from "../middleware/time";
 
 const router = express.Router();
@@ -45,21 +45,12 @@ router.get("/:id", auth, (req, res) => {
     );
 });
 
-router.post(
-    "/",
-    auth,
-    contestIsRunning,
-    codeUpload,
-    validateCode,
-    (req, res) => {
-        const file = req.file;
-        sendCode(
-            file.path,
-            req.user._id,
-            file.originalname,
-            file.mimetype
-        ).then(() => res.sendStatus(200), () => res.sendStatus(500));
-    }
-);
+router.post("/", auth, contestIsRunning, upload, (req, res) => {
+    const file = req.file;
+    sendCode(file.path, req.user._id, file.originalname, file.mimetype).then(
+        () => res.sendStatus(200),
+        () => res.sendStatus(500)
+    );
+});
 
 export default router;

@@ -37,7 +37,7 @@ function limitUpload(multerMid) {
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-export const codeUpload = limitUpload(
+const codeUpload = limitUpload(
     multer({
         dest: code.uploadFolder,
         limits: {
@@ -68,7 +68,7 @@ function checkCodeType(file) {
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-export function validateCode(req, res, next) {
+function validateCode(req, res, next) {
     const code = req.file;
     // Check for invalid code
     if (!code) res.sendStatus(400);
@@ -77,3 +77,5 @@ export function validateCode(req, res, next) {
         else next();
     }
 }
+
+export default [codeUpload, validateCode];
