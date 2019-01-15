@@ -1,16 +1,17 @@
-var Datastore = require("nedb"),
-    db = new Datastore({ autoload: true });
-
 import bcrypt from "bcryptjs";
 import { join } from "path";
 import { cwd } from "../config/cwd";
+import Datastore from "nedb";
 
-db = {};
-db.users = new Datastore(join(cwd, "data", "users.db"));
-db.submissions = new Datastore(join(cwd, "data", "submissions.db"));
-
-db.users.loadDatabase();
-db.submissions.loadDatabase();
+let db = {};
+db.users = new Datastore({
+    filename: join(cwd, "data", "users.db"),
+    autoload: true
+});
+db.submissions = new Datastore({
+    filename: join("data", "submissions.db"),
+    autoload: true
+});
 
 /**
  * User Schema Object

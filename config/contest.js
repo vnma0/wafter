@@ -1,12 +1,26 @@
-import { readFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
+import sampleContest from "./sampleContest";
 import score from "../util/score";
 
 const contestConfig = "contest.json";
 
+let contestObj;
 let name, startTime, endTime, mode, probList, acceptMIME;
 
 try {
-    const contestObj = JSON.parse(readFileSync(contestConfig));
+    contestObj = JSON.parse(readFileSync(contestConfig));
+} catch (err) {
+    if (err.code === "ENOENT") {
+        writeFileSync(contestConfig, JSON.stringify(sampleContest, null, 4));
+        throw new Error(
+            "No contest file found. Wafter just created a sample one for you"
+        );
+    }
+
+    throw new Error(`Cannot read contest file. (${contestConfig}).`);
+}
+
+try {
     ({ name, startTime, endTime, mode, probList, acceptMIME } = contestObj);
 
     // TODO: Move condition outside ?
@@ -33,9 +47,8 @@ try {
 
     if (startTime >= endTime) throw new Error();
 } catch (err) {
-    throw new Error("Invalid contest file. See contest.sample.json");
+    throw new Error(`Invalid contest file (${contestConfig})`);
 }
-
 
 probList = probList.map((x) => String(x).toUpperCase());
 
@@ -47,4 +60,4 @@ export default {
     mode: mode,
     probList: probList,
     acceptMIME: acceptMIME
-}
+};

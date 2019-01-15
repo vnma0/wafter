@@ -1,9 +1,7 @@
 import multer from "multer";
 import mime from "mime";
-import { join } from "path";
 import { extname } from "path";
 
-import { cwd } from "../config/cwd";
 import code from "../config/code";
 import contest from "../config/contest";
 
@@ -39,14 +37,13 @@ function limitUpload(multerMid) {
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-export const codeUpload = limitUpload(
+const codeUpload = limitUpload(
     multer({
-        dest: join(cwd, "upload/"),
+        dest: code.uploadFolder,
         limits: {
             fileSize: code.sizeLimit,
             files: 1,
-            parts: 1,
-            preservePath: true
+            parts: 1
         }
     }).single("code")
 );
@@ -71,7 +68,7 @@ function checkCodeType(file) {
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-export function validateCode(req, res, next) {
+function validateCode(req, res, next) {
     const code = req.file;
     // Check for invalid code
     if (!code) res.sendStatus(400);
@@ -80,3 +77,5 @@ export function validateCode(req, res, next) {
         else next();
     }
 }
+
+export default [codeUpload, validateCode];
