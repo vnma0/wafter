@@ -73,7 +73,7 @@ export async function sendCode(source_code_path, user_id, prob_name, mime) {
     const prob_ext = extname(prob_name);
     const prob_id = basename(prob_name, prob_ext);
 
-    if (!contest.probList.includes(prob_name)) throw "Invalid prob_id";
+    if (!contest.probList.includes(prob_id)) throw "Invalid prob_id";
 
     const availJudger = kon.judgers.filter((kon) =>
         kon.probList.includes(prob_name)
@@ -96,11 +96,14 @@ export async function sendCode(source_code_path, user_id, prob_name, mime) {
             const qPromise = availJudger.map((judger) => judger.qLength());
 
             const judgersQ = await Promise.all(qPromise);
-            const judgerNum = judgersQ
+
+            const availKon = judgersQ
                 .map((val, iter) => [val, iter])
-                .filter((v) => v[0])
-                .sort()
-                .shift()[1];
+                .filter((v) => v[0]);
+
+            if (!availKon.length) throw new Error("No available Kon");
+
+            const judgerNum = availKon.sort().shift()[1];
             const judger = kon.judgers[judgerNum];
 
             judger.send(source_code_path, prob_name, sub_id);
