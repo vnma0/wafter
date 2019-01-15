@@ -1,6 +1,5 @@
 import multer from "multer";
-import mime from "mime";
-import { extname } from "path";
+import { isBinaryFileSync } from "isbinaryfile";
 
 import code from "../config/code";
 import contest from "../config/contest";
@@ -53,10 +52,7 @@ const codeUpload = limitUpload(
  * @param {Object} file source code blob
  */
 function checkCodeType(file) {
-    const mimetype = mime.getType(extname(file.originalname));
-    return (
-        contest.acceptMIME.includes(file.mimetype) && mimetype === file.mimetype
-    );
+    return !isBinaryFileSync(file.path);
 }
 
 /**
