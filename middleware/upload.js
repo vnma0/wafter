@@ -48,7 +48,7 @@ const codeUpload = limitUpload(
 );
 
 /**
- * Check if given file is a valid source code via MIME
+ * Check if given file is a valid source code by check if it's binary or not
  * @param {Object} file source code blob
  */
 function checkCodeType(file) {
