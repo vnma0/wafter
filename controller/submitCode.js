@@ -66,7 +66,7 @@ function getMinuteSpan() {
  * @param {String} user_id User's ID
  * @param {String} prob_name file's name
  */
-export async function sendCode(source_code_path, user_id, prob_name, mime) {
+export async function sendCode(source_code_path, user_id, prob_name) {
     prob_name = prob_name.toUpperCase();
 
     // TODO: Create lang map
@@ -87,7 +87,7 @@ export async function sendCode(source_code_path, user_id, prob_name, mime) {
             user_id,
             prob_id,
             getMinuteSpan(),
-            mime
+            prob_ext
         );
 
         if (availJudger.length === 1)

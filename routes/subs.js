@@ -47,7 +47,7 @@ router.get("/:id", auth, (req, res) => {
 
 router.post("/", auth, contestIsRunning, upload, (req, res) => {
     const file = req.file;
-    sendCode(file.path, req.user._id, file.originalname, file.mimetype).then(
+    sendCode(file.path, req.user._id, file.originalname).then(
         () => res.sendStatus(200),
         () => res.sendStatus(500)
     );
