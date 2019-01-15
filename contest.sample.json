@@ -3,11 +3,5 @@
     "startTime": [1970, 0, 1, 0, 0],
     "endTime": [1970, 0, 1, 1, 0],
     "mode": "OI",
-    "probList": ["LARES", "GCD"],
-    "acceptMIME": [
-        "text/x-c",
-        "text/x-pascal",
-        "text/x-java-source",
-        "text/x-script.python"
-    ]
+    "probList": ["LARES", "GCD"]
 }
