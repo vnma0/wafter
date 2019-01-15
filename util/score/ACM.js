@@ -32,5 +32,6 @@ const acceptedStatus = ["AC"];
 export default {
     calc,
     sort,
-    acceptedStatus
+    acceptedStatus,
+    allowScoreboard: true
 };
