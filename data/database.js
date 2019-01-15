@@ -223,6 +223,7 @@ export async function updateUser(
 /**
  * @typedef {Object} ReturnSubmission
  * @property {String} _id Submission's ID
+ * @property {Number} ext Source code's extension
  * @property {String} status Submission's Status
  * @property {Date} date Submission's Date
  * @property {String} user_id Submission's User's ID
@@ -319,6 +320,7 @@ export function readUserSubmission(user_id) {
  * @param {String} user_id User's ID
  * @param {String} prob_id Problem's ID
  * @param {Number} tpen Submission's penalty
+ * @param {Number} ext Source code's extension
  * @returns {Promise<String>} Submission's ID if success
  */
 export async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
