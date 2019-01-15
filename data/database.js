@@ -210,6 +210,7 @@ export async function updateUser(
 //  * Submission Schema Object
 //  * _id:             Submission's ID
 //  * source_code:     Source code path
+//  * ext:             Source code extension
 //  * status:          Submission Status
 //  * date:            Submission Date (Db first receive)
 //  * user_id:         User's ID of submission
@@ -240,7 +241,7 @@ export function readAllSubmissions() {
         db.submissions.find(
             {},
             {
-                mime: 1,
+                ext: 1,
                 status: 1,
                 date: 1,
                 user_id: 1,
@@ -267,7 +268,7 @@ export function readSubmission(sub_id) {
         db.submissions.findOne(
             { _id: sub_id },
             {
-                mime: 1,
+                ext: 1,
                 status: 1,
                 date: 1,
                 user_id: 1,
@@ -295,7 +296,7 @@ export function readUserSubmission(user_id) {
         db.submissions.find(
             { user_id: user_id },
             {
-                mime: 1,
+                ext: 1,
                 status: 1,
                 date: 1,
                 user_id: 1,
@@ -320,14 +321,14 @@ export function readUserSubmission(user_id) {
  * @param {Number} tpen Submission's penalty
  * @returns {Promise<String>} Submission's ID if success
  */
-export async function newSubmission(source_code, user_id, prob_id, tpen, mime) {
+export async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
     await readUserByID(user_id);
     return new Promise((resolve, reject) => {
         db.submissions.insert(
             [
                 {
                     source_code,
-                    mime,
+                    ext,
                     status: "Pending",
                     date: new Date(),
                     user_id,
