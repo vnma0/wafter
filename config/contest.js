@@ -5,7 +5,7 @@ import score from "../util/score";
 const contestConfig = "contest.json";
 
 let contestObj;
-let name, startTime, endTime, mode, probList;
+let name, startTime, endTime, mode, probList, allowedCodeExt;
 
 try {
     contestObj = JSON.parse(readFileSync(contestConfig));
@@ -23,12 +23,14 @@ try {
 try {
     ({ name, startTime, endTime, mode, probList } = contestObj);
 
-    // TODO: Filter Extension ?
+    // TODO: Add allowedCodeExt to contest.json
+    allowedCodeExt = [".C", ".CPP", ".PY", ".JAVA"];
 
     if (
         !Array.isArray(startTime) ||
         !Array.isArray(endTime) ||
-        !Array.isArray(probList)
+        !Array.isArray(probList) ||
+        !Array.isArray(allowedCodeExt)
     )
         throw new Error();
     if (!name || !mode) throw new Error();
@@ -50,5 +52,6 @@ export default {
     startTime: startTime,
     endTime: endTime,
     mode: mode,
-    probList: probList
+    probList: probList,
+    allowedCodeExt: allowedCodeExt
 };
