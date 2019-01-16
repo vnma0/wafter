@@ -6,7 +6,8 @@
   "scripts": {
     "start": "babel-node server.js",
     "test": "mocha --require @babel/register",
-    "dev": "nodemon --exec npm start"
+    "dev": "nodemon --exec npm start",
+    "newuser": "babel-node scripts/addUser.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "node-fetch": "^2.3.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "readline-sync": "^1.4.9",
     "uuid": "^3.3.2",
     "valid-url": "^1.0.9",
     "zip-dir": "^1.0.2"
