@@ -76,7 +76,7 @@ export async function sendCode(source_code_path, user_id, prob_name, mime) {
     if (!contest.probList.includes(prob_id)) throw "Invalid prob_id";
 
     const availJudger = kon.judgers.filter((kon) =>
-        kon.probList.includes(prob_name)
+        kon.probList.includes(prob_id)
     );
 
     // TODO: Handle empty availJudger
@@ -97,20 +97,20 @@ export async function sendCode(source_code_path, user_id, prob_name, mime) {
 
             const judgersQ = await Promise.all(qPromise);
 
+            Console.log(judgersQ);
             const availKon = judgersQ
                 .map((val, iter) => [val, iter])
-                .filter((v) => v[0]);
-
+                .filter((v) => !isNaN(v[0]));
             if (!availKon.length) throw new Error("No available Kon");
 
-            const judgerNum = availKon.sort().shift()[1];
+            const judgerNum = availKon.sort((a, b) => a[0] - b[0]).shift()[1];
             const judger = kon.judgers[judgerNum];
 
             judger.send(source_code_path, prob_name, sub_id);
         }
 
         // Temporary trigger
-        setTimeout(() => reloadSubs(), 100);
+        reloadSubs();
     } catch (err) {
         throw err;
     }
