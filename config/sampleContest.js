@@ -17,5 +17,6 @@ export default {
     startTime: sampleStart,
     endTime: sampleEnd,
     mode: "OI",
-    probList: []
+    probList: [],
+    allowedCodeExt: [".C", ".CPP", ".PY", ".JAVA", ".PAS"]
 };

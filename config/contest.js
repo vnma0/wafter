@@ -21,10 +21,11 @@ try {
 }
 
 try {
-    ({ name, startTime, endTime, mode, probList } = contestObj);
+    ({ name, startTime, endTime, mode, probList, allowedCodeExt } = contestObj);
 
     // TODO: Add allowedCodeExt to contest.json
-    allowedCodeExt = [".C", ".CPP", ".PY", ".JAVA"];
+    if (allowedCodeExt === undefined)
+        allowedCodeExt = sampleContest.allowedCodeExt;
 
     if (
         !Array.isArray(startTime) ||
