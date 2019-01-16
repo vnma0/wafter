@@ -23,7 +23,6 @@ try {
 try {
     ({ name, startTime, endTime, mode, probList, allowedCodeExt } = contestObj);
 
-    // TODO: Add allowedCodeExt to contest.json
     if (allowedCodeExt === undefined)
         allowedCodeExt = sampleContest.allowedCodeExt;
 
