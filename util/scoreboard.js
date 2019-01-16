@@ -33,11 +33,12 @@ async function GetUserResult(user_id, prob_list) {
         return map;
     }, {});
 
-    const result = {};
     const username = (await user).username;
-    result[username] = getAll;
 
-    return result;
+    return {
+        name: username,
+        result: getAll
+    };
 }
 
 /**
@@ -49,7 +50,7 @@ async function GetUserResult(user_id, prob_list) {
 async function GetAllResult(prob_list) {
     const users = await readAllUser();
     const result = await Promise.all(
-        users.map((x) => GetUserResult(x.user_id, prob_list))
+        users.map((x) => GetUserResult(x._id, prob_list))
     );
 
     return result;
