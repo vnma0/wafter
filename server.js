@@ -23,7 +23,7 @@ const app = express();
 const PORT = server.port;
 
 app.use(helmet());
-app.use(morgan("tiny"));
+app.use(morgan("short"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     session({
