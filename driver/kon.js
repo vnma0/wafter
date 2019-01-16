@@ -1,4 +1,3 @@
-import "@babel/polyfill";
 import fetch from "node-fetch";
 import FormData from "form-data";
 import { createReadStream } from "fs";
