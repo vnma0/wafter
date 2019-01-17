@@ -28,6 +28,11 @@ async function GetUserResult(user_id, prob_list) {
         GetProblemBestResult(user_id, prob_id)
     );
     const totalResult = await Promise.all(resultPromises);
+    let countAC = 0;
+    const totalScore = totalResult.reduce((score, prob) => {
+        if (prob.pri !== null) ++countAC;
+        return score + prob.pri;
+    }, 0);
     const getAll = totalResult.reduce((map, obj, idx) => {
         map[prob_list[idx]] = obj;
         return map;
@@ -37,6 +42,8 @@ async function GetUserResult(user_id, prob_list) {
 
     return {
         name: username,
+        score: totalScore,
+        aced: countAC,
         result: getAll
     };
 }
@@ -63,7 +70,10 @@ async function GetAllResult(prob_list) {
  */
 async function scoreboard(user_id) {
     const ctype = score[contest.mode];
-    if (ctype.allowScoreboard) return GetAllResult(contest.probList);
+    if (ctype.allowScoreboard)
+        return GetAllResult(contest.probList).then((v) =>
+            v.sort(ctype.sortFun)
+        );
     else return GetUserResult(user_id, contest.probList).then((v) => [v]);
 }
 

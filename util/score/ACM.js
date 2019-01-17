@@ -24,6 +24,16 @@ function sort(a, b) {
 }
 
 /**
+ * Sort by ACed problem, then penalty
+ * @param {Score} a 
+ * @param {Score} b 
+ */
+function sortFun(a, b) {
+    if (a.aced !== b.aced) return b.aced - a.aced;
+    else return a.score - b.score;
+}
+
+/**
  * Array of accepted Status
  * bestSubmission use this to filter what is "best"
  */
@@ -33,5 +43,6 @@ export default {
     calc,
     sort,
     acceptedStatus,
-    allowScoreboard: true
+    allowScoreboard: true,
+    sortFun
 };

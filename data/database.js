@@ -253,7 +253,7 @@ export function readAllSubmissions() {
             },
             function(err, docs) {
                 if (err) reject(err);
-                else resolve(docs);
+                else resolve(docs.sort((a, b) => b.date - a.date));
             }
         );
     });
@@ -308,7 +308,7 @@ export function readUserSubmission(user_id) {
             },
             function(err, docs) {
                 if (err) reject(err);
-                else resolve(docs);
+                else resolve(docs.sort((a, b) => b.date - a.date));
             }
         );
     });
