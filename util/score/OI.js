@@ -39,6 +39,6 @@ export default {
     calc,
     sort,
     acceptedStatus,
-    allowScoreboard: false,
+    allowScoreboard: true,
     sortFun
 };

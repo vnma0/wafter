@@ -8,10 +8,12 @@ db.users = new Datastore({
     filename: join(cwd, "data", "users.db"),
     autoload: true
 });
+db.users.persistence.setAutocompactionInterval(5000);
 db.submissions = new Datastore({
     filename: join("data", "submissions.db"),
     autoload: true
 });
+db.submissions.persistence.setAutocompactionInterval(5000);
 
 /**
  * User Schema Object
@@ -355,8 +357,11 @@ export async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
  * @param {Number} score score
  */
 export async function updateSubmission(sub_id, new_verdict, score, tests) {
-    const doc = await readSubmission(sub_id);
-    if (doc.status !== "Pending") throw "Submission was updated";
+    try {
+        await readSubmission(sub_id);
+    } catch (err) {
+        throw new Error("Incorrect reference: " + sub_id);
+    }
     return new Promise((resolve, reject) => {
         db.submissions.update(
             { _id: sub_id },

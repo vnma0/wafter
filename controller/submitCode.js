@@ -40,7 +40,7 @@ export function reloadSubs() {
                         verdict,
                         sub.finalScore,
                         sub.tests
-                    );
+                    ).catch((err) => Console.log(err.message));
                 });
             },
             () => {
@@ -97,12 +97,13 @@ export async function sendCode(source_code_path, user_id, prob_name) {
 
             const judgersQ = await Promise.all(qPromise);
 
-            Console.log(judgersQ);
             const availKon = judgersQ
                 .map((val, iter) => [val, iter])
                 .filter((v) => !isNaN(v[0]));
+
             if (!availKon.length) throw new Error("No available Kon");
 
+            Console.log(availKon);
             const judgerNum = availKon.sort((a, b) => a[0] - b[0]).shift()[1];
             const judger = kon.judgers[judgerNum];
 

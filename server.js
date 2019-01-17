@@ -39,7 +39,7 @@ app.use("/info", info);
 app.use("/subs", subs);
 app.use("/users", users);
 app.use("/score", score);
-app.use("/static", express.static(server.staticFolder));
+app.use("/", express.static(server.staticFolder));
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
