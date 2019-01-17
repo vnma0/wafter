@@ -4,6 +4,7 @@ package-lock.json
 
 # Runtime
 upload/
+static/
 **/*.db
 
 # Environment
