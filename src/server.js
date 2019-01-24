@@ -1,3 +1,5 @@
+import "@babel/polyfill";
+
 import Console from "console";
 import express from "express";
 import morgan from "morgan";
