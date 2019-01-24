@@ -2,12 +2,12 @@
   "name": "wafter",
   "version": "0.0.1",
   "description": "Mirai's Backend",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "build": "babel src/ -d dist",
     "start": "npm run build && node dist/server.js",
     "test": "mocha --require @babel/register",
-    "dev": "nodemon --exec babel-node server.js"
+    "dev": "nodemon --exec babel-node src/server.js"
   },
   "repository": {
     "type": "git",
