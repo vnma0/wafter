@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { join } from "path";
-import { cwd } from "../config/cwd";
+import cwd from "../config/cwd";
 import Datastore from "nedb";
 
 let db = {};
