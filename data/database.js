@@ -92,12 +92,18 @@ export async function newUser(username, pass, isAdmin = false) {
  * Retrieve list of users in database
  * @returns {Promise} Array of user if success
  */
-export function readAllUser() {
+export function readAllUser(includeAdmin = false) {
+    let isAdminSchema = [false];
+    if (includeAdmin) isAdminSchema.push(true);
     return new Promise((resolve, reject) => {
-        db.users.find({}, { username: 1, isAdmin: 1 }, function(err, docs) {
-            if (err) reject(err);
-            else resolve(docs);
-        });
+        db.users.find(
+            { isAdmin: { $in: isAdminSchema } },
+            { username: 1, isAdmin: 1 },
+            function(err, docs) {
+                if (err) reject(err);
+                else resolve(docs);
+            }
+        );
     });
 }
 
