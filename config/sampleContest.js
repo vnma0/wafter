@@ -12,18 +12,11 @@ let sampleEnd = [
     now.getHours() + 2
 ];
 
-const acceptMIME = [
-    "text/x-c",
-    "text/x-pascal",
-    "text/x-java-source",
-    "text/x-script.python"
-];
-
 export default {
     name: "Sample Contest",
     startTime: sampleStart,
     endTime: sampleEnd,
     mode: "OI",
     probList: [],
-    acceptMIME: acceptMIME
+    allowedCodeExt: [".C", ".CPP", ".PY", ".JAVA", ".PAS"]
 };

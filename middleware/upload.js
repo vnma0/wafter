@@ -1,6 +1,6 @@
 import multer from "multer";
-import mime from "mime";
-import { extname } from "path";
+import { isBinaryFileSync } from "isbinaryfile";
+import { extname, basename } from "path";
 
 import code from "../config/code";
 import contest from "../config/contest";
@@ -49,14 +49,26 @@ const codeUpload = limitUpload(
 );
 
 /**
- * Check if given file is a valid source code via MIME
+ * Check if given file is a valid source code by check if it's binary or not
  * @param {Object} file source code blob
  */
 function checkCodeType(file) {
-    const mimetype = mime.getType(extname(file.originalname));
-    return (
-        contest.acceptMIME.includes(file.mimetype) && mimetype === file.mimetype
-    );
+    return !isBinaryFileSync(file.path);
+}
+
+/**
+ * Check if given file is written in correct extension and problem id
+ * @param {Object} file
+ */
+function isCorrectFile(file) {
+    const name = file.originalname.toUpperCase();
+    const ext = extname(name);
+    const prob_id = basename(name, ext);
+
+    const isAllowedExt = contest.allowedCodeExt.includes(ext);
+    const isAllowedProbId = contest.probList.includes(prob_id);
+
+    return isAllowedExt && isAllowedProbId;
 }
 
 /**
@@ -73,8 +85,8 @@ function validateCode(req, res, next) {
     // Check for invalid code
     if (!code) res.sendStatus(400);
     else {
-        if (!checkCodeType(code)) res.sendStatus(415);
-        else next();
+        if (checkCodeType(code) && isCorrectFile(code)) next();
+        else res.sendStatus(415);
     }
 }
 

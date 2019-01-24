@@ -5,7 +5,7 @@ import score from "../util/score";
 const contestConfig = "contest.json";
 
 let contestObj;
-let name, startTime, endTime, mode, probList, acceptMIME;
+let name, startTime, endTime, mode, probList, allowedCodeExt;
 
 try {
     contestObj = JSON.parse(readFileSync(contestConfig));
@@ -21,22 +21,16 @@ try {
 }
 
 try {
-    ({ name, startTime, endTime, mode, probList, acceptMIME } = contestObj);
+    ({ name, startTime, endTime, mode, probList, allowedCodeExt } = contestObj);
 
-    // TODO: Move condition outside ?
-    if (acceptMIME === undefined)
-        acceptMIME = [
-            "text/x-c",
-            "text/x-pascal",
-            "text/x-java-source",
-            "text/x-script.python"
-        ];
+    if (allowedCodeExt === undefined)
+        allowedCodeExt = sampleContest.allowedCodeExt;
 
     if (
         !Array.isArray(startTime) ||
         !Array.isArray(endTime) ||
         !Array.isArray(probList) ||
-        !Array.isArray(acceptMIME)
+        !Array.isArray(allowedCodeExt)
     )
         throw new Error();
     if (!name || !mode) throw new Error();
@@ -59,5 +53,5 @@ export default {
     endTime: endTime,
     mode: mode,
     probList: probList,
-    acceptMIME: acceptMIME
+    allowedCodeExt: allowedCodeExt
 };
