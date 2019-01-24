@@ -3,7 +3,7 @@ import uuidv4 from "uuid/v4";
 
 require("dotenv").config();
 
-const staticFolder = "static";
+const staticFolder = "front";
 if (!existsSync(staticFolder)) mkdirSync(staticFolder);
 
 const serverPORT = Number(process.env.PORT);
