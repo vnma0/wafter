@@ -4,9 +4,9 @@ package-lock.json
 
 # Build
 build/
+dist/
 
 # Runtime
-dist/
 upload/
 front/
 **/*.db

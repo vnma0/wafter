@@ -1,9 +1,12 @@
 import { existsSync, mkdirSync } from "fs";
 import uuidv4 from "uuid/v4";
+import { join } from "path";
+
+import { cwd } from "./cwd";
 
 require("dotenv").config();
 
-const staticFolder = "front";
+const staticFolder = join(cwd, "front");
 if (!existsSync(staticFolder)) mkdirSync(staticFolder);
 
 const serverPORT = Number(process.env.PORT);
