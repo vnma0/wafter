@@ -25,7 +25,7 @@ const app = express();
 const PORT = server.port;
 
 app.use(helmet());
-app.use(morgan("short"));
+app.use(morgan("common"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     session({
@@ -41,7 +41,6 @@ app.use("/info", info);
 app.use("/subs", subs);
 app.use("/users", users);
 app.use("/score", score);
-app.use("/", express.static(server.staticFolder));
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
@@ -50,6 +49,12 @@ app.post("/login", passport.authenticate("local"), (req, res) => {
 app.get("/logout", (req, res) => {
     req.logout();
     res.sendStatus(200);
+});
+
+app.use("/", express.static(server.staticFolder));
+
+app.all("/*", (req, res) => {
+    res.redirect("/");
 });
 
 let serv = app.listen(PORT, () => {
