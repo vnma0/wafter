@@ -25,6 +25,7 @@ const app = express();
 const PORT = server.port;
 
 app.use(helmet());
+app.use(helmet.noCache());
 app.use(morgan("common"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -37,6 +38,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// TODO: Organize these routes
 app.use("/info", info);
 app.use("/subs", subs);
 app.use("/users", users);
@@ -52,10 +54,10 @@ app.get("/logout", (req, res) => {
 });
 
 app.use("/", express.static(server.staticFolder));
-
-app.all("/*", (req, res) => {
-    res.redirect("/");
-});
+// Temp solution ?
+app.use("/*", (req, res) => {
+    res.sendFile(server.staticFolder + "/index.html");
+};);
 
 let serv = app.listen(PORT, () => {
     Console.log(`Wafter is running on port ${serv.address().port}`);
