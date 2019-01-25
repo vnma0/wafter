@@ -13,8 +13,9 @@ import contestIsRunning from "../middleware/time";
 const router = express.Router();
 
 router.get("/", auth, (req, res) => {
+    const page = Number(req.query.page);
     if (req.user.isAdmin)
-        readAllSubmissions().then(
+        readAllSubmissions(page).then(
             (docs) => {
                 res.send(docs);
             },
@@ -23,7 +24,7 @@ router.get("/", auth, (req, res) => {
             }
         );
     else
-        readUserSubmission(req.user._id).then(
+        readUserSubmission(req.user._id, page).then(
             (docs) => {
                 res.send(docs);
             },
