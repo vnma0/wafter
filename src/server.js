@@ -57,7 +57,7 @@ app.use("/", express.static(server.staticFolder));
 // Temp solution ?
 app.use("/*", (req, res) => {
     res.sendFile(server.staticFolder + "/index.html");
-};);
+});
 
 let serv = app.listen(PORT, () => {
     Console.log(`Wafter is running on port ${serv.address().port}`);
