@@ -7,6 +7,7 @@ import {
     readUserSubmission
 } from "../data/database";
 import auth from "../middleware/auth";
+import bruteForce from "../middleware/bruteForce";
 import upload from "../middleware/upload";
 import contestIsRunning from "../middleware/time";
 
@@ -46,12 +47,19 @@ router.get("/:id", auth, (req, res) => {
     );
 });
 
-router.post("/", auth, contestIsRunning, upload, (req, res) => {
-    const file = req.file;
-    sendCode(file.path, req.user._id, file.originalname).then(
-        () => res.sendStatus(200),
-        () => res.sendStatus(500)
-    );
-});
+router.post(
+    "/",
+    auth,
+    contestIsRunning,
+    bruteForce.prevent,
+    upload,
+    (req, res) => {
+        const file = req.file;
+        sendCode(file.path, req.user._id, file.originalname).then(
+            () => res.sendStatus(200),
+            () => res.sendStatus(500)
+        );
+    }
+);
 
 export default router;
