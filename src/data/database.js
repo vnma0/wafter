@@ -15,6 +15,8 @@ db.submissions = new Datastore({
 });
 db.submissions.persistence.setAutocompactionInterval(5000);
 
+const PageSize = 50;
+
 /**
  * User Schema Object
  * _id:             User's ID
@@ -245,25 +247,39 @@ export async function updateUser(
  * Retrieve list of submissions in database
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
-export function readAllSubmissions() {
+export function readAllSubmissions(page) {
+    if (isNaN(page)) page = 0;
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            {},
-            {
-                ext: 1,
-                status: 1,
-                date: 1,
-                user_id: 1,
-                prob_id: 1,
-                score: 1,
-                tpen: 1,
-                tests: 1
-            },
-            function(err, docs) {
+        db.submissions
+            .find(
+                {},
+                {
+                    ext: 1,
+                    status: 1,
+                    date: 1,
+                    user_id: 1,
+                    prob_id: 1,
+                    score: 1,
+                    tpen: 1,
+                    tests: 1
+                }
+            )
+            .sort({ date: -1 })
+            .skip(PageSize * page)
+            .limit(PageSize)
+            .exec((err, docs) => {
                 if (err) reject(err);
-                else resolve(docs.sort((a, b) => b.date - a.date));
-            }
-        );
+                else
+                    Promise.all(
+                        docs.map((doc) => readUserByID(doc.user_id))
+                    ).then((usernameList) => {
+                        let serialized = docs.map((doc, idx) => {
+                            doc.username = usernameList[idx].username;
+                            return doc;
+                        });
+                        resolve(serialized);
+                    });
+            });
     });
 }
 
@@ -300,25 +316,36 @@ export function readSubmission(sub_id) {
  * @param {String} user_id User's ID
  * @returns {Promise<Array<ReturnSubmission>>} Array of user's submissions if success
  */
-export function readUserSubmission(user_id) {
+export async function readUserSubmission(user_id, page) {
+    const username = await readUserByID(user_id);
+    if (isNaN(page)) page = 0;
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            { user_id: user_id },
-            {
-                ext: 1,
-                status: 1,
-                date: 1,
-                user_id: 1,
-                prob_id: 1,
-                score: 1,
-                tpen: 1,
-                tests: 1
-            },
-            function(err, docs) {
+        db.submissions
+            .find(
+                { user_id: user_id },
+                {
+                    ext: 1,
+                    status: 1,
+                    date: 1,
+                    user_id: 1,
+                    prob_id: 1,
+                    score: 1,
+                    tpen: 1,
+                    tests: 1
+                }
+            )
+            .sort({ date: -1 })
+            .skip(PageSize * page)
+            .limit(PageSize)
+            .exec((err, docs) => {
                 if (err) reject(err);
-                else resolve(docs.sort((a, b) => b.date - a.date));
-            }
-        );
+                else {
+                    let serialized = docs.map((doc) => {
+                        doc.username = username;
+                    });
+                    resolve(serialized);
+                }
+            });
     });
 }
 
