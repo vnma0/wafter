@@ -7,6 +7,7 @@ import helmet from "helmet";
 import passport from "passport";
 import session from "express-session";
 import bodyParser from "body-parser";
+import ip from "ip";
 
 import server from "./config/server";
 import passportConfig from "./controller/passportConfig";
@@ -60,5 +61,5 @@ app.use("/*", (req, res) => {
 });
 
 let serv = app.listen(PORT, () => {
-    Console.log(`Wafter is running on port ${serv.address().port}`);
+    Console.log(`Wafter is serving at ${ip.address()}:${serv.address().port}`);
 });
