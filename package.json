@@ -34,7 +34,7 @@
     ],
     "assets": [
       "build/public/*",
-      "build/public/**/*"
+      "build/public/**/**/*"
     ]
   },
   "dependencies": {
