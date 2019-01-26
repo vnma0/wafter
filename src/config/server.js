@@ -1,10 +1,10 @@
+import path from "path";
 import { existsSync, mkdirSync } from "fs";
 import uuidv4 from "uuid/v4";
-import { join } from "path";
 
 require("dotenv").config();
 
-const staticFolder = join(__dirname + "/../public");
+const staticFolder = path.join(__dirname, "../public");
 if (!existsSync(staticFolder)) mkdirSync(staticFolder);
 
 const serverPORT = Number(process.env.PORT);
