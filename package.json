@@ -2,13 +2,14 @@
   "name": "wafter",
   "version": "0.0.1",
   "description": "Mirai's Backend",
+  "bin": "build/server.js",
   "main": "src/server.js",
   "scripts": {
     "build": "babel src/ -d build/",
     "start": "npm run build && node build/server.js",
     "test": "mocha --require @babel/register",
     "dev": "nodemon --exec babel-node src/server.js",
-    "pkg:win": "set NODE_ENV=production && npm run build && pkg -t node10-win -o dist/wafter build/server.js"
+    "pkg:win": "set NODE_ENV=production && npm run build && pkg -t node10-win -o dist/wafter ."
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,21 @@
     "url": "https://github.com/vnma0/wafter/issues"
   },
   "homepage": "https://github.com/vnma0/wafter#readme",
+  "pkg": {
+    "scripts": [
+      "build/*.js",
+      "build/config/*.js",
+      "build/controller/*.js",
+      "build/data/*.js",
+      "build/driver/*.js",
+      "build/middleware/*.js",
+      "build/routes/*.js",
+      "build/util/*.js"
+    ],
+    "assets": [
+      "build/public/**/*"
+    ]
+  },
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "bcryptjs": "^2.4.3",
