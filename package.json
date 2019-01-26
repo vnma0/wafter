@@ -33,6 +33,7 @@
       "build/util/*.js"
     ],
     "assets": [
+      "build/public/*",
       "build/public/**/*"
     ]
   },
