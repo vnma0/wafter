@@ -342,6 +342,7 @@ export async function readUserSubmission(user_id, page) {
                 else {
                     let serialized = docs.map((doc) => {
                         doc.username = username;
+                        return doc;
                     });
                     resolve(serialized);
                 }
