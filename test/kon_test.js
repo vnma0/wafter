@@ -1,4 +1,4 @@
-import Judger from "../driver/kon";
+import Judger from "../src/driver/kon";
 
 const judger = new Judger("http://localhost:30000");
 
@@ -43,10 +43,18 @@ describe("kon", function() {
     describe("send", function() {
         // TODO: Patch with real test using sample.contest
         it("should return true when sending .cpp ...", () => {
-            return judger.send("./test/submitcode.cpp", "submitcode", "hash sha-256");
+            return judger.send(
+                "./test/submitcode.cpp",
+                "submitcode",
+                "hash sha-256"
+            );
         });
         it("...and return true when sending .pas ...", () => {
-            return judger.send("./test/submitcode.pas", "submitcode", "hash sha-256");
+            return judger.send(
+                "./test/submitcode.pas",
+                "submitcode",
+                "hash sha-256"
+            );
         });
         it("...and false when sending .txt", () => {
             return judger
