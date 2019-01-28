@@ -425,21 +425,18 @@ export async function updateSubmission(sub_id, new_verdict, score, tests) {
  */
 export async function readLastSatisfy(user_id, prob_id) {
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            {
+        db.submissions
+            .find({
                 user_id: user_id,
                 prob_id: prob_id,
                 status: { $ne: "Pending" }
-            },
-            function(err, docs) {
-                docs.sort(function(a, b) {
-                    return a.date - b.date;
-                });
+            })
+            .sort({ date: -1 })
+            .exec((err, docs) => {
                 if (err) reject(err);
                 else if (!docs.length) resolve({});
                 else resolve(docs.pop());
-            }
-        );
+            });
     });
 }
 
@@ -481,24 +478,24 @@ export async function countPreviousSatisfy(sub_id) {
  */
 export function bestSubmission(user_id, prob_id, ctype) {
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            {
+        db.submissions
+            .find({
                 user_id: user_id,
                 prob_id: prob_id,
                 status: { $in: ctype.acceptedStatus }
-            },
-            function(err, docs) {
+            })
+            .sort({ date: -1 })
+            .exec((err, docs) => {
                 if (err) reject(err);
                 else if (!docs.length) resolve(null);
                 else {
-                    docs.sort(ctype.sort);
+                    docs.sort(ctype.sortSub);
                     let doc = docs[0];
                     countPreviousSatisfy(doc._id).then((atmp) => {
                         doc.attempt = atmp + 1;
                         resolve(doc);
                     });
                 }
-            }
-        );
+            });
     });
 }

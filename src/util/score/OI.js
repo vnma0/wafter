@@ -16,7 +16,7 @@ function calc(submission) {
  * @param {Submission} a
  * @param {Submission} b
  */
-function sort(a, b) {
+function sortSub(a, b) {
     return b.score - a.score;
 }
 
@@ -37,7 +37,7 @@ const acceptedStatus = ["AC", "MLE", "TLE", "RTE", "WA"];
 
 export default {
     calc,
-    sort,
+    sortSub,
     acceptedStatus,
     allowScoreboard: true,
     sortFun

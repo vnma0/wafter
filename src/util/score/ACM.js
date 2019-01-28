@@ -19,7 +19,7 @@ function calc(sub) {
  * @param {Submission} a
  * @param {Submission} b
  */
-function sort(a, b) {
+function sortSub(a, b) {
     return a.tpen - b.tpen;
 }
 
@@ -41,7 +41,7 @@ const acceptedStatus = ["AC"];
 
 export default {
     calc,
-    sort,
+    sortSub,
     acceptedStatus,
     allowScoreboard: true,
     sortFun
