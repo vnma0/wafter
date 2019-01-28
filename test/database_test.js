@@ -1,5 +1,5 @@
-import * as db from "../src/data/database";
-import score from "../src/util/score";
+const db = require("../src/data/database");
+const score = require("../src/util/score");
 
 const sampleUser = Math.random()
     .toString(36)
