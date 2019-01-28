@@ -39,7 +39,7 @@ function sortFun(a, b) {
  */
 const acceptedStatus = ["AC"];
 
-export default {
+module.exports = {
     calc,
     sortSub,
     acceptedStatus,

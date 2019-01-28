@@ -1,7 +1,7 @@
-import bcrypt from "bcryptjs";
-import { join } from "path";
-import cwd from "../config/cwd";
-import Datastore from "nedb";
+const bcrypt = require("bcryptjs");
+const { join } = require("path");
+const cwd = require("../config/cwd");
+const Datastore = require("nedb");
 
 let db = {};
 db.users = new Datastore({
@@ -58,7 +58,7 @@ function usernameChecking(username) {
  * @param {Boolean} isAdmin Is user's an admin
  * @returns {Promise} User's ID if success
  */
-export async function newUser(username, pass, isAdmin = false) {
+async function newUser(username, pass, isAdmin = false) {
     // TODO: Simplify these code
     const passHash = bcrypt.hash(pass, bcrypt.genSaltSync(10));
     try {
@@ -94,7 +94,7 @@ export async function newUser(username, pass, isAdmin = false) {
  * Retrieve list of users in database
  * @returns {Promise} Array of user if success
  */
-export function readAllUser(includeAdmin = false) {
+function readAllUser(includeAdmin = false) {
     let isAdminSchema = [false];
     if (includeAdmin) isAdminSchema.push(true);
     return new Promise((resolve, reject) => {
@@ -114,7 +114,7 @@ export function readAllUser(includeAdmin = false) {
  * @param {String} username User's id
  * @returns {Promise} User's info if success
  */
-export function readUser(username) {
+function readUser(username) {
     return new Promise((resolve, reject) => {
         db.users.findOne(
             { username: username },
@@ -133,7 +133,7 @@ export function readUser(username) {
  * @param {String} id User's id
  * @returns {Promise} User's info if success
  */
-export function readUserByID(id) {
+function readUserByID(id) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: id }, { username: 1, isAdmin: 1 }, function(
             err,
@@ -151,7 +151,7 @@ export function readUserByID(id) {
  * @param {String} id User's id
  * @returns {Promise} User's info if success
  */
-export function readUserPassHash(id) {
+function readUserPassHash(id) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: id }, { pass: 1 }, function(err, docs) {
             if (err) reject(err);
@@ -170,13 +170,7 @@ export function readUserPassHash(id) {
  * @param {String} new_pass New password
  *
  */
-export async function updateUser(
-    user_id,
-    username,
-    new_username,
-    old_pass,
-    new_pass
-) {
+async function updateUser(user_id, username, new_username, old_pass, new_pass) {
     const dbUserID = await readUserByID(user_id);
     const dbUserPassHash = await readUserPassHash(user_id);
 
@@ -247,7 +241,7 @@ export async function updateUser(
  * Retrieve list of submissions in database
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
-export function readAllSubmissions(page) {
+function readAllSubmissions(page) {
     if (isNaN(page)) page = 0;
     return new Promise((resolve, reject) => {
         db.submissions
@@ -288,7 +282,7 @@ export function readAllSubmissions(page) {
  * @param {String} sub_id Submission's ID
  * @returns {Promise<ReturnSubmission>} Submission's details if success
  */
-export function readSubmission(sub_id) {
+function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
         db.submissions.findOne(
             { _id: sub_id },
@@ -316,7 +310,7 @@ export function readSubmission(sub_id) {
  * @param {String} user_id User's ID
  * @returns {Promise<Array<ReturnSubmission>>} Array of user's submissions if success
  */
-export async function readUserSubmission(user_id, page) {
+async function readUserSubmission(user_id, page) {
     const username = await readUserByID(user_id);
     if (isNaN(page)) page = 0;
     return new Promise((resolve, reject) => {
@@ -359,7 +353,7 @@ export async function readUserSubmission(user_id, page) {
  * @param {Number} ext Source code's extension
  * @returns {Promise<String>} Submission's ID if success
  */
-export async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
+async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
     await readUserByID(user_id);
     return new Promise((resolve, reject) => {
         db.submissions.insert(
@@ -390,7 +384,7 @@ export async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
  * @param {Object} new_verdict new verdict
  * @param {Number} score score
  */
-export async function updateSubmission(sub_id, new_verdict, score, tests) {
+async function updateSubmission(sub_id, new_verdict, score, tests) {
     try {
         await readSubmission(sub_id);
     } catch (err) {
@@ -423,7 +417,7 @@ export async function updateSubmission(sub_id, new_verdict, score, tests) {
  * @param {String} prob_id problem's id
  * @returns {Promise} Submission's details if success
  */
-export async function readLastSatisfy(user_id, prob_id) {
+async function readLastSatisfy(user_id, prob_id) {
     return new Promise((resolve, reject) => {
         db.submissions
             .find({
@@ -445,7 +439,7 @@ export async function readLastSatisfy(user_id, prob_id) {
  * @param {String} sub_id Submission's ID
  * @returns {Promise<Number>} Number of satisfy submissions
  */
-export async function countPreviousSatisfy(sub_id) {
+async function countPreviousSatisfy(sub_id) {
     return new Promise((resolve, reject) => {
         readSubmission(sub_id).then(
             (sub_data) => {
@@ -476,7 +470,7 @@ export async function countPreviousSatisfy(sub_id) {
  * @param {ContestType} ctype contest's type
  * @returns {Promise<ReturnSubmission>} the best submission if possible, null if none exists
  */
-export function bestSubmission(user_id, prob_id, ctype) {
+function bestSubmission(user_id, prob_id, ctype) {
     return new Promise((resolve, reject) => {
         db.submissions
             .find({
@@ -499,3 +493,21 @@ export function bestSubmission(user_id, prob_id, ctype) {
             });
     });
 }
+
+module.exports = {
+    usernameChecking,
+    newUser,
+    readAllUser,
+    readUser,
+    readUserByID,
+    readUserPassHash,
+    updateUser,
+    readAllSubmissions,
+    readSubmission,
+    readUserSubmission,
+    newSubmission,
+    updateSubmission,
+    readLastSatisfy,
+    countPreviousSatisfy,
+    bestSubmission
+};

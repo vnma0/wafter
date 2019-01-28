@@ -1,12 +1,12 @@
-import zipdir from "zip-dir";
-import isZip from "is-zip";
-import Console from "console";
-import kon from "../config/kon";
+const zipdir = require("zip-dir");
+const isZip = require("is-zip");
+const Console = require("console");
+const kon = require("../config/kon");
 
 /**
  * Zip task folder then send it to Judgers
  */
-export default function initJudger() {
+function initJudger() {
     const arcPath = "Tasks.zip";
     zipdir(kon.tasks, { saveTo: arcPath }, (err, buf) => {
         if (err) throw err;
@@ -24,3 +24,5 @@ export default function initJudger() {
         });
     });
 }
+
+module.exports = initJudger;

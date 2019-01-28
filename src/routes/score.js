@@ -1,7 +1,7 @@
-import express from "express";
+const express = require("express");
 
-import auth from "../middleware/auth";
-import scoreboard from "../util/scoreboard";
+const auth = require("../middleware/auth");
+const scoreboard = require("../util/scoreboard");
 
 const router = express.Router();
 
@@ -12,4 +12,4 @@ router.get("/", auth, (req, res) => {
     );
 });
 
-export default router;
+module.exports = router;

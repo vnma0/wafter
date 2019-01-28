@@ -4,7 +4,9 @@
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-export default function auth(req, res, next) {
+function auth(req, res, next) {
     if (req.isAuthenticated()) return next();
     else res.sendStatus(401);
 }
+
+module.exports = auth;

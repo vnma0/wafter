@@ -1,6 +1,6 @@
-import express from "express";
+const express = require("express");
 
-import contest from "../config/contest";
+const contest = require("../config/contest");
 
 const router = express.Router();
 
@@ -8,4 +8,4 @@ router.get("/", (req, res) => {
     res.json(contest);
 });
 
-export default router;
+module.exports = router;

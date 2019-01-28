@@ -1,6 +1,6 @@
-import { readFileSync, writeFileSync } from "fs";
-import sampleContest from "./sampleContest";
-import score from "../util/score";
+const { readFileSync, writeFileSync } = require("fs");
+const sampleContest = require("./sampleContest");
+const score = require("../util/score");
 
 const contestConfig = "contest.json";
 
@@ -46,7 +46,7 @@ try {
 
 probList = probList.map((x) => String(x).toUpperCase());
 
-export default {
+module.exports = {
     // Change this to config contest time
     name: name,
     startTime: startTime,

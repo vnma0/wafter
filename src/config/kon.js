@@ -1,9 +1,9 @@
-import { readFileSync, existsSync, writeFileSync, mkdirSync } from "fs";
+const { readFileSync, existsSync, writeFileSync, mkdirSync } = require("fs");
 
-import validUrl from "valid-url";
+const validUrl = require("valid-url");
 
-import Judger from "../driver/kon";
-import parseProbList from "../util/parseProbList";
+const Judger = require("../driver/kon");
+const parseProbList = require("../util/parseProbList");
 
 const konListFile = "kon.json";
 
@@ -25,7 +25,7 @@ const konList = rawServerList
     .filter((kon) => validUrl.isWebUri(kon.url))
     .map((kon) => new Judger(kon.url, parseProbList(kon.prob)));
 
-export default {
+module.exports = {
     judgers: konList,
     tasks: taskFolder
 };

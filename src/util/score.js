@@ -1,7 +1,7 @@
-import ACM from "./score/ACM";
-import OI from "./score/OI";
+const ACM = require("./score/ACM");
+const OI = require("./score/OI");
 
-export default {
+module.exports = {
     ACM,
     OI
 };

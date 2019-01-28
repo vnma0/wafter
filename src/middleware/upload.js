@@ -1,9 +1,9 @@
-import multer from "multer";
-import { isBinaryFileSync } from "isbinaryfile";
-import { extname, basename } from "path";
+const multer = require("multer");
+const { isBinaryFileSync } = require("isbinaryfile");
+const { extname, basename } = require("path");
 
-import code from "../config/code";
-import contest from "../config/contest";
+const code = require("../config/code");
+const contest = require("../config/contest");
 
 /**
  * Multer middleware wrapper to limit upload size
@@ -90,4 +90,4 @@ function validateCode(req, res, next) {
     }
 }
 
-export default [codeUpload, validateCode];
+module.exports = [codeUpload, validateCode];

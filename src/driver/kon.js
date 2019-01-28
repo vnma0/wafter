@@ -1,11 +1,11 @@
-import fetch from "node-fetch";
-import FormData from "form-data";
-import { createReadStream } from "fs";
+const fetch = require("node-fetch");
+const FormData = require("form-data");
+const { createReadStream } = require("fs");
 
 //Supporting Library for Admin-Judger Interface, MIRAI's backend
 
 // TODO: Make parent class
-export default class Judger {
+class Judger {
     constructor(server_address, prob_list) {
         this.serverAddress = server_address;
         this.probList = prob_list;
@@ -140,3 +140,5 @@ export default class Judger {
         }
     }
 }
+
+module.exports = Judger;
