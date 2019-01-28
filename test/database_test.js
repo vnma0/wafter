@@ -1,6 +1,5 @@
-import * as db from "../data/database";
-import score from "../util/score";
-import { GetProblemBestResult } from "../util/result";
+import * as db from "../src/data/database";
+import score from "../src/util/score";
 
 const sampleUser = Math.random()
     .toString(36)
@@ -154,14 +153,6 @@ describe("database", function() {
     describe("readLastSatisfy", function() {
         it("should count to last satisfy result", function() {
             return db.readLastSatisfy(sampleUser, sampleProb, score.OI);
-        });
-    });
-});
-
-describe("score", function() {
-    describe("GetProblemBestResult", function() {
-        it("should return best result", function() {
-            return GetProblemBestResult(sampleID, sampleProb, score.OI);
         });
     });
 });
