@@ -1,5 +1,3 @@
-// import "@babel/polyfill";
-
 const Console = require("console");
 const express = require("express");
 const morgan = require("morgan");
