@@ -1,3 +1,5 @@
+"use strict";
+
 let now = new Date();
 let sampleStart = [
     now.getFullYear(),

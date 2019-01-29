@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Calculate final result from judger's result, ACM style
  * @param {ReturnSubmission} sub Submission given by database.js

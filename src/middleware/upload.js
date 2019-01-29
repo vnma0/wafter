@@ -1,3 +1,5 @@
+"use strict";
+
 const multer = require("multer");
 const { isBinaryFileSync } = require("isbinaryfile");
 const { extname, basename } = require("path");

@@ -1,3 +1,5 @@
+"use strict";
+
 const bcrypt = require("bcryptjs");
 const { join } = require("path");
 const cwd = require("../config/cwd");

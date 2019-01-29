@@ -1,3 +1,5 @@
+"use strict";
+
 const zipdir = require("zip-dir");
 const isZip = require("is-zip");
 const Console = require("console");

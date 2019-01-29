@@ -1,3 +1,5 @@
+"use strict";
+
 const ExpressBrute = require("express-brute");
 const ExpressBruteNedbStore = require("express-brute-nedb");
 

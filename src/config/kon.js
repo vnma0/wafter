@@ -1,3 +1,5 @@
+"use strict";
+
 const { readFileSync, existsSync, writeFileSync, mkdirSync } = require("fs");
 
 const validUrl = require("valid-url");

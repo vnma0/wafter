@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Check if connected session is authenticated
  * @param {Request} req Express request object

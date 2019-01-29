@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Calculate result
  * @param {Submission} submission Submission given by database.js

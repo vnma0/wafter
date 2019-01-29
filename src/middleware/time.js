@@ -1,3 +1,5 @@
+"use strict";
+
 const contest = require("../config/contest");
 
 /**

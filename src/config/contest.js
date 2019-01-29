@@ -1,3 +1,5 @@
+"use strict";
+
 const { readFileSync, writeFileSync } = require("fs");
 const sampleContest = require("./sampleContest");
 const score = require("../util/score");

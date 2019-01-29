@@ -1,3 +1,5 @@
+"use strict";
+
 const Console = require("console");
 const { basename, extname } = require("path");
 

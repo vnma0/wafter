@@ -1,3 +1,5 @@
+"use strict";
+
 const fetch = require("node-fetch");
 const FormData = require("form-data");
 const { createReadStream } = require("fs");

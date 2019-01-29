@@ -1,3 +1,5 @@
+"use strict";
+
 const Console = require("console");
 const express = require("express");
 const morgan = require("morgan");

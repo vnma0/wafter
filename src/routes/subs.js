@@ -1,3 +1,5 @@
+"use strict";
+
 const express = require("express");
 
 const { sendCode } = require("../controller/submitCode");
