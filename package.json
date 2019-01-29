@@ -4,7 +4,7 @@
   "description": "Mirai's Backend",
   "main": "src/server.js",
   "scripts": {
-    "build": "babel src/ -d build/",
+    "build": "minify src/ -d build/",
     "start": "node src/server.js",
     "test": "mocha",
     "dev": "nodemon src/server.js"
