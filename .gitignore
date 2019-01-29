@@ -7,7 +7,7 @@ build/
 
 # Runtime
 upload/
-front/
+public/
 **/*.db
 
 # Environment
