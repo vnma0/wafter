@@ -8,7 +8,7 @@ let contestObj;
 let name, startTime, endTime, mode, probList, allowedCodeExt;
 
 try {
-    contestObj = JSON.parse(readFileSync(contestConfig));
+    contestObj = JSON.parse(readFileSync(contestConfig, "utf8"));
 } catch (err) {
     if (err.code === "ENOENT") {
         writeFileSync(contestConfig, JSON.stringify(sampleContest, null, 4));
