@@ -37,11 +37,14 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// TODO: Organize these routes
-app.use("/info", info);
-app.use("/subs", subs);
-app.use("/users", users);
-app.use("/score", score);
+// API
+app.all("/api", (req, res) => {
+    res.sendStatus(204);
+});
+app.use("/api/info", info);
+app.use("/api/subs", subs);
+app.use("/api/users", users);
+app.use("/api/score", score);
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
