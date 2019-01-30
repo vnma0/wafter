@@ -2,6 +2,7 @@ import path from "path";
 import { existsSync, mkdirSync } from "fs";
 import uuidv4 from "uuid/v4";
 
+// DOTENV will be removed soon, don't depend on it
 require("dotenv").config();
 
 const staticFolder = path.join(__dirname, "../public");
