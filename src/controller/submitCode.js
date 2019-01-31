@@ -74,10 +74,11 @@ export async function sendCode(source_code_path, user_id, prob_name) {
     const prob_ext = extname(prob_name);
     const prob_id = basename(prob_name, prob_ext);
 
-    if (!contest.probList.includes(prob_id)) throw new Error("Invalid prob_id");
+    if (contest.probList.indexOf(prob_id) === -1)
+        throw new Error("Invalid prob_id");
 
-    const availJudger = kon.judgers.filter((kon) =>
-        kon.probList.includes(prob_id)
+    const availJudger = kon.judgers.filter(
+        (kon) => kon.probList.indexOf(prob_id) > -1
     );
 
     // Handle empty availJudger
@@ -105,7 +106,7 @@ export async function sendCode(source_code_path, user_id, prob_name) {
 
             if (!availKon.length) throw new Error("All kon are busy");
 
-            Console.log(availKon);
+            Console.log("Kons' queue: ", availKon);
             const judgerNum = availKon.sort((a, b) => a[0] - b[0]).shift()[1];
             const judger = kon.judgers[judgerNum];
 
