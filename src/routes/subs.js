@@ -57,7 +57,7 @@ router.post(
         const file = req.file;
         sendCode(file.path, req.user._id, file.originalname).then(
             () => res.sendStatus(200),
-            () => res.sendStatus(500)
+            () => res.sendStatus(400)
         );
     }
 );

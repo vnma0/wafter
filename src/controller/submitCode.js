@@ -44,7 +44,9 @@ export function reloadSubs() {
                 });
             },
             () => {
-                Console.log("Cannot get result");
+                Console.log(
+                    `Cannot get result from Kon [${judger.serverAddress}]`
+                );
             }
         );
     });
@@ -73,13 +75,14 @@ export async function sendCode(source_code_path, user_id, prob_name) {
     const prob_ext = extname(prob_name);
     const prob_id = basename(prob_name, prob_ext);
 
-    if (!contest.probList.includes(prob_id)) throw "Invalid prob_id";
+    if (!contest.probList.includes(prob_id)) throw new Error("Invalid prob_id");
 
     const availJudger = kon.judgers.filter((kon) =>
         kon.probList.includes(prob_id)
     );
 
-    // TODO: Handle empty availJudger
+    // Handle empty availJudger
+    if (!availJudger.length) throw new Error("No available Kon");
 
     try {
         const sub_id = await newSubmission(
@@ -101,7 +104,7 @@ export async function sendCode(source_code_path, user_id, prob_name) {
                 .map((val, iter) => [val, iter])
                 .filter((v) => !isNaN(v[0]));
 
-            if (!availKon.length) throw new Error("No available Kon");
+            if (!availKon.length) throw new Error("All kon is busy");
 
             Console.log(availKon);
             const judgerNum = availKon.sort((a, b) => a[0] - b[0]).shift()[1];
