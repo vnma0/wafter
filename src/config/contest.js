@@ -44,7 +44,9 @@ try {
     throw new Error(`Invalid contest file (${contestConfig})`);
 }
 
-probList = probList.map((x) => String(x).toUpperCase());
+probList = probList
+    .map((x) => String(x).toUpperCase())
+    .sort((a, b) => a.localeCompare(b));
 
 export default {
     // Change this to config contest time
