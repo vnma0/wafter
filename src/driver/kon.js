@@ -4,8 +4,7 @@ import { createReadStream } from "fs";
 
 //Supporting Library for Admin-Judger Interface, MIRAI's backend
 
-// TODO: Make parent class
-export default class Judger {
+class Judger {
     constructor(server_address, prob_list) {
         this.serverAddress = server_address;
         this.probList = prob_list;
@@ -47,14 +46,14 @@ export default class Judger {
             const response = await fetch(this.serverAddress + "/task", {
                 method: "POST",
                 body: task,
-                timeout: 5000,
+                timeout: 10000,
                 compress: true
             });
             const status = response.status;
 
-            if (status === 415) throw "Incorrect file type";
-            else if (status === 413) throw "File is too large";
-            else if (status === 403) throw "Server has been set up";
+            if (status === 415) throw new Error("Incorrect file type");
+            else if (status === 413) throw new Error("File is too large");
+            else if (status === 403) throw new Error("Server has been set up");
 
             return status === 200;
         } catch (err) {
@@ -84,15 +83,15 @@ export default class Judger {
                 method: "POST",
                 mode: "no-cors",
                 body: data,
-                timeout: 1000,
+                timeout: 5000,
                 compress: true
             });
             const status = response.status;
 
-            if (status === 415) throw "Incorrect file type";
-            else if (status === 413) throw "File is too large";
-            else if (status === 503) throw "Server is not ready";
-            else if (status === 400) throw "Bad request";
+            if (status === 415) throw new Error("Incorrect file type");
+            else if (status === 413) throw new Error("File is too large");
+            else if (status === 503) throw new Error("Server is not ready");
+            else if (status === 400) throw new Error("Bad request");
 
             return status === 200;
         } catch (err) {
@@ -110,10 +109,10 @@ export default class Judger {
             const response = await fetch(this.serverAddress + "/get", {
                 mode: "no-cors",
                 cache: "no-cache",
-                timeout: 1000,
+                timeout: 5000,
                 compress: true
             });
-            if (response.status === 503) throw "Server is not ready";
+            if (response.status === 503) throw new Error("Server is not ready");
             const json = response.status === 200 ? await response.json() : [];
             return json;
         } catch (err) {
@@ -129,14 +128,16 @@ export default class Judger {
             const response = await fetch(this.serverAddress + "/queue", {
                 mode: "no-cors",
                 cache: "no-cache",
-                timeout: 500,
+                timeout: 1000,
                 compress: true
             });
             const text = await response.text();
             return Number(text);
         } catch (err) {
-            if (err.name === "FetchError") return undefined;
+            if (err.name === "FetchError") return null;
             else throw err;
         }
     }
 }
+
+export default Judger;

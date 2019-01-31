@@ -5,6 +5,7 @@ import helmet from "helmet";
 import passport from "passport";
 import session from "express-session";
 import bodyParser from "body-parser";
+import ip from "ip";
 
 import server from "./config/server";
 import passportConfig from "./controller/passportConfig";
@@ -23,7 +24,8 @@ const app = express();
 const PORT = server.port;
 
 app.use(helmet());
-app.use(morgan("short"));
+app.use(helmet.noCache());
+app.use(morgan("common"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     session({
@@ -35,11 +37,14 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/info", info);
-app.use("/subs", subs);
-app.use("/users", users);
-app.use("/score", score);
-app.use("/static", express.static(server.staticFolder));
+// API
+app.all("/api", (req, res) => {
+    res.sendStatus(204);
+});
+app.use("/api/info", info);
+app.use("/api/subs", subs);
+app.use("/api/users", users);
+app.use("/api/score", score);
 
 app.post("/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
@@ -50,6 +55,12 @@ app.get("/logout", (req, res) => {
     res.sendStatus(200);
 });
 
+app.use("/", express.static(server.staticFolder));
+// Temp solution ?
+app.use("/*", (req, res) => {
+    res.sendFile(server.staticFolder + "/index.html");
+});
+
 let serv = app.listen(PORT, () => {
-    Console.log(`Wafter is running on port ${serv.address().port}`);
+    Console.log(`Wafter is serving at http://${ip.address()}:${serv.address().port}`);
 });

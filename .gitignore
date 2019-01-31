@@ -2,9 +2,14 @@
 node_modules/
 package-lock.json
 
+# Build
+build/
+
 # Runtime
 upload/
+public/
 **/*.db
+**/*.zip
 
 # Environment
 .env

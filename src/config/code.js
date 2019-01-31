@@ -4,5 +4,5 @@
  */
 export default {
     sizeLimit: 10000,
-    uploadFolder: "upload/"
+    uploadFolder: "./upload/"
 };

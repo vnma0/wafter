@@ -40,11 +40,15 @@ export function reloadSubs() {
                         verdict,
                         sub.finalScore,
                         sub.tests
-                    );
+                    ).catch((err) => Console.log(err.message));
                 });
             },
-            () => {
-                Console.log("Cannot get result");
+            (err) => {
+                Console.log(
+                    `Cannot get result from Kon [${judger.serverAddress}]: ${
+                        err.message
+                    }`
+                );
             }
         );
     });
@@ -69,19 +73,19 @@ function getMinuteSpan() {
 export async function sendCode(source_code_path, user_id, prob_name) {
     prob_name = prob_name.toUpperCase();
 
-    // TODO: Create lang map
     const prob_ext = extname(prob_name);
     const prob_id = basename(prob_name, prob_ext);
-
-    if (!contest.probList.includes(prob_id)) throw "Invalid prob_id";
-
-    const availJudger = kon.judgers.filter((kon) =>
-        kon.probList.includes(prob_id)
-    );
-
-    // TODO: Handle empty availJudger
-
     try {
+        if (contest.probList.indexOf(prob_id) === -1)
+            throw new Error("Invalid prob_id");
+
+        const availJudger = kon.judgers.filter(
+            (kon) => kon.probList.indexOf(prob_id) > -1
+        );
+
+        // Handle empty availJudger
+        if (!availJudger.length) throw new Error("No available Kon");
+
         const sub_id = await newSubmission(
             source_code_path,
             user_id,
@@ -97,12 +101,13 @@ export async function sendCode(source_code_path, user_id, prob_name) {
 
             const judgersQ = await Promise.all(qPromise);
 
-            Console.log(judgersQ);
             const availKon = judgersQ
                 .map((val, iter) => [val, iter])
                 .filter((v) => !isNaN(v[0]));
-            if (!availKon.length) throw new Error("No available Kon");
 
+            if (!availKon.length) throw new Error("All kon are busy");
+
+            Console.log("Kons' queue: ", availKon);
             const judgerNum = availKon.sort((a, b) => a[0] - b[0]).shift()[1];
             const judger = kon.judgers[judgerNum];
 

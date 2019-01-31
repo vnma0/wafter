@@ -1,17 +1,22 @@
 import bcrypt from "bcryptjs";
 import { join } from "path";
-import { cwd } from "../config/cwd";
+import cwd from "../config/cwd";
 import Datastore from "nedb";
+import { TextEncoder } from "util";
 
 let db = {};
 db.users = new Datastore({
     filename: join(cwd, "data", "users.db"),
     autoload: true
 });
+db.users.persistence.setAutocompactionInterval(5000);
 db.submissions = new Datastore({
     filename: join("data", "submissions.db"),
     autoload: true
 });
+db.submissions.persistence.setAutocompactionInterval(5000);
+
+const PageSize = 50;
 
 /**
  * User Schema Object
@@ -29,10 +34,9 @@ db.submissions = new Datastore({
  * @param {String} username User's name
  */
 function usernameChecking(username) {
-    if (username.length > 32) return false;
+    if (username.length > 18 || username.length < 3) return false;
     for (let i = 0; i < username.length; i++) {
-        var c = username[i];
-        // TODO: Simplify validator
+        let c = username[i];
         if (
             !(
                 ("0" <= c && c <= "9") ||
@@ -55,17 +59,17 @@ function usernameChecking(username) {
  * @returns {Promise} User's ID if success
  */
 export async function newUser(username, pass, isAdmin = false) {
-    // TODO: Simplify these code
     const passHash = bcrypt.hash(pass, bcrypt.genSaltSync(10));
     try {
         await readUser(username);
-        throw "this username has been taken";
+        throw new Error("Username has been taken");
     } catch (err) {
-        if (err !== "invalid username") throw err;
+        if (err.message !== "Invalid username") throw err;
     }
-    if (pass.length > 32) throw "this password's length is too long";
+    if (new TextEncoder().encode(pass).length > 72)
+        throw new Error("Password's length is too long");
     else if (!usernameChecking(username))
-        throw "this username included invalid characters";
+        throw new Error("Username included invalid characters");
     else {
         const hashedPass = await passHash;
         return new Promise((resolve, reject) => {
@@ -77,9 +81,9 @@ export async function newUser(username, pass, isAdmin = false) {
                         isAdmin: !!isAdmin
                     }
                 ],
-                function(err2, docs2) {
-                    if (err2) reject(err2);
-                    else resolve(docs2[0]._id);
+                function(err, docs) {
+                    if (err) reject(err);
+                    else resolve(docs[0]._id);
                 }
             );
         });
@@ -90,12 +94,18 @@ export async function newUser(username, pass, isAdmin = false) {
  * Retrieve list of users in database
  * @returns {Promise} Array of user if success
  */
-export function readAllUser() {
+export function readAllUser(includeAdmin = false) {
+    let isAdminSchema = [false];
+    if (includeAdmin) isAdminSchema.push(true);
     return new Promise((resolve, reject) => {
-        db.users.find({}, { username: 1, isAdmin: 1 }, function(err, docs) {
-            if (err) reject(err);
-            else resolve(docs);
-        });
+        db.users.find(
+            { isAdmin: { $in: isAdminSchema } },
+            { username: 1, isAdmin: 1 },
+            function(err, docs) {
+                if (err) reject(err);
+                else resolve(docs);
+            }
+        );
     });
 }
 
@@ -111,7 +121,7 @@ export function readUser(username) {
             { username: 1, isAdmin: 1 },
             function(err, docs) {
                 if (err) reject(err);
-                else if (docs === null) reject("invalid username");
+                else if (docs === null) reject(new Error("Invalid username"));
                 else resolve(docs);
             }
         );
@@ -130,7 +140,7 @@ export function readUserByID(id) {
             docs
         ) {
             if (err) reject(err);
-            else if (docs === null) reject("invalid user_id");
+            else if (docs === null) reject(new Error(`Invalid user_id: ${id}`));
             else resolve(docs);
         });
     });
@@ -145,7 +155,7 @@ export function readUserPassHash(id) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: id }, { pass: 1 }, function(err, docs) {
             if (err) reject(err);
-            else if (docs === null) reject("invalid user_id");
+            else if (docs === null) reject(new Error(`Invalid user_id: ${id}`));
             else resolve(docs.pass);
         });
     });
@@ -170,21 +180,21 @@ export async function updateUser(
     const dbUserID = await readUserByID(user_id);
     const dbUserPassHash = await readUserPassHash(user_id);
 
-    // TODO: Carefully qualify so no memory leak happen
+    // Carefully qualify so no memory leak happen
     const isHashMatch = bcrypt.compare(old_pass, dbUserPassHash);
     const newHashPass = bcrypt.hash(new_pass, bcrypt.genSaltSync(10));
 
-    if (dbUserID.username !== username) throw "Invalid user";
+    if (dbUserID.username !== username) throw new Error("Username mismatch");
 
     if (username !== new_username)
         try {
             await readUser(new_username);
-            throw "this username has been taken";
+            throw new Error("Username has been taken");
         } catch (err) {
-            if (err !== "invalid username") throw err;
+            if (err.message !== "Invalid username") throw err;
         }
 
-    if (!(await isHashMatch)) throw "Wrong password";
+    if (!(await isHashMatch)) throw new Error("Wrong password");
 
     const newHash = await newHashPass;
     return new Promise((resolve, reject) => {
@@ -199,8 +209,9 @@ export async function updateUser(
             {},
             function(err, numAffected) {
                 if (err) reject(err);
-                else if (numAffected === 0) reject("nothing changed");
-                else resolve("password changed");
+                else if (numAffected === 0)
+                    reject(new Error("Nothing changed"));
+                else resolve("Password changed");
             }
         );
     });
@@ -237,25 +248,41 @@ export async function updateUser(
  * Retrieve list of submissions in database
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
-export function readAllSubmissions() {
+export function readAllSubmissions(page) {
+    if (isNaN(page) || page < 0) page = 0;
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            {},
-            {
-                ext: 1,
-                status: 1,
-                date: 1,
-                user_id: 1,
-                prob_id: 1,
-                score: 1,
-                tpen: 1,
-                tests: 1
-            },
-            function(err, docs) {
+        db.submissions
+            .find(
+                {},
+                {
+                    ext: 1,
+                    status: 1,
+                    date: 1,
+                    user_id: 1,
+                    prob_id: 1,
+                    score: 1,
+                    tpen: 1,
+                    tests: 1
+                }
+            )
+            .sort({ date: -1 })
+            .skip(PageSize * page)
+            .limit(PageSize)
+            .exec((err, docs) => {
+                // TODO: Decide what to do when there's invalid user
+                // Currently, it will throw error with invalid user_id
                 if (err) reject(err);
-                else resolve(docs);
-            }
-        );
+                else
+                    Promise.all(
+                        docs.map((doc) => readUserByID(doc.user_id))
+                    ).then((usernameList) => {
+                        let serialized = docs.map((doc, idx) => {
+                            doc.username = usernameList[idx].username;
+                            return doc;
+                        });
+                        resolve(serialized);
+                    });
+            });
     });
 }
 
@@ -280,7 +307,8 @@ export function readSubmission(sub_id) {
             },
             function(err, docs) {
                 if (err) reject(err);
-                else if (docs === null) reject("invalid ID");
+                else if (docs === null)
+                    reject(new Error(`Invalid Submission's ID: ${sub_id}`));
                 else resolve(docs);
             }
         );
@@ -292,25 +320,37 @@ export function readSubmission(sub_id) {
  * @param {String} user_id User's ID
  * @returns {Promise<Array<ReturnSubmission>>} Array of user's submissions if success
  */
-export function readUserSubmission(user_id) {
+export async function readUserSubmission(user_id, page) {
+    const username = await readUserByID(user_id);
+    if (isNaN(page) || page < 0) page = 0;
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            { user_id: user_id },
-            {
-                ext: 1,
-                status: 1,
-                date: 1,
-                user_id: 1,
-                prob_id: 1,
-                score: 1,
-                tpen: 1,
-                tests: 1
-            },
-            function(err, docs) {
+        db.submissions
+            .find(
+                { user_id: user_id },
+                {
+                    ext: 1,
+                    status: 1,
+                    date: 1,
+                    user_id: 1,
+                    prob_id: 1,
+                    score: 1,
+                    tpen: 1,
+                    tests: 1
+                }
+            )
+            .sort({ date: -1 })
+            .skip(PageSize * page)
+            .limit(PageSize)
+            .exec((err, docs) => {
                 if (err) reject(err);
-                else resolve(docs);
-            }
-        );
+                else {
+                    let serialized = docs.map((doc) => {
+                        doc.username = username;
+                        return doc;
+                    });
+                    resolve(serialized);
+                }
+            });
     });
 }
 
@@ -340,9 +380,9 @@ export async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
                     tests: null
                 }
             ],
-            function(err2, docs2) {
-                if (err2) reject(err2);
-                else resolve(docs2[0]._id);
+            function(err, docs) {
+                if (err) reject(err);
+                else resolve(docs[0]._id);
             }
         );
     });
@@ -355,8 +395,11 @@ export async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
  * @param {Number} score score
  */
 export async function updateSubmission(sub_id, new_verdict, score, tests) {
-    const doc = await readSubmission(sub_id);
-    if (doc.status !== "Pending") throw "Submission was updated";
+    try {
+        await readSubmission(sub_id);
+    } catch (err) {
+        throw new Error(`Incorrect reference: ${sub_id}`);
+    }
     return new Promise((resolve, reject) => {
         db.submissions.update(
             { _id: sub_id },
@@ -368,10 +411,11 @@ export async function updateSubmission(sub_id, new_verdict, score, tests) {
                 }
             },
             {},
-            function(err2, numAffected) {
-                if (err2) reject(err2);
-                else if (numAffected === 0) reject("failed to update");
-                else resolve("new verdict applied");
+            function(err, numAffected) {
+                if (err) reject(err);
+                else if (numAffected === 0)
+                    reject(Error(`Failed to update sub_id ${sub_id}`));
+                else resolve("New verdict applied");
             }
         );
     });
@@ -386,21 +430,18 @@ export async function updateSubmission(sub_id, new_verdict, score, tests) {
  */
 export async function readLastSatisfy(user_id, prob_id) {
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            {
+        db.submissions
+            .find({
                 user_id: user_id,
                 prob_id: prob_id,
                 status: { $ne: "Pending" }
-            },
-            function(err, docs) {
-                docs.sort(function(a, b) {
-                    return a.date - b.date;
-                });
+            })
+            .sort({ date: -1 })
+            .exec((err, docs) => {
                 if (err) reject(err);
                 else if (!docs.length) resolve({});
                 else resolve(docs.pop());
-            }
-        );
+            });
     });
 }
 
@@ -442,24 +483,24 @@ export async function countPreviousSatisfy(sub_id) {
  */
 export function bestSubmission(user_id, prob_id, ctype) {
     return new Promise((resolve, reject) => {
-        db.submissions.find(
-            {
+        db.submissions
+            .find({
                 user_id: user_id,
                 prob_id: prob_id,
                 status: { $in: ctype.acceptedStatus }
-            },
-            function(err, docs) {
+            })
+            .sort({ date: -1 })
+            .exec((err, docs) => {
                 if (err) reject(err);
                 else if (!docs.length) resolve(null);
                 else {
-                    docs.sort(ctype.sort);
+                    docs.sort(ctype.sortSub);
                     let doc = docs[0];
                     countPreviousSatisfy(doc._id).then((atmp) => {
                         doc.attempt = atmp + 1;
                         resolve(doc);
                     });
                 }
-            }
-        );
+            });
     });
 }

@@ -16,7 +16,16 @@ function calc(submission) {
  * @param {Submission} a
  * @param {Submission} b
  */
-function sort(a, b) {
+function sortSub(a, b) {
+    return b.score - a.score;
+}
+
+/**
+ * Sort by ACed problem, then penalty
+ * @param {Score} a
+ * @param {Score} b
+ */
+function sortFun(a, b) {
     return b.score - a.score;
 }
 
@@ -28,7 +37,8 @@ const acceptedStatus = ["AC", "MLE", "TLE", "RTE", "WA"];
 
 export default {
     calc,
-    sort,
+    sortSub,
     acceptedStatus,
-    allowScoreboard: false
+    allowScoreboard: true,
+    sortFun
 };

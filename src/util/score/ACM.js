@@ -19,8 +19,18 @@ function calc(sub) {
  * @param {Submission} a
  * @param {Submission} b
  */
-function sort(a, b) {
+function sortSub(a, b) {
     return a.tpen - b.tpen;
+}
+
+/**
+ * Sort by ACed problem, then penalty
+ * @param {Score} a 
+ * @param {Score} b 
+ */
+function sortFun(a, b) {
+    if (a.aced !== b.aced) return b.aced - a.aced;
+    else return a.score - b.score;
 }
 
 /**
@@ -31,7 +41,8 @@ const acceptedStatus = ["AC"];
 
 export default {
     calc,
-    sort,
+    sortSub,
     acceptedStatus,
-    allowScoreboard: true
+    allowScoreboard: true,
+    sortFun
 };

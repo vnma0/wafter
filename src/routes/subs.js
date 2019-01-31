@@ -7,28 +7,30 @@ import {
     readUserSubmission
 } from "../data/database";
 import auth from "../middleware/auth";
+import bruteForce from "../middleware/bruteForce";
 import upload from "../middleware/upload";
 import contestIsRunning from "../middleware/time";
 
 const router = express.Router();
 
 router.get("/", auth, (req, res) => {
+    const page = Number(req.query.page);
     if (req.user.isAdmin)
-        readAllSubmissions().then(
+        readAllSubmissions(page).then(
             (docs) => {
                 res.send(docs);
             },
             (err) => {
-                res.status(400).json(err);
+                res.status(400).json(err.message);
             }
         );
     else
-        readUserSubmission(req.user._id).then(
+        readUserSubmission(req.user._id, page).then(
             (docs) => {
                 res.send(docs);
             },
             (err) => {
-                res.status(400).json(err);
+                res.status(400).json(err.message);
             }
         );
 });
@@ -40,17 +42,24 @@ router.get("/:id", auth, (req, res) => {
             else res.sendStatus(401);
         },
         (err) => {
-            res.status(400).json(err);
+            res.status(400).json(err.message);
         }
     );
 });
 
-router.post("/", auth, contestIsRunning, upload, (req, res) => {
-    const file = req.file;
-    sendCode(file.path, req.user._id, file.originalname).then(
-        () => res.sendStatus(200),
-        () => res.sendStatus(500)
-    );
-});
+router.post(
+    "/",
+    auth,
+    contestIsRunning,
+    bruteForce.prevent,
+    upload,
+    (req, res) => {
+        const file = req.file;
+        sendCode(file.path, req.user._id, file.originalname).then(
+            () => res.sendStatus(200),
+            () => res.sendStatus(400)
+        );
+    }
+);
 
 export default router;
