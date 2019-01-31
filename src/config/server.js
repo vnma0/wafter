@@ -1,5 +1,5 @@
 import path from "path";
-import { existsSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
 import uuidv4 from "uuid/v4";
 
 // DOTENV will be removed soon, don't depend on it
@@ -7,6 +7,10 @@ require("dotenv").config();
 
 const staticFolder = path.join(__dirname, "../public");
 if (!existsSync(staticFolder)) mkdirSync(staticFolder);
+const sampleHTML =
+    "<!DOCTYPE html><html><body>Wafter is running as an API server only</body></html>";
+if (!existsSync(staticFolder + "/index.html"))
+    writeFileSync(staticFolder + "/index.html", sampleHTML);
 
 const serverPORT = Number(process.env.PORT);
 
