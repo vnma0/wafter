@@ -4,11 +4,13 @@ package-lock.json
 
 # Build
 build/
+**/*.exe
 
 # Runtime
 upload/
 public/
 **/*.db
+**/*.zip
 
 # Environment
 .env
