@@ -104,7 +104,7 @@ export async function sendCode(source_code_path, user_id, prob_name) {
                 .map((val, iter) => [val, iter])
                 .filter((v) => !isNaN(v[0]));
 
-            if (!availKon.length) throw new Error("All kon is busy");
+            if (!availKon.length) throw new Error("All kon are busy");
 
             Console.log(availKon);
             const judgerNum = availKon.sort((a, b) => a[0] - b[0]).shift()[1];
