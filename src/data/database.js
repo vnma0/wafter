@@ -3,6 +3,7 @@ import { join } from "path";
 import cwd from "../config/cwd";
 import Datastore from "nedb";
 import { TextEncoder } from "util";
+import isUsername from "../util/isUsername";
 
 let db = {};
 db.users = new Datastore({
@@ -29,29 +30,6 @@ const PageSize = 50;
  */
 
 /**
- * Validate username
- * NOTE: This function is being considered to be replaced
- * @param {String} username User's name
- */
-function usernameChecking(username) {
-    if (username.length > 18 || username.length < 3) return false;
-    for (let i = 0; i < username.length; i++) {
-        let c = username[i];
-        if (
-            !(
-                ("0" <= c && c <= "9") ||
-                ("a" <= c && c <= "z") ||
-                ("A" <= c && c <= "Z") ||
-                c == "_" ||
-                c == "-"
-            )
-        )
-            return false;
-    }
-    return true;
-}
-
-/**
  * Add user to database
  * @param {String} username User's name
  * @param {String} pass User's password
@@ -68,7 +46,7 @@ export async function newUser(username, pass, isAdmin = false) {
     }
     if (new TextEncoder().encode(pass).length > 72)
         throw new Error("Password's length is too long");
-    else if (!usernameChecking(username))
+    else if (!isUsername(username))
         throw new Error("Username included invalid characters");
     else {
         const hashedPass = await passHash;
