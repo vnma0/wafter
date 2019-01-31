@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { join } from "path";
 import cwd from "../config/cwd";
 import Datastore from "nedb";
+import { TextEncoder } from "util";
 
 let db = {};
 db.users = new Datastore({
@@ -67,7 +68,8 @@ export async function newUser(username, pass, isAdmin = false) {
     } catch (err) {
         if (err !== "invalid username") throw err;
     }
-    if (pass.length > 32) throw "this password's length is too long";
+    if (new TextEncoder().encode(pass).length > 72)
+        throw "this password's length is too long";
     else if (!usernameChecking(username))
         throw "this username included invalid characters";
     else {
