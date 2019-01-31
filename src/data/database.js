@@ -249,7 +249,7 @@ export async function updateUser(
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
 export function readAllSubmissions(page) {
-    if (isNaN(page)) page = 0;
+    if (isNaN(page) || page < 0) page = 0;
     return new Promise((resolve, reject) => {
         db.submissions
             .find(
@@ -322,7 +322,7 @@ export function readSubmission(sub_id) {
  */
 export async function readUserSubmission(user_id, page) {
     const username = await readUserByID(user_id);
-    if (isNaN(page)) page = 0;
+    if (isNaN(page) || page < 0) page = 0;
     return new Promise((resolve, reject) => {
         db.submissions
             .find(
