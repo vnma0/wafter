@@ -62,5 +62,5 @@ app.use("/*", (req, res) => {
 });
 
 let serv = app.listen(PORT, () => {
-    Console.log(`Wafter is serving at ${ip.address()}:${serv.address().port}`);
+    Console.log(`Wafter is serving at http://${ip.address()}:${serv.address().port}`);
 });
