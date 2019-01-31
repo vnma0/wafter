@@ -15,11 +15,15 @@ export default function initJudger() {
             judger
                 .clone(arcPath)
                 .then((boo) => {
-                    if (!boo) throw Error();
-                    Console.log(`Sucessfully cloned ${judger.serverAddress}]`);
+                    if (!boo) throw Error("Kon isn't return 200");
+                    Console.log(`Sucessfully cloned ${judger.serverAddress}`);
                 })
-                .catch(() => {
-                    Console.log(`Failed to clone ${judger.serverAddress}`);
+                .catch((err) => {
+                    Console.log(
+                        `Failed to clone ${judger.serverAddress}: ${
+                            err.message
+                        }`
+                    );
                 });
         });
     });

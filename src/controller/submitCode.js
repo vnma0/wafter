@@ -43,9 +43,11 @@ export function reloadSubs() {
                     ).catch((err) => Console.log(err.message));
                 });
             },
-            () => {
+            (err) => {
                 Console.log(
-                    `Cannot get result from Kon [${judger.serverAddress}]`
+                    `Cannot get result from Kon [${judger.serverAddress}]: ${
+                        err.message
+                    }`
                 );
             }
         );
@@ -73,18 +75,17 @@ export async function sendCode(source_code_path, user_id, prob_name) {
 
     const prob_ext = extname(prob_name);
     const prob_id = basename(prob_name, prob_ext);
-
-    if (contest.probList.indexOf(prob_id) === -1)
-        throw new Error("Invalid prob_id");
-
-    const availJudger = kon.judgers.filter(
-        (kon) => kon.probList.indexOf(prob_id) > -1
-    );
-
-    // Handle empty availJudger
-    if (!availJudger.length) throw new Error("No available Kon");
-
     try {
+        if (contest.probList.indexOf(prob_id) === -1)
+            throw new Error("Invalid prob_id");
+
+        const availJudger = kon.judgers.filter(
+            (kon) => kon.probList.indexOf(prob_id) > -1
+        );
+
+        // Handle empty availJudger
+        if (!availJudger.length) throw new Error("No available Kon");
+
         const sub_id = await newSubmission(
             source_code_path,
             user_id,
