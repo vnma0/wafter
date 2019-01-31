@@ -34,22 +34,7 @@ const PageSize = 50;
  * @param {String} username User's name
  */
 function usernameChecking(username) {
-    if (username.length > 32) return false;
-    for (let i = 0; i < username.length; i++) {
-        var c = username[i];
-        // TODO: Simplify validator
-        if (
-            !(
-                ("0" <= c && c <= "9") ||
-                ("a" <= c && c <= "z") ||
-                ("A" <= c && c <= "Z") ||
-                c == "_" ||
-                c == "-"
-            )
-        )
-            return false;
-    }
-    return true;
+    return /^[a-zA-Z0-9_-]{6,18}$/.test(username);
 }
 
 /**
