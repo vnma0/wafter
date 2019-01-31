@@ -407,9 +407,10 @@ export async function updateSubmission(sub_id, new_verdict, score, tests) {
                 }
             },
             {},
-            function(err2, numAffected) {
-                if (err2) reject(err2);
-                else if (numAffected === 0) reject("failed to update");
+            function(err, numAffected) {
+                if (err) reject(err);
+                else if (numAffected === 0)
+                    reject(Error(`Failed to update sub_id ${sub_id}`));
                 else resolve("new verdict applied");
             }
         );
