@@ -4,7 +4,6 @@ import { createReadStream } from "fs";
 
 //Supporting Library for Admin-Judger Interface, MIRAI's backend
 
-// TODO: Make parent class
 export default class Judger {
     constructor(server_address, prob_list) {
         this.serverAddress = server_address;

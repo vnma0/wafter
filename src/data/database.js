@@ -59,7 +59,6 @@ function usernameChecking(username) {
  * @returns {Promise} User's ID if success
  */
 export async function newUser(username, pass, isAdmin = false) {
-    // TODO: Simplify these code
     const passHash = bcrypt.hash(pass, bcrypt.genSaltSync(10));
     try {
         await readUser(username);
@@ -181,7 +180,7 @@ export async function updateUser(
     const dbUserID = await readUserByID(user_id);
     const dbUserPassHash = await readUserPassHash(user_id);
 
-    // TODO: Carefully qualify so no memory leak happen
+    // Carefully qualify so no memory leak happen
     const isHashMatch = bcrypt.compare(old_pass, dbUserPassHash);
     const newHashPass = bcrypt.hash(new_pass, bcrypt.genSaltSync(10));
 

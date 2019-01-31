@@ -71,7 +71,6 @@ function getMinuteSpan() {
 export async function sendCode(source_code_path, user_id, prob_name) {
     prob_name = prob_name.toUpperCase();
 
-    // TODO: Create lang map
     const prob_ext = extname(prob_name);
     const prob_id = basename(prob_name, prob_ext);
 
