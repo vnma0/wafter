@@ -60,7 +60,7 @@ async function GetAllResult(prob_list) {
         users.map((x) => GetUserResult(x._id, prob_list))
     );
 
-    return result;
+    return result.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**
