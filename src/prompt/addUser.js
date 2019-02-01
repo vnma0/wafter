@@ -16,7 +16,12 @@ async function ImportUserData(data) {
     return Promise.all(
         data.map((a) =>
             newUser(a.username, a.password, a.isAdmin).then(
-                () => Console.log(`Added ${JSON.stringify(a.username)}`),
+                () =>
+                    Console.log(
+                        `Added ${JSON.stringify(a.username)} ${
+                            a.isAdmin ? "[Admin]" : "[User]"
+                        }`
+                    ),
                 (err) =>
                     Console.log(
                         `Failed to add ${JSON.stringify(a.username)}: ${
