@@ -25,7 +25,6 @@ async function main() {
             res = await mainPrompt();
             if (res.main === "Add user") {
                 await addUser();
-                // C:\Users\ntdde\Downloads\Book1.csv
             }
             if (res.main === "Start server") {
                 require("./server");
