@@ -67,8 +67,8 @@ function isCorrectFile(file) {
     const ext = extname(name);
     const prob_id = basename(name, ext);
 
-    const isAllowedExt = contest.allowedCodeExt.includes(ext);
-    const isAllowedProbId = contest.probList.includes(prob_id);
+    const isAllowedExt = contest.allowedCodeExt.indexOf(ext) > -1;
+    const isAllowedProbId = contest.probList.indexOf(prob_id) > -1;
 
     return isAllowedExt && isAllowedProbId;
 }

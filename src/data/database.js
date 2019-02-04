@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const { join } = require("path");
 const cwd = require("../config/cwd");
 const Datastore = require("nedb");
+const { TextEncoder } = require("util");
+const isUsername = require("../util/isUsername");
 
 let db = {};
 db.users = new Datastore({
@@ -30,30 +32,6 @@ const PageSize = 50;
  */
 
 /**
- * Validate username
- * NOTE: This function is being considered to be replaced
- * @param {String} username User's name
- */
-function usernameChecking(username) {
-    if (username.length > 32) return false;
-    for (let i = 0; i < username.length; i++) {
-        var c = username[i];
-        // TODO: Simplify validator
-        if (
-            !(
-                ("0" <= c && c <= "9") ||
-                ("a" <= c && c <= "z") ||
-                ("A" <= c && c <= "Z") ||
-                c == "_" ||
-                c == "-"
-            )
-        )
-            return false;
-    }
-    return true;
-}
-
-/**
  * Add user to database
  * @param {String} username User's name
  * @param {String} pass User's password
@@ -65,13 +43,14 @@ async function newUser(username, pass, isAdmin = false) {
     const passHash = bcrypt.hash(pass, bcrypt.genSaltSync(10));
     try {
         await readUser(username);
-        throw "this username has been taken";
+        throw new Error("Username has been taken");
     } catch (err) {
-        if (err !== "invalid username") throw err;
+        if (err.message !== "Invalid username") throw err;
     }
-    if (pass.length > 32) throw "this password's length is too long";
-    else if (!usernameChecking(username))
-        throw "this username included invalid characters";
+    if (new TextEncoder().encode(pass).length > 72)
+        throw new Error("Password's length is too long");
+    else if (!isUsername(username))
+        throw new Error("Username included invalid characters");
     else {
         const hashedPass = await passHash;
         return new Promise((resolve, reject) => {
@@ -83,9 +62,9 @@ async function newUser(username, pass, isAdmin = false) {
                         isAdmin: !!isAdmin
                     }
                 ],
-                function(err2, docs2) {
-                    if (err2) reject(err2);
-                    else resolve(docs2[0]._id);
+                function(err, docs) {
+                    if (err) reject(err);
+                    else resolve(docs[0]._id);
                 }
             );
         });
@@ -123,7 +102,7 @@ function readUser(username) {
             { username: 1, isAdmin: 1 },
             function(err, docs) {
                 if (err) reject(err);
-                else if (docs === null) reject("invalid username");
+                else if (docs === null) reject(new Error("Invalid username"));
                 else resolve(docs);
             }
         );
@@ -142,7 +121,7 @@ function readUserByID(id) {
             docs
         ) {
             if (err) reject(err);
-            else if (docs === null) reject("invalid user_id");
+            else if (docs === null) reject(new Error(`Invalid user_id: ${id}`));
             else resolve(docs);
         });
     });
@@ -157,7 +136,7 @@ function readUserPassHash(id) {
     return new Promise((resolve, reject) => {
         db.users.findOne({ _id: id }, { pass: 1 }, function(err, docs) {
             if (err) reject(err);
-            else if (docs === null) reject("invalid user_id");
+            else if (docs === null) reject(new Error(`Invalid user_id: ${id}`));
             else resolve(docs.pass);
         });
     });
@@ -176,21 +155,21 @@ async function updateUser(user_id, username, new_username, old_pass, new_pass) {
     const dbUserID = await readUserByID(user_id);
     const dbUserPassHash = await readUserPassHash(user_id);
 
-    // TODO: Carefully qualify so no memory leak happen
+    // Carefully qualify so no memory leak happen
     const isHashMatch = bcrypt.compare(old_pass, dbUserPassHash);
     const newHashPass = bcrypt.hash(new_pass, bcrypt.genSaltSync(10));
 
-    if (dbUserID.username !== username) throw "Invalid user";
+    if (dbUserID.username !== username) throw new Error("Username mismatch");
 
     if (username !== new_username)
         try {
             await readUser(new_username);
-            throw "this username has been taken";
+            throw new Error("Username has been taken");
         } catch (err) {
-            if (err !== "invalid username") throw err;
+            if (err.message !== "Invalid username") throw err;
         }
 
-    if (!(await isHashMatch)) throw "Wrong password";
+    if (!(await isHashMatch)) throw new Error("Wrong password");
 
     const newHash = await newHashPass;
     return new Promise((resolve, reject) => {
@@ -205,8 +184,9 @@ async function updateUser(user_id, username, new_username, old_pass, new_pass) {
             {},
             function(err, numAffected) {
                 if (err) reject(err);
-                else if (numAffected === 0) reject("nothing changed");
-                else resolve("password changed");
+                else if (numAffected === 0)
+                    reject(new Error("Nothing changed"));
+                else resolve("Password changed");
             }
         );
     });
@@ -244,7 +224,7 @@ async function updateUser(user_id, username, new_username, old_pass, new_pass) {
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
 function readAllSubmissions(page) {
-    if (isNaN(page)) page = 0;
+    if (isNaN(page) || page < 0) page = 0;
     return new Promise((resolve, reject) => {
         db.submissions
             .find(
@@ -264,6 +244,8 @@ function readAllSubmissions(page) {
             .skip(PageSize * page)
             .limit(PageSize)
             .exec((err, docs) => {
+                // TODO: Decide what to do when there's invalid user
+                // Currently, it will throw error with invalid user_id
                 if (err) reject(err);
                 else
                     Promise.all(
@@ -300,7 +282,8 @@ function readSubmission(sub_id) {
             },
             function(err, docs) {
                 if (err) reject(err);
-                else if (docs === null) reject("invalid ID");
+                else if (docs === null)
+                    reject(new Error(`Invalid Submission's ID: ${sub_id}`));
                 else resolve(docs);
             }
         );
@@ -314,7 +297,7 @@ function readSubmission(sub_id) {
  */
 async function readUserSubmission(user_id, page) {
     const username = await readUserByID(user_id);
-    if (isNaN(page)) page = 0;
+    if (isNaN(page) || page < 0) page = 0;
     return new Promise((resolve, reject) => {
         db.submissions
             .find(
@@ -372,9 +355,9 @@ async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
                     tests: null
                 }
             ],
-            function(err2, docs2) {
-                if (err2) reject(err2);
-                else resolve(docs2[0]._id);
+            function(err, docs) {
+                if (err) reject(err);
+                else resolve(docs[0]._id);
             }
         );
     });
@@ -390,7 +373,7 @@ async function updateSubmission(sub_id, new_verdict, score, tests) {
     try {
         await readSubmission(sub_id);
     } catch (err) {
-        throw new Error("Incorrect reference: " + sub_id);
+        throw new Error(`Incorrect reference: ${sub_id}`);
     }
     return new Promise((resolve, reject) => {
         db.submissions.update(
@@ -403,10 +386,11 @@ async function updateSubmission(sub_id, new_verdict, score, tests) {
                 }
             },
             {},
-            function(err2, numAffected) {
-                if (err2) reject(err2);
-                else if (numAffected === 0) reject("failed to update");
-                else resolve("new verdict applied");
+            function(err, numAffected) {
+                if (err) reject(err);
+                else if (numAffected === 0)
+                    reject(Error(`Failed to update sub_id ${sub_id}`));
+                else resolve("New verdict applied");
             }
         );
     });
@@ -497,7 +481,6 @@ function bestSubmission(user_id, prob_id, ctype) {
 }
 
 module.exports = {
-    usernameChecking,
     newUser,
     readAllUser,
     readUser,
