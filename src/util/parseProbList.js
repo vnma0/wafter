@@ -10,8 +10,8 @@ function parseProbList(obj) {
     const probList = contest.probList;
     if (obj === undefined) return probList;
 
-    if (!Array.isArray(obj) || !obj) return [];
-    const out = obj.filter((x) => probList.includes(x));
+    if (!Array.isArray(obj)) return [];
+    const out = probList.filter((x) => obj.indexOf(x) > -1);
 
     return out;
 }

@@ -1,13 +1,18 @@
 "use strict";
 
 const path = require("path");
-const { existsSync, mkdirSync } = require("fs");
+const { existsSync, mkdirSync, writeFileSync } = require("fs");
 const uuidv4 = require("uuid/v4");
 
+// DOTENV will be removed soon, don't depend on it
 require("dotenv").config();
 
 const staticFolder = path.join(__dirname, "../public");
 if (!existsSync(staticFolder)) mkdirSync(staticFolder);
+const sampleHTML =
+    "<!DOCTYPE html><html><body>Wafter is running as an API server only</body></html>";
+if (!existsSync(staticFolder + "/index.html"))
+    writeFileSync(staticFolder + "/index.html", sampleHTML);
 
 const serverPORT = Number(process.env.PORT);
 

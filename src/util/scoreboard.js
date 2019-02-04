@@ -30,9 +30,9 @@ async function GetProblemBestResult(user_id, prob_id) {
  */
 async function GetUserResult(user_id, prob_list) {
     const user = readUserByID(user_id);
-    const resultPromises = prob_list.map((prob_id) =>
-        GetProblemBestResult(user_id, prob_id)
-    );
+    const resultPromises = prob_list
+        .sort((a, b) => a.localeCompare(b))
+        .map((prob_id) => GetProblemBestResult(user_id, prob_id));
     const totalResult = await Promise.all(resultPromises);
     let countAC = 0;
     const totalScore = totalResult.reduce((score, prob) => {
@@ -66,7 +66,7 @@ async function GetAllResult(prob_list) {
         users.map((x) => GetUserResult(x._id, prob_list))
     );
 
-    return result;
+    return result.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**

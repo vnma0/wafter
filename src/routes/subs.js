@@ -23,7 +23,7 @@ router.get("/", auth, (req, res) => {
                 res.send(docs);
             },
             (err) => {
-                res.status(400).json(err);
+                res.status(400).json(err.message);
             }
         );
     else
@@ -32,7 +32,7 @@ router.get("/", auth, (req, res) => {
                 res.send(docs);
             },
             (err) => {
-                res.status(400).json(err);
+                res.status(400).json(err.message);
             }
         );
 });
@@ -44,7 +44,7 @@ router.get("/:id", auth, (req, res) => {
             else res.sendStatus(401);
         },
         (err) => {
-            res.status(400).json(err);
+            res.status(400).json(err.message);
         }
     );
 });
@@ -59,7 +59,7 @@ router.post(
         const file = req.file;
         sendCode(file.path, req.user._id, file.originalname).then(
             () => res.sendStatus(200),
-            () => res.sendStatus(500)
+            () => res.sendStatus(400)
         );
     }
 );

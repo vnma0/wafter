@@ -6,7 +6,6 @@ const { createReadStream } = require("fs");
 
 //Supporting Library for Admin-Judger Interface, MIRAI's backend
 
-// TODO: Make parent class
 class Judger {
     constructor(server_address, prob_list) {
         this.serverAddress = server_address;
@@ -54,9 +53,9 @@ class Judger {
             });
             const status = response.status;
 
-            if (status === 415) throw "Incorrect file type";
-            else if (status === 413) throw "File is too large";
-            else if (status === 403) throw "Server has been set up";
+            if (status === 415) throw new Error("Incorrect file type");
+            else if (status === 413) throw new Error("File is too large");
+            else if (status === 403) throw new Error("Server has been set up");
 
             return status === 200;
         } catch (err) {
@@ -91,10 +90,10 @@ class Judger {
             });
             const status = response.status;
 
-            if (status === 415) throw "Incorrect file type";
-            else if (status === 413) throw "File is too large";
-            else if (status === 503) throw "Server is not ready";
-            else if (status === 400) throw "Bad request";
+            if (status === 415) throw new Error("Incorrect file type");
+            else if (status === 413) throw new Error("File is too large");
+            else if (status === 503) throw new Error("Server is not ready");
+            else if (status === 400) throw new Error("Bad request");
 
             return status === 200;
         } catch (err) {
@@ -115,7 +114,7 @@ class Judger {
                 timeout: 5000,
                 compress: true
             });
-            if (response.status === 503) throw "Server is not ready";
+            if (response.status === 503) throw new Error("Server is not ready");
             const json = response.status === 200 ? await response.json() : [];
             return json;
         } catch (err) {
@@ -137,7 +136,7 @@ class Judger {
             const text = await response.text();
             return Number(text);
         } catch (err) {
-            if (err.name === "FetchError") return undefined;
+            if (err.name === "FetchError") return null;
             else throw err;
         }
     }

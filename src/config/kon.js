@@ -17,7 +17,6 @@ if (!existsSync(konListFile)) mkdirSync(taskFolder);
 // Setup konList
 if (!existsSync(konListFile)) writeFileSync(konListFile, "[]");
 
-// TODO: Validate
 let rawServerList = JSON.parse(readFileSync(konListFile, "utf8"));
 
 // Try manage error
