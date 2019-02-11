@@ -5,6 +5,7 @@ import Enquirer from "enquirer";
 import neatCsv from "neat-csv";
 
 import { newUser } from "../data/database";
+import isUsername from "../util/isUsername";
 
 const enquirer = new Enquirer();
 
@@ -50,12 +51,40 @@ async function ImportUserFilePrompt(ext, parseFun) {
 }
 
 /**
+ * Add user manually via CLI
+ */
+async function addUserManually() {
+    const { username, password, isAdmin } = await enquirer.prompt([
+        {
+            type: "input",
+            name: "username",
+            message: "Username",
+            validate: isUsername
+        },
+        {
+            type: "invisible",
+            name: "password",
+            message: "Password"
+        },
+        {
+            type: "confirm",
+            name: "isAdmin",
+            message: "isAdmin?"
+        }
+    ]);
+    // TODO: Validate password
+
+    return newUser(username, password, isAdmin).catch((e) => Console.log(e.message));
+}
+
+/**
  * Add user prompt
  */
 async function addUserPrompt() {
     let userChoicesContainer = {
         "Import from CSV": () => ImportUserFilePrompt(".csv", neatCsv),
-        "Import from JSON": () => ImportUserFilePrompt(".json", JSON.parse)
+        "Import from JSON": () => ImportUserFilePrompt(".json", JSON.parse),
+        "Add manually": () => addUserManually()
     };
     const { addChoice } = await enquirer.prompt([
         {
