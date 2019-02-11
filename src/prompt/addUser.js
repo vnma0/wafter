@@ -74,7 +74,9 @@ async function addUserManually() {
     ]);
     // TODO: Validate password
 
-    return newUser(username, password, isAdmin).catch((e) => Console.log(e.message));
+    return newUser(username, password, isAdmin).catch((e) =>
+        Console.log(e.message)
+    );
 }
 
 /**
