@@ -3,7 +3,7 @@ import { join } from "path";
 import cwd from "../config/cwd";
 import Datastore from "nedb";
 import { TextEncoder } from "util";
-import isUsername from "../util/isUsername";
+import { isUsername } from "../util/userValid";
 
 let db = {};
 db.users = new Datastore({
