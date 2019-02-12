@@ -182,11 +182,13 @@ export async function updateUserName(user_id, old_name, new_name) {
  * @param {String} new_pass New password
  */
 export async function updateUserPassword(user_id, old_pass, new_pass) {
+    if (!isPassword(new_pass)) throw new Error("Invalid new password");
+    const newHashPass = bcrypt.hash(new_pass, bcrypt.genSaltSync(10));
+
     const dbUserPassHash = await readUserPassHash(user_id);
 
     // Carefully qualify so no memory leak happen
     const isHashMatch = bcrypt.compare(old_pass, dbUserPassHash);
-    const newHashPass = bcrypt.hash(new_pass, bcrypt.genSaltSync(10));
 
     if (!(await isHashMatch)) throw new Error("Wrong password");
 
