@@ -1,3 +1,5 @@
+import { TextEncoder } from "util";
+
 /**
  * Validate username
  * @param {String} username User's name
@@ -20,4 +22,13 @@ function isUsername(username) {
     return true;
 }
 
-export { isUsername };
+/**
+ * Validate Password
+ * This is required due to the limitation of bcrypt
+ * @param {String} password
+ */
+function isPassword(password) {
+    return new TextEncoder().encode(password).length <= 72;
+}
+
+export { isUsername, isPassword };
