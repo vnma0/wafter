@@ -28,8 +28,8 @@ function isUsername(username) {
  * @param {String} password
  */
 function isPassword(password) {
-    const lowerLimit = password.length >= 6,
-        upperLimit = TextEncoder().encode(password).length <= 72;
+    const lowerLimit = password.length >= 6;
+    const upperLimit = TextEncoder().encode(password).length <= 72;
     return upperLimit && lowerLimit;
 }
 
