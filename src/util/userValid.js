@@ -28,7 +28,9 @@ function isUsername(username) {
  * @param {String} password
  */
 function isPassword(password) {
-    return new TextEncoder().encode(password).length <= 72;
+    const lowerLimit = password.length >= 6,
+        upperLimit = TextEncoder().encode(password).length <= 72;
+    return upperLimit && lowerLimit;
 }
 
 export { isUsername, isPassword };
