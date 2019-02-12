@@ -1,6 +1,5 @@
 /**
  * Validate username
- * NOTE: This function is being considered to be replaced
  * @param {String} username User's name
  */
 function isUsername(username) {
@@ -21,4 +20,4 @@ function isUsername(username) {
     return true;
 }
 
-export default isUsername;
+export { isUsername };
