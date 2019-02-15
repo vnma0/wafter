@@ -3,6 +3,12 @@ import addUser from "./prompt/addUser";
 
 const enquirer = new Enquirer();
 
+const mainChoices = {
+    "Start server": () => {},
+    "Add user": () => addUser(),
+    Exit: () => {}
+};
+
 /**
  * Main prompt
  */
@@ -11,7 +17,7 @@ async function mainPrompt() {
         type: "autocomplete",
         name: "main",
         message: "How can I help you ?",
-        choices: ["Start server", "Add user", "Exit"]
+        choices: Object.keys(mainChoices)
     });
 }
 
@@ -23,9 +29,8 @@ async function main() {
     try {
         while (res.main !== "Exit") {
             res = await mainPrompt();
-            if (res.main === "Add user") {
-                await addUser();
-            }
+            await mainChoices[res.main]();
+
             if (res.main === "Start server") {
                 require("./server");
                 return;
