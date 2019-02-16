@@ -3,11 +3,28 @@
   "version": "0.1.0",
   "description": "Mirai's Backend",
   "main": "src/server.js",
+  "bin": "build/server.js",
   "scripts": {
     "build": "babel src/ -d build/",
     "start": "npm run build && node build/server.js",
     "test": "mocha --require @babel/register",
-    "dev": "nodemon --exec babel-node src/server.js"
+    "dev": "nodemon --exec babel-node src/server.js",
+    "pkg": "pkg -o dist/wafter ."
+  },
+  "pkg": {
+    "scripts": [
+      "build/*.js",
+      "build/config/*.js",
+      "build/controller/*.js",
+      "build/data/*.js",
+      "build/driver/*.js",
+      "build/middleware/*.js",
+      "build/routes/*.js",
+      "build/util/*.js"
+    ],
+    "assets": [
+      "build/public/**/*"
+    ]
   },
   "repository": {
     "type": "git",
@@ -52,6 +69,7 @@
     "babel-preset-minify": "^0.5.0",
     "eslint": "^5.11.0",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.9"
+    "nodemon": "^1.18.9",
+    "pkg": "^4.3.7"
   }
 }
