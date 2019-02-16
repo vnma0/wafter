@@ -146,7 +146,7 @@ function readUserPassHash(id) {
  * @param {String} old_name Old username
  * @param {String} new_name New username
  */
-export async function updateUserName(user_id, old_name, new_name) {
+async function updateUserName(user_id, old_name, new_name) {
     if (!isUsername(new_name)) throw new Error("Invalid new name");
     const dbUserID = await readUserByID(user_id);
 
