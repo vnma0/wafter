@@ -107,34 +107,22 @@ describe("database", function() {
         });
     });
 
-    describe("updateUser", function() {
-        it("should be update user's password", function() {
-            return db.updateUser(
-                sampleID,
-                sampleUser,
-                sampleUser,
-                samplePass,
-                "newpass"
+    describe("updateUserName", function() {
+        it("should be able to prevent the collision", function() {
+            return db.updateUserName(sampleID, sampleUser, "ontest").then(
+                () => {
+                    throw "it updates to an username which has been used";
+                },
+                () => {
+                    return;
+                }
             );
         });
+    });
 
-        it("should be able to prevent the collision", function() {
-            return db
-                .updateUser(
-                    sampleID,
-                    sampleUser,
-                    "ontest",
-                    "newpass",
-                    samplePass
-                )
-                .then(
-                    () => {
-                        throw "it updates to an username which has been used";
-                    },
-                    () => {
-                        return;
-                    }
-                );
+    describe("updateUserPassword", function() {
+        it("should be update user's password", function() {
+            return db.updateUserPassword(sampleID, samplePass, "newpass");
         });
     });
 

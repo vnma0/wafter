@@ -4,8 +4,7 @@ const bcrypt = require("bcryptjs");
 const { join } = require("path");
 const cwd = require("../config/cwd");
 const Datastore = require("nedb");
-const { TextEncoder } = require("util");
-const isUsername = require("../util/isUsername");
+const { isUsername, isPassword } = require("../util/userValid");
 
 let db = {};
 db.users = new Datastore({
@@ -47,8 +46,7 @@ async function newUser(username, pass, isAdmin = false) {
     } catch (err) {
         if (err.message !== "Invalid username") throw err;
     }
-    if (new TextEncoder().encode(pass).length > 72)
-        throw new Error("Password's length is too long");
+    if (!isPassword(pass)) throw new Error("Invalid password's length");
     else if (!isUsername(username))
         throw new Error("Username included invalid characters");
     else {
@@ -143,41 +141,67 @@ function readUserPassHash(id) {
 }
 
 /**
- * Update User's data in database
+ * Update user's name
  * @param {String} user_id User's id
- * @param {String} username Username
- * @param {String} new_username New username
+ * @param {String} old_name Old username
+ * @param {String} new_name New username
+ */
+export async function updateUserName(user_id, old_name, new_name) {
+    if (!isUsername(new_name)) throw new Error("Invalid new name");
+    const dbUserID = await readUserByID(user_id);
+
+    try {
+        await readUser(new_name);
+        throw new Error("Username has been taken");
+    } catch (err) {
+        if (err.message !== "Invalid username") throw err;
+    }
+
+    if (dbUserID.username !== old_name)
+        throw new Error("Mismatch between username and user_id");
+
+    return new Promise((resolve, reject) => {
+        db.users.update(
+            { _id: user_id, username: dbUserID.username },
+            {
+                $set: {
+                    username: new_name
+                }
+            },
+            {},
+            function(err, numAffected) {
+                if (err) reject(err);
+                else if (numAffected === 0)
+                    reject(new Error("Nothing changed"));
+                else resolve("Username changed");
+            }
+        );
+    });
+}
+
+/**
+ * Update user's password
+ * @param {String} user_id User's id
  * @param {String} old_pass Old password
  * @param {String} new_pass New password
- *
  */
-async function updateUser(user_id, username, new_username, old_pass, new_pass) {
-    const dbUserID = await readUserByID(user_id);
+async function updateUserPassword(user_id, old_pass, new_pass) {
+    if (!isPassword(new_pass)) throw new Error("Invalid new password");
+    const newHashPass = bcrypt.hash(new_pass, bcrypt.genSaltSync(10));
+
     const dbUserPassHash = await readUserPassHash(user_id);
 
     // Carefully qualify so no memory leak happen
     const isHashMatch = bcrypt.compare(old_pass, dbUserPassHash);
-    const newHashPass = bcrypt.hash(new_pass, bcrypt.genSaltSync(10));
-
-    if (dbUserID.username !== username) throw new Error("Username mismatch");
-
-    if (username !== new_username)
-        try {
-            await readUser(new_username);
-            throw new Error("Username has been taken");
-        } catch (err) {
-            if (err.message !== "Invalid username") throw err;
-        }
 
     if (!(await isHashMatch)) throw new Error("Wrong password");
 
     const newHash = await newHashPass;
     return new Promise((resolve, reject) => {
         db.users.update(
-            { _id: user_id, pass: dbUserPassHash, username: username },
+            { _id: user_id, pass: dbUserPassHash },
             {
                 $set: {
-                    username: new_username,
                     pass: newHash
                 }
             },
@@ -486,7 +510,8 @@ module.exports = {
     readUser,
     readUserByID,
     readUserPassHash,
-    updateUser,
+    updateUserName,
+    updateUserPassword,
     readAllSubmissions,
     readSubmission,
     readUserSubmission,
