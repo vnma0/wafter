@@ -43,7 +43,7 @@ export async function newUser(username, pass, isAdmin = false) {
     } catch (err) {
         if (err.message !== "Invalid username") throw err;
     }
-    if (!isPassword(pass)) throw new Error("Password's length is too long");
+    if (!isPassword(pass)) throw new Error("Invalid password's length");
     else if (!isUsername(username))
         throw new Error("Username included invalid characters");
     else {
