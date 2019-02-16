@@ -5,7 +5,7 @@ import Enquirer from "enquirer";
 import neatCsv from "neat-csv";
 
 import { newUser } from "../data/database";
-import isUsername from "../util/isUsername";
+import { isPassword, isUsername } from "../util/userValid";
 
 const enquirer = new Enquirer();
 
@@ -64,7 +64,8 @@ async function addUserManually() {
         {
             type: "invisible",
             name: "password",
-            message: "Password"
+            message: "Password",
+            validate: isPassword
         },
         {
             type: "confirm",
