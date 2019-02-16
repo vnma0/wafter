@@ -1,6 +1,7 @@
+const { TextEncoder } = require("util");
+
 /**
  * Validate username
- * NOTE: This function is being considered to be replaced
  * @param {String} username User's name
  */
 function isUsername(username) {
@@ -21,4 +22,15 @@ function isUsername(username) {
     return true;
 }
 
-export default isUsername;
+/**
+ * Validate Password
+ * This is required due to the limitation of bcrypt
+ * @param {String} password
+ */
+function isPassword(password) {
+    const lowerLimit = password.length >= 6;
+    const upperLimit = TextEncoder().encode(password).length <= 72;
+    return upperLimit && lowerLimit;
+}
+
+module.exports = { isUsername, isPassword };
