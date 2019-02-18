@@ -48,11 +48,11 @@ app.use("/api/subs", subs);
 app.use("/api/users", users);
 app.use("/api/score", score);
 
-app.post("/login", passport.authenticate("local"), (req, res) => {
+app.post("/api/login", passport.authenticate("local"), (req, res) => {
     res.sendStatus(200);
 });
 
-app.get("/logout", (req, res) => {
+app.get("/api/logout", (req, res) => {
     req.logout();
     res.sendStatus(200);
 });
@@ -64,5 +64,7 @@ app.use("/*", (req, res) => {
 });
 
 let serv = app.listen(PORT, () => {
-    Console.log(`Wafter is serving at http://${ip.address()}:${serv.address().port}`);
+    Console.log(
+        `Wafter is serving at http://${ip.address()}:${serv.address().port}`
+    );
 });
