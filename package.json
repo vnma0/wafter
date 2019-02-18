@@ -23,7 +23,8 @@
       "build/util/*.js"
     ],
     "assets": [
-      "build/public/**/*"
+      "build/public/**/**/*",
+      "build/public/*"
     ]
   },
   "repository": {
