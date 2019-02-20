@@ -23,7 +23,7 @@ function KonConfig(konListFile) {
 
         return konList;
     } catch (err) {
-        throw new Error("Cannot read Kon Config");
+        throw new Error(`Failed to read config for Kon: ${err.message}`);
     }
 }
 
