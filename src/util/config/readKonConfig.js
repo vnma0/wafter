@@ -4,6 +4,7 @@ import validUrl from "valid-url";
 
 import Judger from "../../driver/kon";
 import parseProbList from "../parseProbList";
+import readConfig from "../readConfig";
 
 /**
  * Read kon config
@@ -14,7 +15,7 @@ function KonConfig(konListFile) {
         // Setup konList
         if (!existsSync(konListFile)) writeFileSync(konListFile, "[]");
 
-        let rawServerList = JSON.parse(readFileSync(konListFile, "utf8"));
+        let rawServerList = readConfig(konListFile);
 
         const konList = rawServerList
             .filter((kon) => validUrl.isWebUri(kon.url))
