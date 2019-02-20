@@ -1,4 +1,4 @@
-import { readFileSync, existsSync, writeFileSync } from "fs";
+import { existsSync, writeFileSync } from "fs";
 
 import validUrl from "valid-url";
 
