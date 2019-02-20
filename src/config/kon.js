@@ -1,9 +1,6 @@
-import { readFileSync, existsSync, writeFileSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync } from "fs";
 
-import validUrl from "valid-url";
-
-import Judger from "../driver/kon";
-import parseProbList from "../util/parseProbList";
+import KonConfig from "../util/config/readKonConfig";
 
 const konListFile = "kon.json";
 
@@ -12,19 +9,7 @@ const taskFolder = "Tasks";
 
 if (!existsSync(konListFile)) mkdirSync(taskFolder);
 
-// Setup konList
-if (!existsSync(konListFile)) writeFileSync(konListFile, "[]");
-
-let rawServerList = JSON.parse(readFileSync(konListFile, "utf8"));
-
-// Try manage error
-if (!Array.isArray(rawServerList)) rawServerList = [rawServerList];
-
-const konList = rawServerList
-    .filter((kon) => validUrl.isWebUri(kon.url))
-    .map((kon) => new Judger(kon.url, parseProbList(kon.prob)));
-
 export default {
-    judgers: konList,
+    judgers: KonConfig(konListFile),
     tasks: taskFolder
 };
