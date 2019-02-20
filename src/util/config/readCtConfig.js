@@ -1,8 +1,6 @@
 import score from "../score";
 import readConfig from "../readConfig";
 
-const ctCfgFile = "contest.json";
-
 /**
  * Parse Object into Date object
  * @param {Object} timeData
@@ -62,15 +60,13 @@ function parseCtCfg(configData) {
 /**
  * Read Config from contest.json
  */
-function contestConfig() {
+function contestConfig(ctCfgFile) {
     try {
-        return parseCtCfg(readConfig(contestConfig));
+        return parseCtCfg(readConfig(ctCfgFile));
     } catch (err) {
-        throw new Error(
-            `Invalid contest file (${contestConfig}): ${err.message}`
-        );
+        throw new Error(`Invalid contest file (${ctCfgFile}): ${err.message}`);
     }
 }
 
 export default contestConfig;
-export { parseCtCfg, ctCfgFile };
+export { parseCtCfg };

@@ -1,3 +1,5 @@
 import contestConfig from "../util/config/readCtConfig";
 
-export default contestConfig();
+const ctCfgFile = "contest.json";
+
+export default contestConfig(ctCfgFile);
