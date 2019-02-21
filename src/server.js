@@ -57,6 +57,10 @@ app.get("/api/logout", (req, res) => {
     res.sendStatus(200);
 });
 
+app.all("/api/*", (req, res) => {
+    res.sendStatus(404);
+});
+
 app.use("/", express.static(server.staticFolder));
 // Temp solution ?
 app.use("/*", (req, res) => {
