@@ -1,6 +1,8 @@
-import { readFileSync, writeFileSync } from "fs";
-import sampleContest from "./sampleContest";
-import score from "../util/score";
+"use strict";
+
+const { readFileSync, writeFileSync } = require("fs");
+const sampleContest = require("./sampleContest");
+const score = require("../util/score");
 
 const contestConfig = "contest.json";
 
@@ -48,7 +50,7 @@ probList = probList
     .map((x) => String(x).toUpperCase())
     .sort((a, b) => a.localeCompare(b));
 
-export default {
+module.exports = {
     // Change this to config contest time
     name: name,
     startTime: startTime,

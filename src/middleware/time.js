@@ -1,4 +1,6 @@
-import contest from "../config/contest";
+"use strict";
+
+const contest = require("../config/contest");
 
 /**
  * Check if contest í running
@@ -7,9 +9,11 @@ import contest from "../config/contest";
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-export default function contestIsRunning(req, res, next) {
+function contestIsRunning(req, res, next) {
     const { startTime, endTime } = contest;
     const now = new Date();
     if (now < startTime || now > endTime) res.sendStatus(403);
     else next();
 }
+
+module.exports = contestIsRunning;

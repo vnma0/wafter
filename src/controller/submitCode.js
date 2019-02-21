@@ -1,9 +1,11 @@
-import Console from "console";
-import { basename, extname } from "path";
+"use strict";
 
-import kon from "../config/kon";
-import contest from "../config/contest";
-import { newSubmission, updateSubmission } from "../data/database";
+const Console = require("console");
+const { basename, extname } = require("path");
+
+const kon = require("../config/kon");
+const contest = require("../config/contest");
+const { newSubmission, updateSubmission } = require("../data/database");
 
 /**
  * Parse Submission from kon.js for verdict
@@ -29,7 +31,7 @@ function getVerdict(sub) {
 /**
  * Update submission status from log from kons'
  */
-export function reloadSubs() {
+function reloadSubs() {
     kon.judgers.forEach((judger) => {
         judger.get().then(
             (coll) => {
@@ -70,7 +72,7 @@ function getMinuteSpan() {
  * @param {String} user_id User's ID
  * @param {String} prob_name file's name
  */
-export async function sendCode(source_code_path, user_id, prob_name) {
+async function sendCode(source_code_path, user_id, prob_name) {
     prob_name = prob_name.toUpperCase();
 
     const prob_ext = extname(prob_name);
@@ -121,3 +123,8 @@ export async function sendCode(source_code_path, user_id, prob_name) {
         throw err;
     }
 }
+
+module.exports = {
+    reloadSubs,
+    sendCode
+};
