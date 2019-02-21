@@ -1,6 +1,8 @@
-import { existsSync, mkdirSync } from "fs";
+"use strict";
 
-import KonConfig from "../util/config/readKonConfig";
+const { existsSync, mkdirSync } = require("fs");
+
+const KonConfig = require("../util/config/readKonConfig");
 
 const konListFile = "kon.json";
 
@@ -9,7 +11,7 @@ const taskFolder = "Tasks";
 
 if (!existsSync(konListFile)) mkdirSync(taskFolder);
 
-export default {
+module.exports = {
     judgers: KonConfig(konListFile),
     tasks: taskFolder
 };

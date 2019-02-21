@@ -1,10 +1,12 @@
-import { existsSync, writeFileSync } from "fs";
+"use strict";
 
-import validUrl from "valid-url";
+const { existsSync, writeFileSync } = require("fs");
 
-import Judger from "../../driver/kon";
-import parseProbList from "../parseProbList";
-import readConfig from "../readConfig";
+const validUrl = require("valid-url");
+
+const Judger = require("../../driver/kon");
+const parseProbList = require("../parseProbList");
+const readConfig = require("../readConfig");
 
 /**
  * Read kon config

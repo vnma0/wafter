@@ -1,5 +1,7 @@
-import score from "../score";
-import readConfig from "../readConfig";
+"use strict";
+
+const score = require("../score");
+const readConfig = require("../readConfig");
 
 /**
  * Parse Object into Date object

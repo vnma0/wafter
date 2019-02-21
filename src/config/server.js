@@ -1,7 +1,9 @@
-import path from "path";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
+"use strict";
 
-import serverConfig from "../util/config/readServerConfig";
+const path = require("path");
+const { existsSync, mkdirSync, writeFileSync } = require("fs");
+
+const serverConfig = require("../util/config/readServerConfig");
 
 const staticFolder = path.join(__dirname, "../public");
 if (!existsSync(staticFolder)) mkdirSync(staticFolder);
@@ -12,4 +14,7 @@ if (!existsSync(staticFolder + "/index.html"))
 
 const serverCfg = Object.assign(serverConfig(), { staticFolder: staticFolder });
 
-export default serverCfg;
+// TODO: Allow option to be be parsed as parameter in CLI
+// i.e: `--port 3002`
+
+module.exports = serverCfg;

@@ -1,19 +1,23 @@
-import express from "express";
+"use strict";
 
-import { readUserByID } from "../data/database";
-import auth from "../middleware/auth";
+const express = require("express");
+
+const { readUserByID } = require("../data/database");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
+
+router.use(auth);
 
 /**
  * GET /users
  * If user -> redirect to user
  */
-router.get("/", auth, (req, res) => {
+router.get("/", (req, res) => {
     res.redirect(req.baseUrl + "/" + req.user._id);
 });
 
-router.get("/:userid", auth, (req, res) => {
+router.get("/:userid", (req, res) => {
     const userId = req.user._id;
     if (userId !== req.params.userid) res.sendStatus(403);
     readUserByID(userId).then(
@@ -26,5 +30,4 @@ router.get("/:userid", auth, (req, res) => {
     );
 });
 
-export default router;
-
+module.exports = router;

@@ -1,4 +1,6 @@
-import uuidv4 from "uuid/v4";
+"use strict";
+
+const uuidv4 = require("uuid/v4");
 
 /**
  * Read Server config: .env

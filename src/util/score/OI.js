@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Calculate result
  * @param {Submission} submission Submission given by database.js
@@ -35,7 +37,7 @@ function sortFun(a, b) {
  */
 const acceptedStatus = ["AC", "MLE", "TLE", "RTE", "WA"];
 
-export default {
+module.exports = {
     calc,
     sortSub,
     acceptedStatus,

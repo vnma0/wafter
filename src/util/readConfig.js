@@ -1,4 +1,6 @@
-import { readFileSync } from "fs";
+"use strict";
+
+const { readFileSync } = require("fs");
 
 /**
  * Read Config File

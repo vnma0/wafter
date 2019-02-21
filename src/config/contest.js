@@ -1,5 +1,7 @@
-import contestConfig from "../util/config/readCtConfig";
+"use strict";
+
+const contestConfig = require("../util/config/readCtConfig");
 
 const ctCfgFile = "contest.json";
 
-export default contestConfig(ctCfgFile);
+module.exports = contestConfig(ctCfgFile);

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Calculate final result from judger's result, ACM style
  * @param {ReturnSubmission} sub Submission given by database.js
@@ -39,7 +41,7 @@ function sortFun(a, b) {
  */
 const acceptedStatus = ["AC"];
 
-export default {
+module.exports = {
     calc,
     sortSub,
     acceptedStatus,

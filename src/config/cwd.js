@@ -1,1 +1,3 @@
-export default process.cwd();
+"use strict";
+
+module.exports = process.cwd();
