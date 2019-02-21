@@ -1,4 +1,6 @@
-import contest from "../config/contest";
+"use strict";
+
+const contest = require("../config/contest");
 
 /**
  * parseProbList
@@ -14,4 +16,4 @@ function parseProbList(obj) {
     return out;
 }
 
-export default parseProbList;
+module.exports = parseProbList;

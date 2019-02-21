@@ -1,4 +1,4 @@
-import Judger from "../src/driver/kon";
+const Judger = require("../src/driver/kon");
 
 const judger = new Judger("http://localhost:30000");
 

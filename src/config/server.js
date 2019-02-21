@@ -1,6 +1,8 @@
-import path from "path";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
-import uuidv4 from "uuid/v4";
+"use strict";
+
+const path = require("path");
+const { existsSync, mkdirSync, writeFileSync } = require("fs");
+const uuidv4 = require("uuid/v4");
 
 // DOTENV will be removed soon, don't depend on it
 require("dotenv").config();
@@ -17,7 +19,7 @@ const serverPORT = Number(process.env.PORT);
 // TODO: Allow option to be be parsed as parameter in CLI
 // i.e: `--port 3002`
 
-export default {
+module.exports = {
     displayName: process.env.SERVERNAME || "Wafter - Themis Distributed Server",
     port: isNaN(serverPORT) ? 3001 : serverPORT,
     secret: process.env.SECRET || uuidv4(),

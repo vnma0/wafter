@@ -1,7 +1,9 @@
-import express from "express";
+"use strict";
 
-import { readUserByID } from "../data/database";
-import auth from "../middleware/auth";
+const express = require("express");
+
+const { readUserByID } = require("../data/database");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -28,4 +30,4 @@ router.get("/:userid", (req, res) => {
     );
 });
 
-export default router;
+module.exports = router;

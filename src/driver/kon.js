@@ -1,6 +1,8 @@
-import fetch from "node-fetch";
-import FormData from "form-data";
-import { createReadStream } from "fs";
+"use strict";
+
+const fetch = require("node-fetch");
+const FormData = require("form-data");
+const { createReadStream } = require("fs");
 
 //Supporting Library for Admin-Judger Interface, MIRAI's backend
 
@@ -140,4 +142,4 @@ class Judger {
     }
 }
 
-export default Judger;
+module.exports = Judger;

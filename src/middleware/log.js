@@ -1,5 +1,5 @@
-import { createWriteStream } from "fs";
-import morgan from "morgan";
+const { createWriteStream } = require("fs");
+const morgan = require("morgan");
 
 const logToConsole = morgan("short", {
     skip: function(req, res) {
@@ -14,4 +14,4 @@ const logToFile = morgan("combined", {
     })
 });
 
-export { logToConsole, logToFile };
+module.exports = { logToConsole, logToFile };

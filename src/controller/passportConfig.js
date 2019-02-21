@@ -1,12 +1,18 @@
-import { readUser, readUserByID, readUserPassHash } from "../data/database";
-import { Strategy } from "passport-local";
-import bcrypt from "bcryptjs";
+"use strict";
+
+const {
+    readUser,
+    readUserByID,
+    readUserPassHash
+} = require("../data/database");
+const { Strategy } = require("passport-local");
+const bcrypt = require("bcryptjs");
 
 /**
  * Configure passport to use local Strategy with nedb
  * @param {PassportStatic} passport put require('passport') here
  */
-export default function(passport) {
+function passportConfig(passport) {
     const local = new Strategy(
         {
             usernameField: "username",
@@ -35,3 +41,5 @@ export default function(passport) {
 
     passport.use("local", local);
 }
+
+module.exports = passportConfig;
