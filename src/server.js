@@ -10,6 +10,7 @@ import ip from "ip";
 import server from "./config/server";
 import passportConfig from "./controller/passportConfig";
 import initJudger from "./controller/initJudger";
+import { logToConsole, logToFile } from "./middleware/log";
 
 import info from "./routes/info";
 import subs from "./routes/subs";
@@ -25,7 +26,9 @@ const PORT = server.port;
 
 app.use(helmet());
 app.use(helmet.noCache());
-app.use(morgan("common"));
+app.use(logToConsole);
+app.use(logToFile);
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     session({
