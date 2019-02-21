@@ -1,6 +1,12 @@
-import { bestSubmission, readAllUser, readUserByID } from "../data/database";
-import score from "./score";
-import contest from "../config/contest";
+"use strict";
+
+const {
+    bestSubmission,
+    readAllUser,
+    readUserByID
+} = require("../data/database");
+const score = require("./score");
+const contest = require("../config/contest");
 
 /**
  * Output correct result
@@ -77,4 +83,4 @@ async function scoreboard(user_id) {
     else return GetUserResult(user_id, contest.probList).then((v) => [v]);
 }
 
-export default scoreboard;
+module.exports = scoreboard;

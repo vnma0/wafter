@@ -1,4 +1,4 @@
-import { TextEncoder } from "util";
+const { TextEncoder } = require("util");
 
 /**
  * Validate username
@@ -33,4 +33,4 @@ function isPassword(password) {
     return upperLimit && lowerLimit;
 }
 
-export { isUsername, isPassword };
+module.exports = { isUsername, isPassword };

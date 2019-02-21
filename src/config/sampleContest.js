@@ -1,3 +1,5 @@
+"use strict";
+
 let now = new Date();
 let sampleStart = [
     now.getFullYear(),
@@ -12,7 +14,7 @@ let sampleEnd = [
     now.getHours() + 2
 ];
 
-export default {
+module.exports = {
     name: "Sample Contest",
     startTime: sampleStart,
     endTime: sampleEnd,

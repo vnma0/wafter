@@ -1,20 +1,22 @@
-import Console from "console";
-import express from "express";
-import morgan from "morgan";
-import helmet from "helmet";
-import passport from "passport";
-import session from "express-session";
-import bodyParser from "body-parser";
-import ip from "ip";
+"use strict";
 
-import server from "./config/server";
-import passportConfig from "./controller/passportConfig";
-import initJudger from "./controller/initJudger";
+const Console = require("console");
+const express = require("express");
+const morgan = require("morgan");
+const helmet = require("helmet");
+const passport = require("passport");
+const session = require("express-session");
+const bodyParser = require("body-parser");
+const ip = require("ip");
 
-import info from "./routes/info";
-import subs from "./routes/subs";
-import users from "./routes/users";
-import score from "./routes/score";
+const server = require("./config/server");
+const passportConfig = require("./controller/passportConfig");
+const initJudger = require("./controller/initJudger");
+
+const info = require("./routes/info");
+const subs = require("./routes/subs");
+const users = require("./routes/users");
+const score = require("./routes/score");
 
 passportConfig(passport);
 initJudger();

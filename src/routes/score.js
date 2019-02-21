@@ -1,7 +1,9 @@
-import express from "express";
+"use strict";
 
-import auth from "../middleware/auth";
-import scoreboard from "../util/scoreboard";
+const express = require("express");
+
+const auth = require("../middleware/auth");
+const scoreboard = require("../util/scoreboard");
 
 const router = express.Router();
 
@@ -12,4 +14,4 @@ router.get("/", auth, (req, res) => {
     );
 });
 
-export default router;
+module.exports = router;

@@ -1,15 +1,17 @@
-import express from "express";
+"use strict";
 
-import { sendCode } from "../controller/submitCode";
-import {
+const express = require("express");
+
+const { sendCode } = require("../controller/submitCode");
+const {
     readSubmission,
     readAllSubmissions,
     readUserSubmission
-} from "../data/database";
-import auth from "../middleware/auth";
-import bruteForce from "../middleware/bruteForce";
-import upload from "../middleware/upload";
-import contestIsRunning from "../middleware/time";
+} = require("../data/database");
+const auth = require("../middleware/auth");
+const bruteForce = require("../middleware/bruteForce");
+const upload = require("../middleware/upload");
+const contestIsRunning = require("../middleware/time");
 
 const router = express.Router();
 
@@ -58,4 +60,4 @@ router.get("/:id", (req, res) => {
     );
 });
 
-export default router;
+module.exports = router;
