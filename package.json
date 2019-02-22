@@ -14,16 +14,10 @@
   "pkg": {
     "scripts": [
       "build/*.js",
-      "build/config/*.js",
-      "build/controller/*.js",
-      "build/data/*.js",
-      "build/driver/*.js",
-      "build/middleware/*.js",
-      "build/routes/*.js",
-      "build/util/*.js"
+      "build/**/*.js"
     ],
     "assets": [
-      "public/**/**/*",
+      "public/**/*",
       "public/*"
     ]
   },
