@@ -62,7 +62,8 @@ function parseCtCfg(configData) {
 /**
  * Read Config from contest.json
  */
-function contestConfig(ctCfgFile) {
+function contestConfig() {
+    const ctCfgFile = "contest.json";
     try {
         return parseCtCfg(readConfig(ctCfgFile));
     } catch (err) {

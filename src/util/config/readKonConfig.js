@@ -10,9 +10,9 @@ const readConfig = require("../readConfig");
 
 /**
  * Read kon config
- * @param {String} konListFile Filename
  */
-function KonConfig(konListFile) {
+function KonConfig() {
+    const konListFile = "kon.json";
     try {
         // Setup konList
         if (!existsSync(konListFile)) writeFileSync(konListFile, "[]");
