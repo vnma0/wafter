@@ -5,6 +5,9 @@ package-lock.json
 # Build
 build/
 
+# Package
+dist/
+
 # Runtime
 upload/
 public/

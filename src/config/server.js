@@ -5,7 +5,7 @@ const { existsSync, mkdirSync, writeFileSync } = require("fs");
 
 const serverConfig = require("../util/config/readServerConfig");
 
-const staticFolder = path.join(__dirname, "../public");
+const staticFolder = path.join(__dirname, "../../public");
 if (!existsSync(staticFolder)) mkdirSync(staticFolder);
 const sampleHTML =
     "<!DOCTYPE html><html><body>Wafter is running as an API server only</body></html>";
