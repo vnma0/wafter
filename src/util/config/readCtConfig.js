@@ -28,7 +28,8 @@ function parseContainer(container) {
 }
 
 /**
- * Parse contest config file
+ * Parse & validate contest config data into formatted one
+ * @param {Object} configData 
  */
 function parseCtCfg(configData) {
     let {
