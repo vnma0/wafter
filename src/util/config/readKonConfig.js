@@ -29,4 +29,4 @@ function KonConfig(konListFile) {
     }
 }
 
-export default KonConfig;
+module.exports = KonConfig;

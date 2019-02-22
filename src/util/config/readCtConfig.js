@@ -70,5 +70,5 @@ function contestConfig(ctCfgFile) {
     }
 }
 
-export default contestConfig;
-export { parseCtCfg };
+module.exports = contestConfig;
+module.exports.parseCtCfg = parseCtCfg;

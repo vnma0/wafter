@@ -14,4 +14,4 @@ function readConfig(configFile) {
     }
 }
 
-export default readConfig;
+module.exports = readConfig;
