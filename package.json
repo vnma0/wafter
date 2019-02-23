@@ -6,9 +6,9 @@
   "bin": "build/index.js",
   "scripts": {
     "build": "del-cli build/ && minify src/ -d build/",
-    "start": "node src/server.js",
+    "start": "node src/index.js",
     "test": "mocha",
-    "dev": "nodemon src/server.js",
+    "dev": "nodemon src/index.js",
     "pkg": "pkg -o dist/wafter ."
   },
   "pkg": {

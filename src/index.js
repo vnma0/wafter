@@ -1,4 +1,5 @@
 const Enquirer = require("enquirer");
+const Console = require("console");
 const addUser = require("./prompt/addUser");
 
 const enquirer = new Enquirer();
@@ -37,6 +38,7 @@ async function main() {
             }
         }
     } catch (err) {
+        Console.log(err.message);
         process.exit();
     }
     process.exit();
