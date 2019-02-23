@@ -1,41 +1,54 @@
-import express from "express";
+"use strict";
 
-import { sendCode } from "../controller/submitCode";
-import {
+const express = require("express");
+
+const { sendCode } = require("../controller/submitCode");
+const {
     readSubmission,
     readAllSubmissions,
     readUserSubmission
-} from "../data/database";
-import auth from "../middleware/auth";
-import bruteForce from "../middleware/bruteForce";
-import upload from "../middleware/upload";
-import contestIsRunning from "../middleware/time";
+} = require("../data/database");
+const auth = require("../middleware/auth");
+const bruteForce = require("../middleware/bruteForce");
+const upload = require("../middleware/upload");
+const contestIsRunning = require("../middleware/time");
 
 const router = express.Router();
 
-router.get("/", auth, (req, res) => {
-    const page = Number(req.query.page);
-    if (req.user.isAdmin)
-        readAllSubmissions(page).then(
-            (docs) => {
-                res.send(docs);
-            },
-            (err) => {
-                res.status(400).json(err.message);
-            }
-        );
-    else
-        readUserSubmission(req.user._id, page).then(
-            (docs) => {
-                res.send(docs);
-            },
-            (err) => {
-                res.status(400).json(err.message);
-            }
-        );
-});
+router.use(auth);
 
-router.get("/:id", auth, (req, res) => {
+router
+    .route("/")
+    .get((req, res) => {
+        const page = Number(req.query.page);
+        if (req.user.isAdmin)
+            readAllSubmissions(page).then(
+                (docs) => {
+                    res.send(docs);
+                },
+                (err) => {
+                    res.status(400).json(err.message);
+                }
+            );
+        else
+            readUserSubmission(req.user._id, page).then(
+                (docs) => {
+                    res.send(docs);
+                },
+                (err) => {
+                    res.status(400).json(err.message);
+                }
+            );
+    })
+    .post(contestIsRunning, bruteForce.prevent, upload, (req, res) => {
+        const file = req.file;
+        sendCode(file.path, req.user._id, file.originalname).then(
+            () => res.sendStatus(200),
+            () => res.sendStatus(400)
+        );
+    });
+
+router.get("/:id", (req, res) => {
     readSubmission(req.params.id).then(
         (docs) => {
             if (docs.user_id === req.user._id) res.send(docs);
@@ -47,19 +60,4 @@ router.get("/:id", auth, (req, res) => {
     );
 });
 
-router.post(
-    "/",
-    auth,
-    contestIsRunning,
-    bruteForce.prevent,
-    upload,
-    (req, res) => {
-        const file = req.file;
-        sendCode(file.path, req.user._id, file.originalname).then(
-            () => res.sendStatus(200),
-            () => res.sendStatus(400)
-        );
-    }
-);
-
-export default router;
+module.exports = router;

@@ -3,11 +3,23 @@
   "version": "0.1.0",
   "description": "Mirai's Backend",
   "main": "src/index.js",
+  "bin": "build/index.js",
   "scripts": {
-    "build": "babel src/ -d build/",
-    "start": "npm run build && node build/index.js",
-    "test": "mocha --require @babel/register",
-    "dev": "nodemon --exec babel-node src/index.js"
+    "build": "del-cli build/ && minify src/ -d build/",
+    "start": "node src/server.js",
+    "test": "mocha",
+    "dev": "nodemon src/server.js",
+    "pkg": "pkg -o dist/wafter ."
+  },
+  "pkg": {
+    "scripts": [
+      "build/*.js",
+      "build/**/*.js"
+    ],
+    "assets": [
+      "public/**/*",
+      "public/*"
+    ]
   },
   "repository": {
     "type": "git",
@@ -23,6 +35,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
+    "del-cli": "^1.1.0",
     "dotenv": "^6.2.0",
     "enquirer": "^2.3.0",
     "express": "^4.16.4",
@@ -46,14 +59,10 @@
     "zip-dir": "^1.0.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/node": "^7.2.2",
-    "@babel/preset-env": "^7.2.3",
-    "@babel/register": "^7.0.0",
-    "babel-preset-minify": "^0.5.0",
+    "babel-minify": "^0.5.0",
     "eslint": "^5.11.0",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.9"
+    "nodemon": "^1.18.9",
+    "pkg": "^4.3.7"
   }
 }

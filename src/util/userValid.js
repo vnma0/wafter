@@ -1,4 +1,4 @@
-import { TextEncoder } from "util";
+const { TextEncoder } = require("util");
 
 /**
  * Validate username
@@ -29,8 +29,8 @@ function isUsername(username) {
  */
 function isPassword(password) {
     const lowerLimit = password.length >= 6;
-    const upperLimit = TextEncoder().encode(password).length <= 72;
+    const upperLimit = new TextEncoder().encode(password).length <= 72;
     return upperLimit && lowerLimit;
 }
 
-export { isUsername, isPassword };
+module.exports = { isUsername, isPassword };
