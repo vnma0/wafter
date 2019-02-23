@@ -1,11 +1,11 @@
-import Console from "console";
-import { readFileSync, existsSync } from "fs";
-import { extname } from "path";
-import Enquirer from "enquirer";
-import neatCsv from "neat-csv";
+const Console = require("console");
+const { readFileSync, existsSync } = require("fs");
+const { extname } = require("path");
+const Enquirer = require("enquirer");
+const neatCsv = require("neat-csv");
 
-import { newUser } from "../data/database";
-import { isPassword, isUsername } from "../util/userValid";
+const { newUser } = require("../data/database");
+const { isPassword, isUsername } = require("../util/userValid");
 
 const enquirer = new Enquirer();
 
@@ -100,4 +100,4 @@ async function addUserPrompt() {
     return userChoicesContainer[addChoice]();
 }
 
-export default addUserPrompt;
+module.exports = addUserPrompt;

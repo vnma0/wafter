@@ -1,5 +1,5 @@
-import Enquirer from "enquirer";
-import addUser from "./prompt/addUser";
+const Enquirer = require("enquirer");
+const addUser = require("./prompt/addUser");
 
 const enquirer = new Enquirer();
 
