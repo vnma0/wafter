@@ -120,7 +120,6 @@ async function sendCode(source_code_path, user_id, prob_name) {
         reloadSubs();
     } catch (err) {
         Console.log(err.message);
-        throw err;
     }
 }
 

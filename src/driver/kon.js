@@ -44,23 +44,16 @@ class Judger {
         const zip = createReadStream(compressed_task_path);
         task.append("task", zip);
 
-        try {
-            const response = await fetch(this.serverAddress + "/task", {
-                method: "POST",
-                body: task,
-                timeout: 10000,
-                compress: true
-            });
-            const status = response.status;
-
-            if (status === 415) throw new Error("Incorrect file type");
-            else if (status === 413) throw new Error("File is too large");
-            else if (status === 403) throw new Error("Server has been set up");
-
-            return status === 200;
-        } catch (err) {
-            throw err;
-        }
+        const response = await fetch(this.serverAddress + "/task", {
+            method: "POST",
+            body: task,
+            timeout: 10000,
+            compress: true
+        }).catch((err) => {
+            throw new Error(err.message);
+        });
+        // TODO: Return as response instead
+        return response.status === 200;
     }
 
     /**
@@ -80,25 +73,17 @@ class Judger {
         data.append("code", createReadStream(source_code_path), prob_name);
         data.append("id", encrypted_info);
 
-        try {
-            const response = await fetch(this.serverAddress + "/submit", {
-                method: "POST",
-                mode: "no-cors",
-                body: data,
-                timeout: 5000,
-                compress: true
-            });
-            const status = response.status;
+        const response = await fetch(this.serverAddress + "/submit", {
+            method: "POST",
+            mode: "no-cors",
+            body: data,
+            timeout: 5000,
+            compress: true
+        }).catch((err) => {
+            throw new Error(err.message);
+        });
 
-            if (status === 415) throw new Error("Incorrect file type");
-            else if (status === 413) throw new Error("File is too large");
-            else if (status === 503) throw new Error("Server is not ready");
-            else if (status === 400) throw new Error("Bad request");
-
-            return status === 200;
-        } catch (err) {
-            throw err;
-        }
+        return response;
     }
 
     /**
