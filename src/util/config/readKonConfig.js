@@ -34,5 +34,7 @@ function KonConfig() {
     }
 }
 
-module.exports = KonConfig;
-module.exports.parseKonConfig = parseKonConfig;
+module.exports = {
+    config: KonConfig,
+    parse: parseKonConfig
+};

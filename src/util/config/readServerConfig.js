@@ -19,4 +19,4 @@ function serverConfig() {
     };
 }
 
-module.exports = serverConfig;
+module.exports.config = serverConfig;

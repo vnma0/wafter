@@ -29,7 +29,7 @@ function parseContainer(container) {
 
 /**
  * Parse & validate contest config data into formatted one
- * @param {Object} configData 
+ * @param {Object} configData
  */
 function parseCtCfg(configData) {
     let {
@@ -72,5 +72,7 @@ function contestConfig() {
     }
 }
 
-module.exports = contestConfig;
-module.exports.parseCtCfg = parseCtCfg;
+module.exports = {
+    config: contestConfig,
+    parse: parseCtCfg
+};

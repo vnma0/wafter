@@ -2,4 +2,4 @@
 
 const contestConfig = require("../util/config/readCtConfig");
 
-module.exports = contestConfig();
+module.exports = contestConfig.config();

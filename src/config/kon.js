@@ -10,6 +10,6 @@ const taskFolder = "Tasks";
 if (!existsSync(taskFolder)) mkdirSync(taskFolder);
 
 module.exports = {
-    judgers: KonConfig(),
+    judgers: KonConfig.config(),
     tasks: taskFolder
 };

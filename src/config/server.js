@@ -12,7 +12,9 @@ const sampleHTML =
 if (!existsSync(staticFolder + "/index.html"))
     writeFileSync(staticFolder + "/index.html", sampleHTML);
 
-const serverCfg = Object.assign(serverConfig(), { staticFolder: staticFolder });
+const serverCfg = Object.assign(serverConfig.config(), {
+    staticFolder: staticFolder
+});
 
 // TODO: Allow option to be be parsed as parameter in CLI
 // i.e: `--port 3002`
