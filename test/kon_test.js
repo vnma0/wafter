@@ -30,7 +30,9 @@ describe("kon", function() {
                 });
         });
         it("...and return true when correctly and successfully cloning Task file to judger ...", function() {
-            return judger.clone("./test/Tasks.zip");
+            return judger.clone("./test/Tasks.zip").then((res) => {
+                if (!res.ok) throw new Error("Response is not ok");
+            });
         });
     });
 

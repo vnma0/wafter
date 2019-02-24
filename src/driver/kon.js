@@ -35,8 +35,8 @@ class Judger {
 
     /**
      * Part 2: cloning Task file to judger
-     * @param {string} compressed_task_path : path to database, linked to compressed Task file
-     * @return {promise} : true if Task file is successfully cloned, false otherwise
+     * @param {string} compressed_task_path path to database, linked to compressed Task file
+     * @return {promise} response of server
      */
     async clone(compressed_task_path) {
         let task = new FormData();
@@ -53,7 +53,7 @@ class Judger {
             throw new Error(err.message);
         });
         // TODO: Return as response instead
-        return response.status === 200;
+        return response;
     }
 
     /**
