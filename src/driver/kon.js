@@ -88,21 +88,17 @@ class Judger {
      * @return {json} : result file, consist of verdicts ands hashes
      */
     async get() {
-        try {
-            const response = await fetch(this.serverAddress + "/get", {
-                mode: "no-cors",
-                cache: "no-cache",
-                timeout: 2000,
-                compress: true
-            });
-            if (response.status === 503) throw new Error("Server is not ready");
-            else if (response.status !== 200)
-                throw new Error("Undefined behaviour");
-            const json = await response.json();
-            return json;
-        } catch (err) {
-            throw new Error(err.message);
-        }
+        const response = await fetch(this.serverAddress + "/get", {
+            mode: "no-cors",
+            cache: "no-cache",
+            timeout: 2000,
+            compress: true
+        });
+        if (response.status === 503) throw new Error("Server is not ready");
+        else if (response.status !== 200)
+            throw new Error("Undefined behaviour");
+        const json = await response.json();
+        return json;
     }
 
     /**
