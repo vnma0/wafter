@@ -23,7 +23,7 @@ function parseKonConfig(configData) {
     return configData
         .reduce((arr, kon) => {
             kon.url = String(kon.url).toLowerCase();
-            if (!includesUrlValue(arr, kon.url)) arr.push(kon);
+            if (kon.url && !includesUrlValue(arr, kon.url)) arr.push(kon);
             return arr;
         }, [])
         .filter((kon) => validUrl.isWebUri(kon.url))
