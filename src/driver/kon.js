@@ -49,8 +49,6 @@ class Judger {
             body: task,
             timeout: 5000,
             compress: true
-        }).catch((err) => {
-            throw new Error(err.message);
         });
         // TODO: Return as response instead
         return response;
@@ -79,8 +77,6 @@ class Judger {
             body: data,
             timeout: 3000,
             compress: true
-        }).catch((err) => {
-            throw new Error(err.message);
         });
 
         return response;
@@ -89,7 +85,7 @@ class Judger {
     /**
      * Part 4 : receive result from judger
      * @param {string} serverAddress : IP address of judger
-     * @return {json} : result file, consist of verdicts ans hashes
+     * @return {json} : result file, consist of verdicts ands hashes
      */
     async get() {
         try {
@@ -100,10 +96,12 @@ class Judger {
                 compress: true
             });
             if (response.status === 503) throw new Error("Server is not ready");
-            const json = response.status === 200 ? await response.json() : [];
+            else if (response.status !== 200)
+                throw new Error("Undefined behaviour");
+            const json = await response.json();
             return json;
         } catch (err) {
-            throw err;
+            throw new Error(err.message);
         }
     }
 
