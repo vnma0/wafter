@@ -13,7 +13,7 @@ class Judger {
     }
     /**
      * Part 1: checking status of availability of judger
-     * @return {promise} : true if judger is available, false otherwise
+     * @return {Promise<Boolean>} true if judger is available, false otherwise
      */
     async check() {
         try {
@@ -35,8 +35,8 @@ class Judger {
 
     /**
      * Part 2: cloning Task file to judger
-     * @param {string} compressed_task_path path to database, linked to compressed Task file
-     * @return {promise} response of server
+     * @param {String} compressed_task_path path to compressed Task file
+     * @return {Promise<Response>} Response from server
      */
     async clone(compressed_task_path) {
         let task = new FormData();
@@ -56,11 +56,10 @@ class Judger {
 
     /**
      * Part 3 : send data to judger
-     * @param {string} source_code_path :
-     * Path to the database, linked to submission's source code of contestant,
+     * @param {string} source_code_path path to submission's source code of contestant
      * @param {string} prob_name Filename
-     * @param {String} encrypted_info : Hash of ubmission's info
-     * @return {Promise} : true if data is sent successfully, false otherwise
+     * @param {String} encrypted_info Hash of ubmission's info
+     * @return {Promise<Response>} Response from server
      */
     async send(source_code_path, prob_name, encrypted_info) {
         let data = new FormData();
@@ -84,8 +83,7 @@ class Judger {
 
     /**
      * Part 4 : receive result from judger
-     * @param {string} serverAddress : IP address of judger
-     * @return {json} : result file, consist of verdicts ands hashes
+     * @return {Promise} result JSON, consist of verdicts and hashes
      */
     async get() {
         const response = await fetch(this.serverAddress + "/get", {
@@ -103,6 +101,7 @@ class Judger {
 
     /**
      * Receive queue length from judger
+     * @returns {Promise<Number>} Number of queue in Kon
      */
     async qLength() {
         try {
