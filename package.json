@@ -2,13 +2,13 @@
   "name": "wafter",
   "version": "0.1.0",
   "description": "Mirai's Backend",
-  "main": "src/server.js",
-  "bin": "build/server.js",
+  "main": "src/index.js",
+  "bin": "build/index.js",
   "scripts": {
     "build": "del-cli build/ && minify src/ -d build/",
-    "start": "node src/server.js",
+    "start": "node src/index.js",
     "test": "mocha",
-    "dev": "nodemon src/server.js",
+    "dev": "nodemon src/index.js",
     "pkg": "pkg -o dist/wafter ."
   },
   "pkg": {
@@ -36,6 +36,7 @@
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "dotenv": "^6.2.0",
+    "enquirer": "^2.3.0",
     "express": "^4.16.4",
     "express-brute": "^1.0.1",
     "express-brute-nedb": "^1.1.0",
@@ -47,6 +48,7 @@
     "isbinaryfile": "^4.0.0",
     "morgan": "^1.9.1",
     "multer": "^1.4.1",
+    "neat-csv": "^4.0.0",
     "nedb": "^1.8.0",
     "node-fetch": "^2.3.0",
     "passport": "^0.4.0",

@@ -96,8 +96,9 @@ async function sendCode(source_code_path, user_id, prob_name) {
             prob_ext
         );
 
-        if (availJudger.length === 1)
-            availJudger[0].send(source_code_path, prob_name, sub_id);
+        let judger;
+
+        if (availJudger.length === 1) judger = availJudger[0];
         else {
             const qPromise = availJudger.map((judger) => judger.qLength());
 
@@ -111,16 +112,17 @@ async function sendCode(source_code_path, user_id, prob_name) {
 
             Console.log("Kons' queue: ", availKon);
             const judgerNum = availKon.sort((a, b) => a[0] - b[0]).shift()[1];
-            const judger = kon.judgers[judgerNum];
-
-            judger.send(source_code_path, prob_name, sub_id);
+            judger = kon.judgers[judgerNum];
         }
+
+        judger.send(source_code_path, prob_name, sub_id).catch((err) => {
+            Console.log(err.message);
+        });
 
         // Temporary trigger
         reloadSubs();
     } catch (err) {
         Console.log(err.message);
-        throw err;
     }
 }
 

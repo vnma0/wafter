@@ -13,7 +13,7 @@ class Judger {
     }
     /**
      * Part 1: checking status of availability of judger
-     * @return {promise} : true if judger is available, false otherwise
+     * @return {Promise<Boolean>} true if judger is available, false otherwise
      */
     async check() {
         try {
@@ -35,8 +35,8 @@ class Judger {
 
     /**
      * Part 2: cloning Task file to judger
-     * @param {string} compressed_task_path : path to database, linked to compressed Task file
-     * @return {promise} : true if Task file is successfully cloned, false otherwise
+     * @param {String} compressed_task_path path to compressed Task file
+     * @return {Promise<Response>} Response from server
      */
     async clone(compressed_task_path) {
         let task = new FormData();
@@ -44,32 +44,22 @@ class Judger {
         const zip = createReadStream(compressed_task_path);
         task.append("task", zip);
 
-        try {
-            const response = await fetch(this.serverAddress + "/task", {
-                method: "POST",
-                body: task,
-                timeout: 10000,
-                compress: true
-            });
-            const status = response.status;
-
-            if (status === 415) throw new Error("Incorrect file type");
-            else if (status === 413) throw new Error("File is too large");
-            else if (status === 403) throw new Error("Server has been set up");
-
-            return status === 200;
-        } catch (err) {
-            throw err;
-        }
+        const response = await fetch(this.serverAddress + "/task", {
+            method: "POST",
+            body: task,
+            timeout: 5000,
+            compress: true
+        });
+        // TODO: Return as response instead
+        return response;
     }
 
     /**
      * Part 3 : send data to judger
-     * @param {string} source_code_path :
-     * Path to the database, linked to submission's source code of contestant,
+     * @param {string} source_code_path path to submission's source code of contestant
      * @param {string} prob_name Filename
-     * @param {String} encrypted_info : Hash of ubmission's info
-     * @return {Promise} : true if data is sent successfully, false otherwise
+     * @param {String} encrypted_info Hash of ubmission's info
+     * @return {Promise<Response>} Response from server
      */
     async send(source_code_path, prob_name, encrypted_info) {
         let data = new FormData();
@@ -80,50 +70,38 @@ class Judger {
         data.append("code", createReadStream(source_code_path), prob_name);
         data.append("id", encrypted_info);
 
-        try {
-            const response = await fetch(this.serverAddress + "/submit", {
-                method: "POST",
-                mode: "no-cors",
-                body: data,
-                timeout: 5000,
-                compress: true
-            });
-            const status = response.status;
+        const response = await fetch(this.serverAddress + "/submit", {
+            method: "POST",
+            mode: "no-cors",
+            body: data,
+            timeout: 3000,
+            compress: true
+        });
 
-            if (status === 415) throw new Error("Incorrect file type");
-            else if (status === 413) throw new Error("File is too large");
-            else if (status === 503) throw new Error("Server is not ready");
-            else if (status === 400) throw new Error("Bad request");
-
-            return status === 200;
-        } catch (err) {
-            throw err;
-        }
+        return response;
     }
 
     /**
      * Part 4 : receive result from judger
-     * @param {string} serverAddress : IP address of judger
-     * @return {json} : result file, consist of verdicts ans hashes
+     * @return {Promise} result JSON, consist of verdicts and hashes
      */
     async get() {
-        try {
-            const response = await fetch(this.serverAddress + "/get", {
-                mode: "no-cors",
-                cache: "no-cache",
-                timeout: 5000,
-                compress: true
-            });
-            if (response.status === 503) throw new Error("Server is not ready");
-            const json = response.status === 200 ? await response.json() : [];
-            return json;
-        } catch (err) {
-            throw err;
-        }
+        const response = await fetch(this.serverAddress + "/get", {
+            mode: "no-cors",
+            cache: "no-cache",
+            timeout: 2000,
+            compress: true
+        });
+        if (response.status === 503) throw new Error("Server is not ready");
+        else if (response.status !== 200)
+            throw new Error("Undefined behaviour");
+        const json = await response.json();
+        return json;
     }
 
     /**
      * Receive queue length from judger
+     * @returns {Promise<Number>} Number of queue in Kon
      */
     async qLength() {
         try {
