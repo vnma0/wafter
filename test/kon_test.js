@@ -38,7 +38,7 @@ describe("kon", function() {
 
     describe("check", function() {
         it("should return true when server is ready", () => {
-            return judger.check("/check");
+            return judger.check();
         });
     });
 
@@ -61,12 +61,8 @@ describe("kon", function() {
         it("...and false when sending .txt", () => {
             return judger
                 .send("./test/submitcode.txt", "submitcode", "hash sha-256")
-                .then(() => {
-                    throw "Incorrect behaviour";
-                })
-                .catch((err) => {
-                    if (err === "Incorrect file type") return Promise.resolve();
-                    else throw err;
+                .then((res) => {
+                    if (res.status !== 415) throw "Incorrect Behaviour";
                 });
         });
     });
