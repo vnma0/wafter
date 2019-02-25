@@ -16,7 +16,7 @@ function parseKonConfig(configData) {
     if (!Array.isArray(configData)) throw new Error("Invalid Kon config data");
 
     const includesUrlValue = (arr, val) => {
-        for (let kon in arr) if (kon.url === val) return true;
+        for (let kon of arr) if (kon.url === val) return true;
         return false;
     };
 
