@@ -47,7 +47,7 @@ class Judger {
         const response = await fetch(this.serverAddress + "/task", {
             method: "POST",
             body: task,
-            timeout: 10000,
+            timeout: 5000,
             compress: true
         }).catch((err) => {
             throw new Error(err.message);
@@ -77,7 +77,7 @@ class Judger {
             method: "POST",
             mode: "no-cors",
             body: data,
-            timeout: 5000,
+            timeout: 3000,
             compress: true
         }).catch((err) => {
             throw new Error(err.message);
@@ -96,7 +96,7 @@ class Judger {
             const response = await fetch(this.serverAddress + "/get", {
                 mode: "no-cors",
                 cache: "no-cache",
-                timeout: 5000,
+                timeout: 2000,
                 compress: true
             });
             if (response.status === 503) throw new Error("Server is not ready");
