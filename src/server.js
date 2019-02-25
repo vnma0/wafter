@@ -2,7 +2,6 @@
 
 const Console = require("console");
 const express = require("express");
-const morgan = require("morgan");
 const helmet = require("helmet");
 const passport = require("passport");
 const session = require("express-session");
@@ -12,6 +11,7 @@ const ip = require("ip");
 const server = require("./config/server");
 const passportConfig = require("./controller/passportConfig");
 const initJudger = require("./controller/initJudger");
+const { logToConsole, logToFile } = require("./middleware/log");
 
 const info = require("./routes/info");
 const subs = require("./routes/subs");
@@ -27,7 +27,9 @@ const PORT = server.port;
 
 app.use(helmet());
 app.use(helmet.noCache());
-app.use(morgan("common"));
+app.use(logToConsole);
+app.use(logToFile);
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     session({
