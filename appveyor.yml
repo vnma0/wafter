@@ -36,4 +36,4 @@ build_script:
 test: off
 artifacts:
 - path: dist\wafter-%PLATFORM%-%APPVEYOR_BUILD_VERSION%.zip
-  name: Wafter
+  name: Wafter-%PLATFORM%
