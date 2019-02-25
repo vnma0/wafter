@@ -14,7 +14,18 @@ const readConfig = require("../readConfig");
  */
 function parseKonConfig(configData) {
     if (!Array.isArray(configData)) throw new Error("Invalid Kon config data");
+
+    const includesUrlValue = (arr, val) => {
+        for (let kon in arr) if (kon.url === val) return true;
+        return false;
+    };
+
     return configData
+        .reduce((arr, kon) => {
+            kon.url = String(kon.url).toLowerCase();
+            if (!includesUrlValue(arr, kon.url)) arr.push(kon);
+            return arr;
+        }, [])
         .filter((kon) => validUrl.isWebUri(kon.url))
         .map((kon) => new Judger(kon.url, parseProbList(kon.prob)));
 }
