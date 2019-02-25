@@ -16,8 +16,9 @@ function initJudger() {
         kon.judgers.forEach((judger) => {
             judger
                 .clone(arcPath)
-                .then((boo) => {
-                    if (!boo) throw Error("Kon isn't return 200");
+                .then((res) => {
+                    if (!res.status === 200)
+                        throw Error("Kon isn't return 200");
                     Console.log(`Sucessfully cloned ${judger.serverAddress}`);
                 })
                 .catch((err) => {
