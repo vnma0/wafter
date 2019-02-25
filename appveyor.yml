@@ -1,0 +1,39 @@
+version: 1.{build}
+clone_folder: C:\wafter
+init:
+- ps: Install-Product node $env:nodejs_version $env:platform
+environment:
+  nodejs_version: 10
+  # Required due to the building of hestia
+  CI: false
+platform:
+  - x86
+  - x64
+install:
+- cmd: >-
+    npm install --global npm@latest
+
+    git clone "https://github.com/vnma0/hestia.git" -b master --single-branch "..\hestia"
+
+    cd ..\hestia
+
+    npm i
+
+    npm run build
+
+    xcopy .\build ..\wafter\public\ /s /e
+
+    cd ..\wafter
+
+    npm i
+build_script:
+- cmd: >-
+    npm run pkg
+
+    cd dist\
+
+    7z a "wafter-%PLATFORM%-%APPVEYOR_BUILD_VERSION%.zip" wafter.exe
+test: off
+artifacts:
+- path: dist\wafter-%PLATFORM%-%APPVEYOR_BUILD_VERSION%.zip
+  name: Wafter
