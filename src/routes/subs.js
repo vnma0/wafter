@@ -20,14 +20,14 @@ router.use(auth);
 router
     .route("/")
     .get((req, res) => {
-        let { page, count, size } = req.query;
+        let { page, size, count } = req.query;
 
         page = Number(page);
-        count = Number(count);
         size = Number(size);
+        count = Number(count);
 
         if (req.user.isAdmin)
-            readAllSubmissions(page, count, size).then(
+            readAllSubmissions(page, size, count).then(
                 (docs) => {
                     res.send(docs);
                 },
@@ -36,7 +36,7 @@ router
                 }
             );
         else
-            readUserSubmission(req.user._id, page, count, size).then(
+            readUserSubmission(req.user._id, page, size, count).then(
                 (docs) => {
                     res.send(docs);
                 },

@@ -254,6 +254,16 @@ function countSubmissions() {
 }
 
 /**
+ * Verify page, count, size value so it will work
+ */
+function verifySubsQuery(page, size, count, maxSize) {
+    if (isNaN(page) || page < 0) page = 0;
+    if (isNaN(size) || size < 0) size = 20;
+    if (isNaN(count) || count < 1 || count > maxSize) count = maxSize;
+    return { page, size, count };
+}
+
+/**
  *
  * Retrieve list of submissions in database
  * @param {Number} page page number
@@ -261,11 +271,10 @@ function countSubmissions() {
  * @param {Number} size limit the size of page
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
-async function readAllSubmissions(page = 0, count = 0, size = 50) {
-    if (isNaN(page) || page < 0) page = 0;
-    if (isNaN(size) || size < 0) size = 50;
+async function readAllSubmissions(page, size, count) {
     const maxSize = await countSubmissions();
-    if (isNaN(count) || count < 1) count = maxSize;
+    ({ page, size, count } = verifySubsQuery(page, size, count, maxSize));
+
     return new Promise((resolve, reject) => {
         db.submissions
             .find(
@@ -298,9 +307,9 @@ async function readAllSubmissions(page = 0, count = 0, size = 50) {
                         });
                         resolve({
                             data: serialized,
-                            count: count,
                             page: page,
-                            size: size
+                            size: size,
+                            count: count
                         });
                     });
             });
@@ -345,12 +354,11 @@ function readSubmission(sub_id) {
  * @param {Number} size limit the size of page
  * @returns {Promise<Array<ReturnSubmission>>} Array of user's submissions if success
  */
-async function readUserSubmission(user_id, page = 0, count = 0, size = 50) {
+async function readUserSubmission(user_id, page, size, count) {
     const username = await readUserByID(user_id);
-    if (isNaN(page) || page < 0) page = 0;
-    if (isNaN(size) || size < 0) size = 50;
     const maxSize = await countSubmissions();
-    if (isNaN(count) || count < 1) count = maxSize;
+    ({ page, size, count } = verifySubsQuery(page, size, count, maxSize));
+
     return new Promise((resolve, reject) => {
         db.submissions
             .find(
@@ -378,9 +386,9 @@ async function readUserSubmission(user_id, page = 0, count = 0, size = 50) {
                     });
                     resolve({
                         data: serialized,
-                        count: count,
                         page: page,
-                        size: size
+                        size: size,
+                        count: count
                     });
                 }
             });
