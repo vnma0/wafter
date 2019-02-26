@@ -18,8 +18,6 @@ db.submissions = new Datastore({
 });
 db.submissions.persistence.setAutocompactionInterval(5000);
 
-const PageSize = 50;
-
 /**
  * User Schema Object
  * _id:             User's ID
@@ -244,11 +242,39 @@ async function updateUserPassword(user_id, old_pass, new_pass) {
  */
 
 /**
+ * Count number of submissions
+ */
+function countSubmissions() {
+    return new Promise((resolve, reject) => {
+        db.submissions.count({}, function(err, count) {
+            if (err) reject(err);
+            else resolve(count);
+        });
+    });
+}
+
+/**
+ * Verify page, count, size value so it will work
+ */
+function verifySubsQuery(page, size, count, maxSize) {
+    if (isNaN(page) || page < 0) page = 0;
+    if (isNaN(size) || size < 0) size = 20;
+    if (isNaN(count) || count < 1 || count > maxSize) count = maxSize;
+    return { page, size, count };
+}
+
+/**
+ *
  * Retrieve list of submissions in database
+ * @param {Number} page page number
+ * @param {Number} count number of subs limited in the selected
+ * @param {Number} size limit the size of page
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
-function readAllSubmissions(page) {
-    if (isNaN(page) || page < 0) page = 0;
+async function readAllSubmissions(page, size, count) {
+    const maxSize = await countSubmissions();
+    ({ page, size, count } = verifySubsQuery(page, size, count, maxSize));
+
     return new Promise((resolve, reject) => {
         db.submissions
             .find(
@@ -265,8 +291,8 @@ function readAllSubmissions(page) {
                 }
             )
             .sort({ date: -1 })
-            .skip(PageSize * page)
-            .limit(PageSize)
+            .skip(size * page - count + maxSize)
+            .limit(size)
             .exec((err, docs) => {
                 // TODO: Decide what to do when there's invalid user
                 // Currently, it will throw error with invalid user_id
@@ -279,7 +305,12 @@ function readAllSubmissions(page) {
                             doc.username = usernameList[idx].username;
                             return doc;
                         });
-                        resolve(serialized);
+                        resolve({
+                            data: serialized,
+                            page: page,
+                            size: size,
+                            count: count
+                        });
                     });
             });
     });
@@ -315,13 +346,19 @@ function readSubmission(sub_id) {
 }
 
 /**
+ *
  * Retrieve list of submission via user_id
  * @param {String} user_id User's ID
+ * @param {Number} page page number
+ * @param {Number} count number of subs limited in the selected
+ * @param {Number} size limit the size of page
  * @returns {Promise<Array<ReturnSubmission>>} Array of user's submissions if success
  */
-async function readUserSubmission(user_id, page) {
+async function readUserSubmission(user_id, page, size, count) {
     const username = await readUserByID(user_id);
-    if (isNaN(page) || page < 0) page = 0;
+    const maxSize = await countSubmissions();
+    ({ page, size, count } = verifySubsQuery(page, size, count, maxSize));
+
     return new Promise((resolve, reject) => {
         db.submissions
             .find(
@@ -338,8 +375,8 @@ async function readUserSubmission(user_id, page) {
                 }
             )
             .sort({ date: -1 })
-            .skip(PageSize * page)
-            .limit(PageSize)
+            .skip(size * page - count + maxSize)
+            .limit(size)
             .exec((err, docs) => {
                 if (err) reject(err);
                 else {
@@ -347,7 +384,12 @@ async function readUserSubmission(user_id, page) {
                         doc.username = username;
                         return doc;
                     });
-                    resolve(serialized);
+                    resolve({
+                        data: serialized,
+                        page: page,
+                        size: size,
+                        count: count
+                    });
                 }
             });
     });
