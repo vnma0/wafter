@@ -17,27 +17,32 @@ router.get("/", (req, res) => {
     res.redirect(req.baseUrl + "/" + req.user._id);
 });
 
-router
-    .route("/:userid")
-    .all((req, res, next) => {
-        if (req.user._id !== req.params.userid) res.sendStatus(403);
-        else next();
-    })
-    .get((req, res) => {
-        const userId = req.user._id;
-        readUserByID(userId).then(
-            (docs) => {
-                res.send(docs);
-            },
-            (err) => {
-                res.status(400).json(err.message);
-            }
+const verifyUserId = (req, res, next) => {
+    if (req.user._id !== req.params.userid) res.sendStatus(403);
+    else next();
+};
+
+router.get("/:userid", verifyUserId, (req, res) => {
+    const userId = req.user._id;
+    readUserByID(userId).then(
+        (docs) => {
+            res.send(docs);
+        },
+        (err) => {
+            res.status(400).json(err.message);
+        }
+    );
+});
+
+router.put("/:userid/password", verifyUserId, (req, res) => {
+    // Allow changing password only
+    const user = req.user;
+    const form = req.body;
+    if (form.password === form.newPassword)
+        res.status(400).send(
+            "New password cannot be the same with old password"
         );
-    })
-    .put((req, res) => {
-        // Allow changing password only
-        const user = req.user;
-        const form = req.body;
+    else
         updateUserPassword(user._id, form.password, form.newPassword)
             .then((docs) => {
                 // Logout after successfully changing password
@@ -47,6 +52,6 @@ router
             .catch((err) => {
                 res.status(400).json(err.message);
             });
-    });
+});
 
 module.exports = router;
