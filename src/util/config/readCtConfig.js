@@ -4,16 +4,14 @@ const score = require("../score");
 const readConfig = require("../readConfig");
 
 /**
- * Parse Object into Date object
- * @param {Object} timeData
+ * Parse ISO 8601 into Date object
+ * @param {String} timeData ISO 8601 String
  */
 function parseTime(timeData) {
-    try {
-        if (Array.isArray(timeData)) return new Date(...timeData);
-        else return new Date(timeData);
-    } catch (err) {
+    // Must be a number
+    if (new Date(timeData).toJSON() !== timeData)
         throw new Error("Invalid Time");
-    }
+    else return new Date(timeData);
 }
 
 /**
