@@ -8,6 +8,8 @@ clone_folder: C:\wafter
 init:
 - ps: >-
     Install-Product node $env:nodejs_version $env:platform
+
+    npm install
 environment:
   nodejs_version: 10
 platform:
@@ -21,15 +23,13 @@ install:
 
     cd ..\hestia
 
-    npm i
+    npm install
 
     npm run build
 
     xcopy .\build ..\wafter\public\ /s /e
 
     cd ..\wafter
-
-    npm i
 build_script:
 - cmd: >-
     npm run pkg
