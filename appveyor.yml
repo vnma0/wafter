@@ -8,8 +8,6 @@ clone_folder: C:\wafter
 init:
 - ps: >-
     Install-Product node $env:nodejs_version $env:platform
-
-    npm install
 environment:
   nodejs_version: 10
 platform:
@@ -30,6 +28,8 @@ install:
     xcopy .\build ..\wafter\public\ /s /e
 
     cd ..\wafter
+
+    npm install
 build_script:
 - cmd: >-
     npm run pkg
