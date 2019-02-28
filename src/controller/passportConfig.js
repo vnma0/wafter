@@ -20,11 +20,17 @@ function passportConfig(passport) {
         },
         async (username, password, done) => {
             try {
-                const dbUser = await readUser(username);
+                const dbUser = await readUser(username).catch(() => null);
                 const passHash = await readUserPassHash(dbUser._id);
                 const isMatch = await bcrypt.compare(password, passHash);
-                if (isMatch) return done(null, dbUser);
-                else done(null, false);
+
+                if (!dbUser)
+                    return done(null, false, { message: "Cannot read user" });
+                else if (!isMatch)
+                    return done(null, false, { message: "Password mismatch" });
+
+                if (dbUser && isMatch) return done(null, dbUser);
+                else return done(null, false, { message: "Unknown error" });
             } catch (err) {
                 done(err);
             }
