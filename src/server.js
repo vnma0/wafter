@@ -74,3 +74,9 @@ let serv = app.listen(PORT, () => {
         `Wafter is serving at http://${ip.address()}:${serv.address().port}`
     );
 });
+process.on("exit", () => {
+    serv.close(() => {
+        Console.log("Closing server");
+        process.exit(0);
+    });
+});
