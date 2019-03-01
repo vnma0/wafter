@@ -1,6 +1,6 @@
 {
   "name": "wafter",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Mirai's Backend",
   "main": "src/index.js",
   "bin": "build/index.js",
@@ -9,7 +9,7 @@
     "start": "node src/index.js",
     "test": "mocha",
     "dev": "nodemon src/index.js",
-    "pkg": "pkg -o dist/wafter ."
+    "pkg": "npm run build && pkg -o dist/wafter ."
   },
   "pkg": {
     "scripts": [

@@ -1,7 +1,8 @@
 {
     "name": "Sample Contest",
-    "startTime": [1970, 0, 1, 0, 0],
-    "endTime": [1970, 0, 1, 1, 0],
+    "startTime": "2019-02-27T14:00:00.000Z",
+    "endTime": "2019-02-27T17:30:00.000Z",
     "mode": "OI",
-    "probList": ["LARES", "GCD"]
+    "probList": ["LARES", "GCD"],
+    "allowedCodeExt": [".C", ".CPP"]
 }

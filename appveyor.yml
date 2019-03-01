@@ -1,0 +1,43 @@
+version: 1.{build}
+pull_requests:
+  do_not_increment_build_number: true
+branches:
+  only:
+  - master
+clone_folder: C:\wafter
+init:
+- ps: >-
+    Install-Product node $env:nodejs_version $env:platform
+environment:
+  nodejs_version: 10
+platform:
+  - x86
+  - x64
+install:
+- cmd: >-
+    npm install --global npm@latest
+
+    git clone "https://github.com/vnma0/hestia.git" -b master --single-branch "..\hestia"
+
+    cd ..\hestia
+
+    npm install
+
+    npm run build
+
+    xcopy .\build ..\wafter\public\ /s /e
+
+    cd ..\wafter
+
+    npm install
+build_script:
+- cmd: >-
+    npm run pkg
+
+    cd dist\
+
+    7z a "wafter-%PLATFORM%-%APPVEYOR_BUILD_VERSION%.zip" wafter.exe
+test: off
+artifacts:
+- path: dist\wafter-%PLATFORM%-%APPVEYOR_BUILD_VERSION%.zip
+  name: Wafter-%PLATFORM%
