@@ -29,6 +29,7 @@ async function main() {
     let res = {};
     Console.log("MIRAI Wafter 1.0.0");
     Console.log("Copyright (c) 2018 Vườn ươm A0. MIT License.");
+
     try {
         while (res.main !== "Exit") {
             res = await mainPrompt();
@@ -41,7 +42,6 @@ async function main() {
         }
     } catch (err) {
         Console.log(err.message);
-        process.exit();
     }
     process.exit();
 }
