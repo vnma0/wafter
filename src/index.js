@@ -1,5 +1,6 @@
 const Enquirer = require("enquirer");
 const Console = require("console");
+const server = require("./server");
 const addUser = require("./prompt/addUser");
 
 const enquirer = new Enquirer();
@@ -36,7 +37,7 @@ async function main() {
             await mainChoices[res.main]();
 
             if (res.main === "Start server") {
-                require("./server");
+                server();
                 return;
             }
         }
