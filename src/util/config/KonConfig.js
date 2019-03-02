@@ -1,12 +1,9 @@
 "use strict";
 
-const { existsSync, writeFileSync } = require("fs");
-
 const validUrl = require("valid-url");
 
-const Judger = require("../../driver/kon");
 const parseProbList = require("../parseProbList");
-const readConfig = require("../readConfig");
+const Config = require("../config");
 
 /**
  * Parse & validate Kon config data into formatted one
@@ -27,25 +24,10 @@ function parseKonConfig(configData) {
             return arr;
         }, [])
         .filter((kon) => validUrl.isWebUri(kon.url))
-        .map((kon) => new Judger(kon.url, parseProbList(kon.prob)));
+        .map((kon) => ({
+            url: kon.url,
+            prob: parseProbList(kon.prob)
+        }));
 }
 
-/**
- * Read kon config
- */
-function KonConfig() {
-    const konListFile = "kon.json";
-    try {
-        // Pre-create konList
-        if (!existsSync(konListFile)) writeFileSync(konListFile, "[]");
-
-        return parseKonConfig(readConfig(konListFile));
-    } catch (err) {
-        throw new Error(`Failed to read config for Kon: ${err.message}`);
-    }
-}
-
-module.exports = {
-    config: KonConfig,
-    parse: parseKonConfig
-};
+module.exports = new Config("kon.json", parseKonConfig, () => "[]");

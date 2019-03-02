@@ -1,7 +1,8 @@
 "use strict";
 
 const score = require("../score");
-const readConfig = require("../readConfig");
+const Config = require("../config");
+const getNow = require("../getNow");
 
 /**
  * Parse ISO 8601 into Date object
@@ -41,6 +42,7 @@ function parseCtCfg(configData) {
 
     name = String(name);
     mode = String(mode);
+
     if (!score.hasOwnProperty(mode)) throw new Error("Invalid mode");
 
     startTime = parseTime(startTime);
@@ -59,18 +61,21 @@ function parseCtCfg(configData) {
 }
 
 /**
- * Read Config from contest.json
+ * Create sample of contest config
  */
-function contestConfig() {
-    const ctCfgFile = "contest.json";
-    try {
-        return parseCtCfg(readConfig(ctCfgFile));
-    } catch (err) {
-        throw new Error(`Invalid contest file (${ctCfgFile}): ${err.message}`);
-    }
+function getSample() {
+    const now = getNow();
+    const start = now.toJSON();
+    now.setHours(now.getHours() + 1);
+    const end = now.toJSON();
+    return {
+        name: "Sample Contest",
+        mode: "OI",
+        startTime: start,
+        endTime: end,
+        probList: [],
+        allowedCodeExt: [".CPP", ".C"]
+    };
 }
 
-module.exports = {
-    config: contestConfig,
-    parse: parseCtCfg
-};
+module.exports = new Config("contest.json", parseCtCfg, getSample);

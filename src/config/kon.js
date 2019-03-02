@@ -2,7 +2,8 @@
 
 const { existsSync, mkdirSync } = require("fs");
 
-const KonConfig = require("../util/config/readKonConfig");
+const Judger = require("../driver/kon");
+const KonConfig = require("../util/config/KonConfig");
 
 // Require valid folder to work
 const taskFolder = "Tasks";
@@ -10,6 +11,6 @@ const taskFolder = "Tasks";
 if (!existsSync(taskFolder)) mkdirSync(taskFolder);
 
 module.exports = {
-    judgers: KonConfig.config(),
+    judgers: KonConfig.read().map((kon) => new Judger(kon.url, kon.prob)),
     tasks: taskFolder
 };
