@@ -1,7 +1,11 @@
 const Enquirer = require("enquirer");
 const Console = require("console");
+
 const addUser = require("./prompt/addUser");
 const contestOptions = require("./prompt/contestOptions");
+
+require("./util/config/contestConfig").genIfNotExist();
+require("./util/config/KonConfig").genIfNotExist();
 
 const enquirer = new Enquirer();
 
@@ -29,6 +33,7 @@ async function mainPrompt() {
  */
 async function main() {
     let res = {};
+
     Console.log("MIRAI Wafter 1.0.0");
     Console.log("Copyright (c) 2018 Vườn ươm A0. MIT License.");
     try {

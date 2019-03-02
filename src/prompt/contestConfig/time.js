@@ -33,7 +33,6 @@ const offSetList = (() => {
  * Change time prompt
  */
 async function timePrompt() {
-    contestConfig.genIfNotExist();
     const { startTime, endTime } = await enquirer
         .prompt([
             {
