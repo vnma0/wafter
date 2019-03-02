@@ -2,6 +2,8 @@ const Console = require("console");
 const Enquirer = require("enquirer");
 
 const time = require("./contestConfig/time");
+const mode = require("./contestConfig/mode");
+const name = require("./contestConfig/name");
 
 const enquirer = new Enquirer();
 
@@ -10,7 +12,9 @@ const enquirer = new Enquirer();
  */
 async function contestOptionsPrompt() {
     let contestOptionsContainer = {
-        "Change time": time
+        "Change name": name,
+        "Change time": time,
+        "Change mode": mode
     };
 
     const { choice } = await enquirer.prompt({
@@ -24,8 +28,8 @@ async function contestOptionsPrompt() {
         () => {
             Console.log("Contest's configuration saved");
         },
-        () => {
-            Console.log("Contest's configuration was not saved :(");
+        (err) => {
+            Console.log("Contest's configuration was not saved: ", err.message);
         }
     );
 }
