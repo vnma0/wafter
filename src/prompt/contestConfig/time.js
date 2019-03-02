@@ -1,16 +1,10 @@
 "use strict";
 
 const Enquirer = require("enquirer");
+const getNow = require("../../util/getNow");
+const contestConfig = require("../../util/config/contestConfig");
 
 const enquirer = new Enquirer();
-
-const getNow = () => {
-    const now = new Date();
-    now.setMilliseconds(0);
-    now.setSeconds(0);
-    now.setMinutes((Math.ceil(now.getMinutes() / 15) + 1) * 15);
-    return now;
-};
 
 const timeList = (() => {
     let now = getNow();
@@ -39,7 +33,8 @@ const offSetList = (() => {
  * Change time prompt
  */
 async function timePrompt() {
-    const { startTime, endTime } = enquirer
+    contestConfig.genIfNotExist();
+    const { startTime, endTime } = await enquirer
         .prompt([
             {
                 type: "select",
@@ -61,7 +56,12 @@ async function timePrompt() {
         ])
         .then((value) => {
             value.endTime = new Date(value.startTime.getTime() + value.offset);
+            value.startTime = value.startTime.toJSON();
+            value.endTime = value.endTime.toJSON();
+            return value;
         });
+
+    contestConfig.update({ startTime, endTime });
 }
 
 module.exports = timePrompt;
