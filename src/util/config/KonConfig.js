@@ -30,4 +30,4 @@ function parseKonConfig(configData) {
         }));
 }
 
-module.exports = new Config("kon.json", parseKonConfig, () => "[]");
+module.exports = new Config("kon.json", parseKonConfig, () => []);
