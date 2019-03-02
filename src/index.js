@@ -1,12 +1,14 @@
 const Enquirer = require("enquirer");
 const Console = require("console");
 const addUser = require("./prompt/addUser");
+const contestOptions = require("./prompt/contestOptions");
 
 const enquirer = new Enquirer();
 
 const mainChoices = {
     "Start server": () => {},
-    "Add user": () => addUser(),
+    "Add user": addUser,
+    "Contest options": contestOptions,
     Exit: () => {}
 };
 
