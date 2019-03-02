@@ -1,7 +1,6 @@
 "use strict";
 
-const { readFileSync } = require("fs");
-const { writeFileSync } = require("fs");
+const { readFileSync, writeFileSync, existsSync } = require("fs");
 
 class ConfigObject {
     constructor(file, parse = (x) => x, sample = () => {}) {
@@ -10,7 +9,7 @@ class ConfigObject {
         this.sample = sample;
     }
     genIfNotExist() {
-        this.write(this.sample());
+        if (!existsSync(this.file)) this.write(this.sample());
     }
     read() {
         try {
