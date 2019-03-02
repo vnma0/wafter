@@ -2,4 +2,8 @@
 
 const contestConfig = require("../util/config/contestConfig");
 
-module.exports = contestConfig.read();
+const contest = contestConfig.read();
+contest.startTime = new Date(contest.startTime);
+contest.endTime = new Date(contest.endTime);
+
+module.exports = contest;
