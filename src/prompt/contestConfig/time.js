@@ -41,7 +41,7 @@ async function timePrompt() {
                 name: "startTime",
                 message: "Start time:",
                 choices: Object.keys(timeList),
-                limit: 5,
+                limit: 1,
                 result: (val) => timeList[val]
             },
             {
@@ -49,8 +49,7 @@ async function timePrompt() {
                 name: "offset",
                 message: "Duration:",
                 choices: Object.keys(offSetList),
-                limit: 5,
-                initial: "1 hr",
+                limit: 1,
                 result: (val) => offSetList[val]
             }
         ])
