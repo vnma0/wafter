@@ -25,7 +25,7 @@ async function contestOptionsPrompt() {
             Console.log("Contest's configuration saved");
         },
         () => {
-            Console.log("Contest's configuration cannot be saved :(");
+            Console.log("Contest's configuration was not saved :(");
         }
     );
 }
