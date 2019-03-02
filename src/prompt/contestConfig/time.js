@@ -10,7 +10,7 @@ const timeList = (() => {
     let now = getNow();
     const res = {};
     for (let i = 0; i < 40; ++i) {
-        res[now.toLocaleString()] = now;
+        res[now.toLocaleString()] = new Date(now);
         now.setMinutes(now.getMinutes() + 15);
     }
     return res;
