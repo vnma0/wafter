@@ -23,7 +23,7 @@ class ConfigObject {
     }
     write(data) {
         try {
-            const parsedData = JSON.stringify(this.parse(data), null, 4);
+            const parsedData = JSON.stringify(data, null, 4);
             return writeFileSync(this.file, parsedData);
         } catch (err) {
             throw new Error(

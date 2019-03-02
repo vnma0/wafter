@@ -45,8 +45,8 @@ function parseCtCfg(configData) {
 
     if (!score.hasOwnProperty(mode)) throw new Error("Invalid mode");
 
-    startTime = parseTime(startTime).toJSON();
-    endTime = parseTime(endTime).toJSON();
+    startTime = parseTime(startTime);
+    endTime = parseTime(endTime);
 
     if (startTime >= endTime) throw new Error("Start time is after end time");
 
