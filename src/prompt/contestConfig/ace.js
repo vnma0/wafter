@@ -34,5 +34,3 @@ async function acePrompt() {
 }
 
 module.exports = acePrompt;
-
-acePrompt();
