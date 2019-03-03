@@ -4,7 +4,7 @@ const validUrl = require("valid-url");
 
 const Judger = require("../../driver/kon");
 const parseProbList = require("../parseProbList");
-const Config = require("../config");
+const Config = require("./config");
 
 /**
  * Parse & validate Kon config data into formatted one

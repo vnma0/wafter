@@ -1,7 +1,7 @@
 "use strict";
 
 const score = require("../score");
-const Config = require("../config");
+const Config = require("./config");
 const getNow = require("../getNow");
 
 /**
