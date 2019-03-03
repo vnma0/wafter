@@ -28,4 +28,4 @@ function parseKonConfig(configData) {
         .map((kon) => new Judger(kon.url, parseProbList(kon.prob)));
 }
 
-module.exports = new Config("kon.json", parseKonConfig, () => []);
+module.exports = new Config("kon.json", parseKonConfig, () => [], [].concat);

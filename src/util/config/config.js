@@ -3,10 +3,16 @@
 const { readFileSync, writeFileSync, existsSync } = require("fs");
 
 class ConfigObject {
-    constructor(file, parse = (x) => x, sample = () => {}) {
+    constructor(
+        file,
+        parse = (x) => x,
+        sample = () => ({}),
+        merge = Object.assign
+    ) {
         this.file = file;
         this.parse = parse;
         this.sample = sample;
+        this.merge = merge;
     }
     genIfNotExist() {
         if (!existsSync(this.file)) this.write(this.sample());
@@ -43,7 +49,7 @@ class ConfigObject {
     }
     update(data) {
         const store = this.read();
-        const updated = Object.assign(store, data);
+        const updated = this.merge(store, data);
         this.write(updated);
     }
 }
