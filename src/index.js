@@ -14,7 +14,7 @@ const mainChoices = {
     "Start server": () => {},
     "Add user": addUser,
     "Contest options": contestOptions,
-    "Kon options": KonOptions,
+    "Kon's pair options": KonOptions,
     Exit: () => {}
 };
 
