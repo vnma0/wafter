@@ -17,7 +17,7 @@ class ConfigObject {
             return this.parse(JSON.parse(rawData));
         } catch (err) {
             throw new Error(
-                `Cannot read config file: "${this.file}": ${err.message}`
+                `[${this.file}] Cannot read config file: ${err.message}`
             );
         }
     }
@@ -30,16 +30,14 @@ class ConfigObject {
             const parsedData = this.parse(jsonized);
             exportData = JSON.stringify(parsedData, null, 4);
         } catch (err) {
-            throw new Error(
-                `Failed to parse config file "${this.file}": ${err.message}`
-            );
+            throw new Error(`Failed to parse data to write: ${err.message}`);
         }
 
         try {
             return writeFileSync(this.file, exportData);
         } catch (err) {
             throw new Error(
-                `Cannot write config file: "${this.file}": ${err.message}`
+                `[${this.file}] Cannot write config file: ${err.message}`
             );
         }
     }
