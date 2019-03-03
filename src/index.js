@@ -3,6 +3,7 @@ const Console = require("console");
 
 const addUser = require("./prompt/addUser");
 const contestOptions = require("./prompt/contestOptions");
+const KonOptions = require("./prompt/KonOptions");
 
 require("./util/config/contestConfig").genIfNotExist();
 require("./util/config/KonConfig").genIfNotExist();
@@ -13,6 +14,7 @@ const mainChoices = {
     "Start server": () => {},
     "Add user": addUser,
     "Contest options": contestOptions,
+    "Kon options": KonOptions,
     Exit: () => {}
 };
 
