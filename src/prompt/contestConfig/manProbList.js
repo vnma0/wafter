@@ -7,7 +7,7 @@ const enquirer = new Enquirer();
 /**
  * Contest name prompt
  */
-async function probListPrompt(init = {}) {
+async function manProbPrompt(init = {}) {
     let _probList = init.probList;
     const { probList } = await enquirer.prompt({
         type: "multiselect",
@@ -19,4 +19,4 @@ async function probListPrompt(init = {}) {
     return { probList };
 }
 
-module.exports = probListPrompt;
+module.exports = manProbPrompt;
