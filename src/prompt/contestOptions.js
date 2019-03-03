@@ -4,6 +4,8 @@ const Enquirer = require("enquirer");
 const time = require("./contestConfig/time");
 const mode = require("./contestConfig/mode");
 const name = require("./contestConfig/name");
+const ace = require("./contestConfig/ace");
+const probList = require("./contestConfig/probList");
 
 const enquirer = new Enquirer();
 
@@ -14,7 +16,9 @@ async function contestOptionsPrompt() {
     let contestOptionsContainer = {
         "Change name": name,
         "Change time": time,
-        "Change mode": mode
+        "Change mode": mode,
+        "Add problem": probList,
+        "Change allowed code languages": ace
     };
 
     const { choice } = await enquirer.prompt({
