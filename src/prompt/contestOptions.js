@@ -8,6 +8,7 @@ const mode = require("./contestConfig/mode");
 const name = require("./contestConfig/name");
 const ace = require("./contestConfig/ace");
 const probList = require("./contestConfig/probList");
+const manProbList = require("./contestConfig/manProbList");
 
 const enquirer = new Enquirer();
 
@@ -20,6 +21,7 @@ async function contestOptionsPrompt() {
         "Change time": time,
         "Change mode": mode,
         "Add problem": probList,
+        "Manage problems": manProbList,
         "Change allowed code languages": ace
     };
 
