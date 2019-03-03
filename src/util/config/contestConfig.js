@@ -21,9 +21,11 @@ function parseTime(timeData) {
  */
 function parseContainer(container) {
     if (!Array.isArray(container)) throw new Error("Invalid Container");
-    return container
-        .map((x) => String(x).toUpperCase())
+    let parsedContainer = container
+        .filter((x) => typeof x === "string")
+        .map((x) => x.trim().toUpperCase())
         .sort((a, b) => a.localeCompare(b));
+    return [...new Set(parsedContainer)];
 }
 
 /**
