@@ -2,6 +2,7 @@
 
 const validUrl = require("valid-url");
 
+const Judger = require("../../driver/kon");
 const parseProbList = require("../parseProbList");
 const Config = require("../config");
 
@@ -24,10 +25,7 @@ function parseKonConfig(configData) {
             return arr;
         }, [])
         .filter((kon) => validUrl.isWebUri(kon.url))
-        .map((kon) => ({
-            url: kon.url,
-            prob: parseProbList(kon.prob)
-        }));
+        .map((kon) => new Judger(kon.url, parseProbList(kon.prob)));
 }
 
 module.exports = new Config("kon.json", parseKonConfig, () => []);
