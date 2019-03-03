@@ -1,15 +1,14 @@
 "use strict";
 
 const Enquirer = require("enquirer");
-const contestConfig = require("../../util/config/contestConfig");
 
 const enquirer = new Enquirer();
 
 /**
  * Contest name prompt
  */
-async function acePrompt() {
-    let _ace = contestConfig.read().allowedCodeExt;
+async function acePrompt(init = {}) {
+    let _ace = init.allowedCodeExt;
 
     // Temporary solution: create list of language, then filter non-included
     const langList = [".C", ".CPP", ".JAVA", ".KT", ".PAS", ".PY"];
@@ -30,7 +29,7 @@ async function acePrompt() {
             { name: ".PY", hint: "- Python" }
         ]
     });
-    contestConfig.update({ allowedCodeExt: ace.concat(leftAce) });
+    return { allowedCodeExt: ace.concat(leftAce) };
 }
 
 module.exports = acePrompt;

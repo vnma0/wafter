@@ -1,6 +1,8 @@
 const Console = require("console");
 const Enquirer = require("enquirer");
 
+const contestConfig = require("../util/config/contestConfig");
+
 const time = require("./contestConfig/time");
 const mode = require("./contestConfig/mode");
 const name = require("./contestConfig/name");
@@ -28,14 +30,14 @@ async function contestOptionsPrompt() {
         choices: Object.keys(contestOptionsContainer)
     });
 
-    return contestOptionsContainer[choice]().then(
-        () => {
+    return contestOptionsContainer[choice](contestConfig.read())
+        .then((newData) => {
+            contestConfig.update(newData);
             Console.log("Contest's configuration saved");
-        },
-        (err) => {
+        })
+        .catch((err) => {
             Console.log("Contest's configuration was not saved: ", err.message);
-        }
-    );
+        });
 }
 
 module.exports = contestOptionsPrompt;

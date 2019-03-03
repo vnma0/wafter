@@ -1,21 +1,22 @@
 "use strict";
 
 const Enquirer = require("enquirer");
-const contestConfig = require("../../util/config/contestConfig");
 
 const enquirer = new Enquirer();
 
 /**
  * Contest name prompt
  */
-async function namePrompt() {
+async function namePrompt(init = {}) {
+    const _name = init.name;
     const { name } = await enquirer.prompt({
         type: "input",
         name: "name",
+        initial: _name,
         message: "Contest name:"
     });
 
-    contestConfig.update({ name });
+    return { name };
 }
 
 module.exports = namePrompt;

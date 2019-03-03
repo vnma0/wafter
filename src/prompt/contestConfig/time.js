@@ -2,7 +2,6 @@
 
 const Enquirer = require("enquirer");
 const getNow = require("../../util/getNow");
-const contestConfig = require("../../util/config/contestConfig");
 
 const enquirer = new Enquirer();
 
@@ -54,12 +53,13 @@ async function timePrompt() {
         ])
         .then((value) => {
             value.endTime = new Date(value.startTime.getTime() + value.offset);
-            value.startTime = value.startTime.toJSON();
-            value.endTime = value.endTime.toJSON();
-            return value;
+            return {
+                startTime: value.startTime.toJSON(),
+                endTime: value.endTime.toJSON()
+            };
         });
 
-    contestConfig.update({ startTime, endTime });
+    return { startTime, endTime };
 }
 
 module.exports = timePrompt;

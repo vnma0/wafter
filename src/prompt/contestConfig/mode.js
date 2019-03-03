@@ -1,7 +1,6 @@
 "use strict";
 
 const Enquirer = require("enquirer");
-const contestConfig = require("../../util/config/contestConfig");
 const score = require("../../util/score");
 
 const enquirer = new Enquirer();
@@ -9,15 +8,16 @@ const enquirer = new Enquirer();
 /**
  * Contest mode prompt
  */
-async function modePrompt() {
+async function modePrompt(init = {}) {
+    const _mode = score.hasOwnProperty(init.mode) ? init.mode : null;
     const { mode } = await enquirer.prompt({
         type: "select",
         name: "mode",
         message: "Contest mode:",
+        initial: _mode,
         choices: Object.keys(score)
     });
-
-    contestConfig.update({ mode });
+    return { mode };
 }
 
 module.exports = modePrompt;
