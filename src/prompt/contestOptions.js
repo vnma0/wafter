@@ -38,7 +38,11 @@ async function contestOptionsPrompt() {
             Console.log("Contest's configuration saved");
         })
         .catch((err) => {
-            Console.log("Contest's configuration was not saved: ", err.message);
+            Console.log(
+                `Contest's configuration was not saved${
+                    err.message ? `: ${err.message}` : ""
+                }`
+            );
         });
 }
 

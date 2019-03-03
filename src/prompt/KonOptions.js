@@ -31,8 +31,9 @@ async function KonOptionsPrompt() {
         })
         .catch((err) => {
             Console.log(
-                "Kon's pair configuration was not saved: ",
-                err.message
+                `Kon's pair configuration was not saved${
+                    err.message ? `: ${err.message}` : ""
+                }`
             );
         });
 }

@@ -23,7 +23,7 @@ const mainChoices = {
  */
 async function mainPrompt() {
     return enquirer.prompt({
-        type: "autocomplete",
+        type: "select",
         name: "main",
         message: "How can I help you ?",
         choices: Object.keys(mainChoices)
@@ -41,7 +41,13 @@ async function main() {
     try {
         while (res.main !== "Exit") {
             res = await mainPrompt();
-            await mainChoices[res.main]();
+            try {
+                await mainChoices[res.main]();
+            } catch (err) {
+                Console.log(
+                    `Exited to menu${err.message ? `: ${err.message}` : ""}`
+                );
+            }
 
             if (res.main === "Start server") {
                 require("./server");
