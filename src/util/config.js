@@ -22,9 +22,21 @@ class ConfigObject {
         }
     }
     write(data) {
+        let exportData = null;
+
         try {
-            const parsedData = JSON.stringify(data, null, 4);
-            return writeFileSync(this.file, parsedData);
+            // Paraphrase data in JSON to strict type
+            const jsonized = JSON.parse(JSON.stringify(data));
+            const parsedData = this.parse(jsonized);
+            exportData = JSON.stringify(parsedData, null, 4);
+        } catch (err) {
+            throw new Error(
+                `Failed to parse config file "${this.file}": ${err.message}`
+            );
+        }
+
+        try {
+            return writeFileSync(this.file, exportData);
         } catch (err) {
             throw new Error(
                 `Cannot write config file: "${this.file}": ${err.message}`
