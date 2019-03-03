@@ -5,7 +5,7 @@ const Enquirer = require("enquirer");
 const enquirer = new Enquirer();
 
 /**
- * Contest name prompt
+ * Contest problem addition prompt
  */
 async function probListPrompt(init = {}) {
     let _probList = init.probList;

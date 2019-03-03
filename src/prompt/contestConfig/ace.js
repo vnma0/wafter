@@ -5,7 +5,7 @@ const Enquirer = require("enquirer");
 const enquirer = new Enquirer();
 
 /**
- * Contest name prompt
+ * Control Code Extension prompt
  */
 async function acePrompt(init = {}) {
     let _ace = init.allowedCodeExt;
