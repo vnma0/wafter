@@ -17,13 +17,15 @@ function initJudger() {
             judger
                 .clone(arcPath)
                 .then((res) => {
-                    if (res.status === 400)
+                    if (res.status === 403)
                         Console.log(`Kon was in used. ${judger.serverAddress}`);
+                    else if (res.status === 500)
+                        Console.log(`Kon unable to respond. ${judger.serverAddress}`);
                     else if (res.status === 200)
                         Console.log(
                             `Sucessfully cloned ${judger.serverAddress}`
                         );
-                    else throw Error("Cannot verified Kon");
+                    else throw Error("Cannot verify Kon");
                 })
                 .catch((err) => {
                     Console.log(
