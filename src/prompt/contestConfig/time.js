@@ -16,7 +16,7 @@ const timeList = (() => {
 })();
 
 const offSetList = (() => {
-    let now = new Date(-7 * 60 * 60 * 1000);
+    let now = new Date(new Date().setHours(0, 0));
     const res = {};
     for (let i = 1; i <= 48; ++i) {
         now.setMinutes(now.getMinutes() + 15);
