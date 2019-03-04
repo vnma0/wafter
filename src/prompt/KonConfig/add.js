@@ -30,7 +30,7 @@ async function addKonPrompt(init = []) {
     ]);
     const newList = init;
     newList.push(new Judger(url, prob));
-    return init;
+    return newList;
 }
 
 module.exports = addKonPrompt;
