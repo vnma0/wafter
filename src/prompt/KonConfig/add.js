@@ -10,7 +10,7 @@ const enquirer = new Enquirer();
 /**
  * Kon addition prompt
  */
-async function addKonPrompt() {
+async function addKonPrompt(init = []) {
     const _probList = contestConfig.read().probList;
     const { url, prob } = await enquirer.prompt([
         {
@@ -28,7 +28,9 @@ async function addKonPrompt() {
             choices: _probList
         }
     ]);
-    return [{ url, prob }];
+    const newList = init;
+    newList.push(new Judger(url, prob));
+    return init;
 }
 
 module.exports = addKonPrompt;
