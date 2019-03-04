@@ -17,11 +17,16 @@ async function KonOptionsPrompt() {
         "Manage Kon": manage
     };
 
+    let KonOptionsChoices = [
+        "Add Kon",
+        { name: "Manage Kon", disabled: KonConfig.read().length === 0 }
+    ];
+
     const { choice } = await enquirer.prompt({
         type: "select",
         name: "choice",
         message: "Kon's Pair Options",
-        choices: Object.keys(KonOptionsContainer)
+        choices: KonOptionsChoices
     });
     const jsonized = JSON.parse(JSON.stringify(KonConfig.read()));
     return KonOptionsContainer[choice](jsonized)

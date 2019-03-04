@@ -25,11 +25,23 @@ async function contestOptionsPrompt() {
         "Change allowed code languages": ace
     };
 
+    let contestOptionsChoices = [
+        "Change name",
+        "Change time",
+        "Change mode",
+        "Add problem",
+        {
+            name: "Manage problems",
+            disabled: contestConfig.read().probList.length === 0
+        },
+        "Change allowed code languages"
+    ];
+
     const { choice } = await enquirer.prompt({
         type: "select",
         name: "choice",
         message: "Contest Options",
-        choices: Object.keys(contestOptionsContainer)
+        choices: contestOptionsChoices
     });
 
     return contestOptionsContainer[choice](contestConfig.read())
