@@ -119,8 +119,9 @@ async function sendCode(source_code_path, user_id, prob_name) {
             Console.log(err.message);
         });
 
-        // Temporary trigger
-        reloadSubs();
+        process.nextTick(() => reloadSubs());
+        // First trigger: 30 seconds
+        setTimeout(() => reloadSubs(), 45000);
     } catch (err) {
         Console.log(err.message);
     }
