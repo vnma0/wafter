@@ -1,12 +1,12 @@
 const Enquirer = require("enquirer");
 const Console = require("console");
 
+require("./util/config/contestConfig").genIfNotExist();
+require("./util/config/KonConfig").genIfNotExist();
+
 const addUser = require("./prompt/addUser");
 const contestOptions = require("./prompt/contestOptions");
 const KonOptions = require("./prompt/KonOptions");
-
-require("./util/config/contestConfig").genIfNotExist();
-require("./util/config/KonConfig").genIfNotExist();
 
 const enquirer = new Enquirer();
 
