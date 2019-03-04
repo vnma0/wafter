@@ -16,12 +16,12 @@ const timeList = (() => {
 })();
 
 const offSetList = (() => {
-    let now = new Date(0);
+    let now = new Date(-7 * 60 * 60 * 1000);
     const res = {};
-    for (let i = 1; i <= 40; ++i) {
+    for (let i = 1; i <= 48; ++i) {
         now.setMinutes(now.getMinutes() + 15);
         let str = "";
-        if (now.getHours() > 7) str += (now.getHours() - 7).toString() + " hr ";
+        if (now.getHours() !== 0) str += now.getHours().toString() + " hr ";
         if (now.getMinutes() !== 0) str += now.getMinutes().toString() + " min";
         res[str.trim()] = i * 15 * 60 * 1000;
     }
