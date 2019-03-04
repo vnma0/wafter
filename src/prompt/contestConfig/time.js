@@ -8,9 +8,9 @@ const enquirer = new Enquirer();
 const timeList = (() => {
     let now = getNow();
     const res = {};
-    for (let i = 0; i < 40; ++i) {
+    for (let i = 0; i < 48; ++i) {
         res[now.toLocaleString()] = new Date(now);
-        now.setMinutes(now.getMinutes() + 15);
+        now.setMinutes(now.getMinutes() + 5);
     }
     return res;
 })();
