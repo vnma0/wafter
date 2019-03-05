@@ -11,6 +11,12 @@ class Judger {
         this.serverAddress = server_address;
         this.probList = prob_list;
     }
+    toJSON() {
+        return {
+            url: this.serverAddress,
+            prob: this.probList
+        };
+    }
     /**
      * Part 1: checking status of availability of judger
      * @return {Promise<Boolean>} true if judger is available, false otherwise
