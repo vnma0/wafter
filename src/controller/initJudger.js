@@ -17,9 +17,17 @@ function initJudger() {
             judger
                 .clone(arcPath)
                 .then((res) => {
-                    if (!res.status === 200)
-                        throw Error("Kon isn't return 200");
-                    Console.log(`Sucessfully cloned ${judger.serverAddress}`);
+                    if (res.status === 403)
+                        Console.log(`Kon was in used. ${judger.serverAddress}`);
+                    else if (res.status === 500)
+                        Console.log(
+                            `Kon failed to process. ${judger.serverAddress}`
+                        );
+                    else if (res.status === 200)
+                        Console.log(
+                            `Sucessfully cloned ${judger.serverAddress}`
+                        );
+                    else throw Error("Kon did not respond");
                 })
                 .catch((err) => {
                     Console.log(
