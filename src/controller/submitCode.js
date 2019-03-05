@@ -130,7 +130,7 @@ async function sendCode(source_code_path, user_id, prob_name) {
                 // First trigger
                 reloadSub(judger);
                 // Second trigger: 45 seconds
-                setTimeout(() => reloadSub(judger), 45000);
+                setTimeout(reloadSub, 45000, judger);
             })
             .catch((err) => {
                 Console.log(err.message);
