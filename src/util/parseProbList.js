@@ -1,13 +1,13 @@
 "use strict";
 
-const contest = require("../config/contest");
+const contestConfig = require("../util/config/contestConfig");
 
 /**
  * parseProbList
  * @param {Array} obj Array of problem included in kon.json
  */
 function parseProbList(obj) {
-    const probList = contest.probList;
+    const probList = contestConfig.read().probList;
     if (obj === undefined) return probList;
 
     if (!Array.isArray(obj)) return [];

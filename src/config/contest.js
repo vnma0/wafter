@@ -1,5 +1,5 @@
 "use strict";
 
-const contestConfig = require("../util/config/readCtConfig");
+const contestConfig = require("../util/config/contestConfig");
 
-module.exports = contestConfig.config();
+module.exports = contestConfig.read();
