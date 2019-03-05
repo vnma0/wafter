@@ -20,7 +20,9 @@ function initJudger() {
                     if (res.status === 403)
                         Console.log(`Kon was in used. ${judger.serverAddress}`);
                     else if (res.status === 500)
-                        Console.log(`Kon failed to process. ${judger.serverAddress}`);
+                        Console.log(
+                            `Kon failed to process. ${judger.serverAddress}`
+                        );
                     else if (res.status === 200)
                         Console.log(
                             `Sucessfully cloned ${judger.serverAddress}`
