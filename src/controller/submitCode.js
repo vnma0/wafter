@@ -127,10 +127,11 @@ async function sendCode(source_code_path, user_id, prob_name) {
                 if (res.status !== 200) throw Error("Cannot get from Kon");
             })
             .then(() => {
-                // First trigger
-                reloadSub(judger);
-                // Second trigger: 45 seconds
-                setTimeout(reloadSub, 45000, judger);
+                // Attempt & retry 3 times to get submission
+                for (let i = 1; i < 4; i++)
+                    setTimeout(reloadSub, i * 30000, judger);
+                // Set "Timeout" status on submission after 2 minutes
+                setTimeout(updateSubmission, 120000, sub_id, "Timeout", null);
             })
             .catch((err) => {
                 Console.log(err.message);
