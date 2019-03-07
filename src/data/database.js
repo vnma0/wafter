@@ -345,10 +345,9 @@ function readSubmission(sub_id) {
                 readUserByID(docs.user_id)
                     .then((res) => {
                         docs.username = res.username;
-                        resolve(docs);
                     })
-                    .catch((err) => {
-                        reject(err);
+                    .finally(() => {
+                        resolve(docs);
                     });
             }
         );
