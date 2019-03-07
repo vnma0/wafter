@@ -6,7 +6,8 @@ const { sendCode } = require("../controller/submitCode");
 const {
     readSubmission,
     readAllSubmissions,
-    readUserSubmission
+    readUserSubmission,
+    readSubmissionSrc
 } = require("../data/database");
 const auth = require("../middleware/auth");
 const bruteForce = require("../middleware/bruteForce");
@@ -63,6 +64,21 @@ router.get("/:id", (req, res) => {
             res.status(400).json(err.message);
         }
     );
+});
+
+router.get("/:id/source", (req, res) => {
+    readSubmissionSrc(req.params.id)
+        .then((docs) => {
+            if (docs.user_id === req.user._id || req.user.isAdmin)
+                res.download(
+                    docs.source_code,
+                    "".concat(docs.prob_id, docs.ext)
+                );
+            else res.sendStatus(401);
+        })
+        .catch((err) => {
+            res.status(400).json(err.message);
+        });
 });
 
 module.exports = router;
