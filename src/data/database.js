@@ -244,9 +244,11 @@ async function updateUserPassword(user_id, old_pass, new_pass) {
 /**
  * Count number of submissions
  */
-function countSubmissions() {
+function countSubmissions(user_id) {
+    let query = {};
+    if (user_id) query = { user_id };
     return new Promise((resolve, reject) => {
-        db.submissions.count({}, function(err, count) {
+        db.submissions.count(query, function(err, count) {
             if (err) reject(err);
             else resolve(count);
         });
@@ -356,7 +358,7 @@ function readSubmission(sub_id) {
  */
 async function readUserSubmission(user_id, page, size, count) {
     const username = await readUserByID(user_id);
-    const maxSize = await countSubmissions();
+    const maxSize = await countSubmissions(user_id);
     ({ page, size, count } = verifySubsQuery(page, size, count, maxSize));
 
     return new Promise((resolve, reject) => {
