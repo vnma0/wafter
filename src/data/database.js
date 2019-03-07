@@ -341,14 +341,14 @@ function readSubmission(sub_id) {
                 if (err) reject(err);
                 else if (docs === null)
                     reject(new Error(`Invalid Submission's ID: ${sub_id}`));
-
-                readUserByID(docs.user_id)
-                    .then((res) => {
-                        docs.username = res.username;
-                    })
-                    .finally(() => {
-                        resolve(docs);
-                    });
+                else
+                    readUserByID(docs.user_id)
+                        .then((res) => {
+                            docs.username = res.username;
+                        })
+                        .finally(() => {
+                            resolve(docs);
+                        });
             }
         );
     });
