@@ -357,7 +357,7 @@ function readSubmission(sub_id) {
  * @returns {Promise<Array<ReturnSubmission>>} Array of user's submissions if success
  */
 async function readUserSubmission(user_id, page, size, count) {
-    const username = await readUserByID(user_id);
+    const userData = await readUserByID(user_id);
     const maxSize = await countSubmissions(user_id);
     ({ page, size, count } = verifySubsQuery(page, size, count, maxSize));
 
@@ -383,7 +383,7 @@ async function readUserSubmission(user_id, page, size, count) {
                 if (err) reject(err);
                 else {
                     let serialized = docs.map((doc) => {
-                        doc.username = username;
+                        doc.username = userData.username;
                         return doc;
                     });
                     resolve({
