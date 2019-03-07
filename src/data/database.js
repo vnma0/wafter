@@ -403,7 +403,7 @@ function readSubmissionSrc(sub_id) {
     return new Promise((resolve, reject) => {
         db.submissions.findOne(
             { _id: sub_id },
-            { ext: 1, user_id: 1, prob_id: 1, source_code: 1 },
+            { ext: 1, user_id: 1, source_code: 1 },
             (err, docs) => {
                 if (err) reject(err);
                 else if (docs === null)

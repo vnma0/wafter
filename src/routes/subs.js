@@ -72,7 +72,7 @@ router.get("/:id/source", (req, res) => {
             if (docs.user_id === req.user._id || req.user.isAdmin)
                 res.download(
                     docs.source_code,
-                    "".concat(docs.prob_id, docs.ext)
+                    "".concat(docs.req.params.id, docs.ext)
                 );
             else res.sendStatus(401);
         })
