@@ -23,7 +23,7 @@ function parseContainer(container) {
     if (!Array.isArray(container)) throw new Error("Invalid Container");
     let parsedContainer = container
         .filter((x) => typeof x === "string")
-        .map((x) => x.toUpperCase().replace(" ", ""))
+        .map((x) => x.replace(/\s/g, "").toUpperCase())
         .sort((a, b) => a.localeCompare(b));
     return [...new Set(parsedContainer)];
 }
