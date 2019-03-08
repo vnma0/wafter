@@ -76,7 +76,7 @@ router.get("/:id/source", (req, res) => {
                 else
                     res.download(
                         docs.source_code,
-                        "".concat(docs._id, docs.ext)
+                        "".concat(docs._id, docs.ext.toLowerCase())
                     );
             } else res.sendStatus(401);
         })
