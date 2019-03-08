@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require("express");
+const { existsSync } = require("fs");
 
 const { sendCode } = require("../controller/submitCode");
 const {
@@ -70,9 +71,14 @@ router.get("/:id", (req, res) => {
 router.get("/:id/source", (req, res) => {
     readSubmissionSrc(req.params.id)
         .then((docs) => {
-            if (docs.user_id === req.user._id || req.user.isAdmin)
-                res.download(docs.source_code, "".concat(docs._id, docs.ext));
-            else res.sendStatus(401);
+            if (docs.user_id === req.user._id || req.user.isAdmin) {
+                if (!existsSync(docs.source_code)) res.sendStatus(404);
+                else
+                    res.download(
+                        docs.source_code,
+                        "".concat(docs._id, docs.ext)
+                    );
+            } else res.sendStatus(401);
         })
         .catch((err) => {
             res.status(400).json(err.message);
