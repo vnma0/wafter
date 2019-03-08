@@ -57,7 +57,8 @@ router
 router.get("/:id", (req, res) => {
     readSubmission(req.params.id).then(
         (docs) => {
-            if (docs.user_id === req.user._id) res.send(docs);
+            if (docs.user_id === req.user._id || req.user.isAdmin)
+                res.send(docs);
             else res.sendStatus(401);
         },
         (err) => {
