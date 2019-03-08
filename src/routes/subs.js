@@ -71,10 +71,7 @@ router.get("/:id/source", (req, res) => {
     readSubmissionSrc(req.params.id)
         .then((docs) => {
             if (docs.user_id === req.user._id || req.user.isAdmin)
-                res.download(
-                    docs.source_code,
-                    "".concat(docs.req.params.id, docs.ext)
-                );
+                res.download(docs.source_code, "".concat(docs._id, docs.ext));
             else res.sendStatus(401);
         })
         .catch((err) => {
