@@ -416,6 +416,32 @@ async function readUserSubmission(user_id, page, size, count) {
 }
 
 /**
+ * Read Submission's source
+ * @param {String} sub_id Submission's ID
+ */
+function readSubmissionSrc(sub_id) {
+    return new Promise((resolve, reject) => {
+        db.submissions.findOne(
+            { _id: sub_id },
+            { ext: 1, user_id: 1, source_code: 1 },
+            (err, docs) => {
+                if (err) reject(err);
+                else if (docs === null)
+                    reject(new Error(`Invalid Submission's ID: ${sub_id}`));
+                else
+                    readUserByID(docs.user_id)
+                        .then((res) => {
+                            docs.username = res.username;
+                        })
+                        .finally(() => {
+                            resolve(docs);
+                        });
+            }
+        );
+    });
+}
+
+/**
  * Add submission to database
  * @param {String} source_code Source Code
  * @param {String} user_id User's ID
@@ -579,6 +605,7 @@ module.exports = {
     readAllSubmissions,
     readSubmission,
     readUserSubmission,
+    readSubmissionSrc,
     newSubmission,
     updateSubmission,
     readLastSatisfy,
