@@ -76,7 +76,8 @@ async function GetAllResult(prob_list) {
  */
 async function scoreboard(user_id) {
     const ctype = score[contest.mode];
-    if (ctype.allowScoreboard)
+    const userData = await readUserByID(user_id);
+    if (userData.isAdmin || ctype.allowScoreboard)
         return GetAllResult(contest.probList).then((v) =>
             v.sort(ctype.sortFun)
         );
