@@ -3,6 +3,17 @@
 const uuidv4 = require("uuid/v4");
 
 /**
+ * Merge into base config custom config on valid
+ * @param {Object} base
+ * @param {Object} custom
+ */
+function mergeConfig(base, custom) {
+    let ret = {};
+    for (let prop in base) ret[prop] = custom[prop] || base[prop];
+    return ret;
+}
+
+/**
  * Read Server config: .env
  */
 function serverConfig() {
@@ -24,14 +35,16 @@ function serverConfig() {
         }
     };
 
-    const config =
+    const envConfig =
         templateConfig[process.env.NODE_ENV] || templateConfig["production"];
 
-    const finalConfig = {
-        displayName: process.env.SERVERNAME || config.displayName,
-        port: process.env.PORT || config.port,
-        secret: process.env.SECRET || config.secret
+    const customConfig = {
+        displayName: process.env.SERVERNAME,
+        port: process.env.PORT,
+        secret: process.env.SECRET
     };
+
+    const finalConfig = mergeConfig(envConfig, customConfig);
 
     return finalConfig;
 }
