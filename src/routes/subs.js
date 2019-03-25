@@ -47,7 +47,7 @@ router
                 }
             );
     })
-    .post(contestIsRunning, bruteForce.prevent, upload, (req, res) => {
+    .post(contestIsRunning, ...(process.env.NODE_ENV === 'development' ? [] : [bruteForce.prevent]), upload, (req, res) => {
         const file = req.file;
         sendCode(file.path, req.user._id, file.originalname).then(
             () => res.sendStatus(200),
