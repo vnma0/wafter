@@ -25,13 +25,15 @@ function serverConfig() {
     const templateConfig = {
         development: {
             displayName: "Wafter - Development Build",
-            port: 3001,
-            secret: "IloveCookie"
+            port: "3001",
+            secret: "IloveCookie",
+            disableBrutePrevent: "false"
         },
         production: {
             displayName: "Wafter - Themis Distributed Server",
-            port: 80,
-            secret: uuidv4()
+            port: "80",
+            secret: uuidv4(),
+            disableBrutePrevent: "true"
         }
     };
 
@@ -41,7 +43,8 @@ function serverConfig() {
     const customConfig = {
         displayName: process.env.SERVERNAME,
         port: process.env.PORT,
-        secret: process.env.SECRET
+        secret: process.env.SECRET,
+        disableBrutePrevent: process.env.DISABLE_BRUTE_PREVENT
     };
 
     const finalConfig = mergeConfig(envConfig, customConfig);
