@@ -127,10 +127,10 @@ async function sendCode(source_code_path, user_id, prob_name) {
                 if (res.status !== 200) throw Error("Cannot get from Kon");
             })
             .then(() => {
-                let retry = 2;
+                let retry = 3;
                 let offset = 30000;
-                let delay = 15000;
-                let timeout = 60000;
+                let delay = 30000;
+                let timeout = 120000;
 
                 // Attempt & retry 2 times to get submission
                 for (let attempt = 0; attempt < retry; attempt++) {
