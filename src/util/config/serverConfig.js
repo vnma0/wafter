@@ -14,6 +14,28 @@ function mergeConfig(base, custom) {
 }
 
 /**
+ * Convert string boolean value into boolean
+ * @param {String} str
+ */
+function toBoolean(str) {
+    if (str === "true") return true;
+    else if (str === "false") return false;
+    else return undefined;
+}
+
+/**
+ * Parse raw server config from env
+ * @param {Config} config
+ */
+function parseServerConfig(config) {
+    return {
+        ...config,
+        port: Number(config.port),
+        disableBrutePrevent: toBoolean(config.disableBrutePrevent)
+    };
+}
+
+/**
  * Read Server config: .env
  */
 function serverConfig() {
@@ -49,7 +71,7 @@ function serverConfig() {
 
     const finalConfig = mergeConfig(envConfig, customConfig);
 
-    return finalConfig;
+    return parseServerConfig(finalConfig);
 }
 
 module.exports = serverConfig;
