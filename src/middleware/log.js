@@ -1,5 +1,6 @@
 const { createWriteStream } = require("fs");
 const morgan = require("morgan");
+const filenamify = require("filenamify");
 
 const logToConsole = morgan("short", {
     skip: function(req, res) {
@@ -7,8 +8,13 @@ const logToConsole = morgan("short", {
     }
 });
 
+const logFileName =
+    filenamify(`wafter-${new Date().toISOString()}`, {
+        replacement: "_"
+    }) + ".log";
+
 const logToFile = morgan("combined", {
-    stream: createWriteStream("wafter.log", {
+    stream: createWriteStream(logFileName, {
         flags: "a",
         encoding: "utf8"
     })
