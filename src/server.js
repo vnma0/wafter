@@ -5,6 +5,7 @@ const express = require("express");
 const helmet = require("helmet");
 const passport = require("passport");
 const session = require("express-session");
+const MemoryStore = require("memorystore")(session);
 const bodyParser = require("body-parser");
 const ip = require("ip");
 
@@ -35,6 +36,12 @@ app.use(
     session({
         resave: false,
         saveUninitialized: true,
+        cookie: {
+            maxAge: 86400000 // 24h
+        },
+        store: new MemoryStore({
+            checkPeriod: 86400000 // 24h every prune
+        }),
         secret: server.secret
     })
 );
