@@ -356,9 +356,14 @@ function readSubmission(sub_id) {
                     reject(new Error(`Invalid Submission's ID: ${sub_id}`));
                 else
                     readUserByID(docs.user_id)
-                        .then((res) => {
-                            docs.username = res.username;
-                        })
+                        .then(
+                            (res) => {
+                                docs.username = res.username;
+                            },
+                            () => {
+                                docs.username = null;
+                            }
+                        )
                         .finally(() => {
                             resolve(docs);
                         });
@@ -432,9 +437,14 @@ function readSubmissionSrc(sub_id) {
                     reject(new Error(`Invalid Submission's ID: ${sub_id}`));
                 else
                     readUserByID(docs.user_id)
-                        .then((res) => {
-                            docs.username = res.username;
-                        })
+                        .then(
+                            (res) => {
+                                docs.username = res.username;
+                            },
+                            () => {
+                                docs.username = null;
+                            }
+                        )
                         .finally(() => {
                             resolve(docs);
                         });
