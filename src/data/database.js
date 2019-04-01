@@ -310,10 +310,11 @@ async function readAllSubmissions(page, size, count) {
                 // TODO: Decide what to do when there's invalid user
                 // Currently, it will throw error with invalid user_id
                 if (err) reject(err);
-                else
-                    Promise.all(
-                        docs.map((doc) => readUserByID(doc.user_id))
-                    ).then((usernameList) => {
+                else {
+                    let usernameListPromise = docs.map((doc) =>
+                        readUserByID(doc.user_id).catch(() => null)
+                    );
+                    Promise.all(usernameListPromise).then((usernameList) => {
                         let serialized = docs.map((doc, idx) => {
                             doc.username = usernameList[idx].username;
                             return doc;
@@ -325,6 +326,7 @@ async function readAllSubmissions(page, size, count) {
                             count: count
                         });
                     });
+                }
             });
     });
 }
