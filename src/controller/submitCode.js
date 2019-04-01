@@ -121,27 +121,29 @@ async function sendCode(source_code_path, user_id, prob_name) {
             judger = kon.judgers[judgerNum];
         }
 
+        let retry = 3;
+        let offset = 30000;
+        let delay = 30000;
+        let timeout = 120000;
+
         judger
             .send(source_code_path, prob_name, sub_id)
             .then((res) => {
                 if (res.status !== 200) throw Error("Cannot get from Kon");
-            })
-            .then(() => {
-                let retry = 3;
-                let offset = 30000;
-                let delay = 30000;
-                let timeout = 120000;
 
                 // Attempt & retry 2 times to get submission
                 for (let attempt = 0; attempt < retry; attempt++) {
                     let time = offset + attempt * delay;
                     if (time < timeout) setTimeout(reloadSub, time, judger);
                 }
-                // Set "Timeout" status on submission after timeout
-                setTimeout(updateSubmission, timeout, sub_id, "Timeout", null);
             })
             .catch((err) => {
                 Console.log(err.message);
+                updateSubmission(sub_id, "Cannot judge", null);
+            })
+            .finally(() => {
+                // Set "Timeout" status on submission after timeout
+                setTimeout(updateSubmission, timeout, sub_id, "Timeout", null);
             });
     } catch (err) {
         Console.log(err.message);
