@@ -244,9 +244,22 @@ async function updateUserPassword(user_id, old_pass, new_pass) {
 /**
  * Count number of submissions
  */
-function countSubmissions() {
+function countAllSubmissions() {
     return new Promise((resolve, reject) => {
         db.submissions.count({}, function(err, count) {
+            if (err) reject(err);
+            else resolve(count);
+        });
+    });
+}
+
+/**
+ * Count number of submissions from user_id
+ * @param {String} user_id User's ID
+ */
+function countUserSubmissions(user_id) {
+    return new Promise((resolve, reject) => {
+        db.submissions.count({ user_id }, function(err, count) {
             if (err) reject(err);
             else resolve(count);
         });
@@ -272,7 +285,7 @@ function verifySubsQuery(page, size, count, maxSize) {
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
 async function readAllSubmissions(page, size, count) {
-    const maxSize = await countSubmissions();
+    const maxSize = await countAllSubmissions();
     ({ page, size, count } = verifySubsQuery(page, size, count, maxSize));
 
     return new Promise((resolve, reject) => {
@@ -297,10 +310,11 @@ async function readAllSubmissions(page, size, count) {
                 // TODO: Decide what to do when there's invalid user
                 // Currently, it will throw error with invalid user_id
                 if (err) reject(err);
-                else
-                    Promise.all(
-                        docs.map((doc) => readUserByID(doc.user_id))
-                    ).then((usernameList) => {
+                else {
+                    let usernameListPromise = docs.map((doc) =>
+                        readUserByID(doc.user_id).catch(() => null)
+                    );
+                    Promise.all(usernameListPromise).then((usernameList) => {
                         let serialized = docs.map((doc, idx) => {
                             doc.username = usernameList[idx].username;
                             return doc;
@@ -312,6 +326,7 @@ async function readAllSubmissions(page, size, count) {
                             count: count
                         });
                     });
+                }
             });
     });
 }
@@ -339,7 +354,14 @@ function readSubmission(sub_id) {
                 if (err) reject(err);
                 else if (docs === null)
                     reject(new Error(`Invalid Submission's ID: ${sub_id}`));
-                else resolve(docs);
+                else
+                    readUserByID(docs.user_id)
+                        .then((res) => {
+                            docs.username = res.username;
+                        })
+                        .finally(() => {
+                            resolve(docs);
+                        });
             }
         );
     });
@@ -355,8 +377,8 @@ function readSubmission(sub_id) {
  * @returns {Promise<Array<ReturnSubmission>>} Array of user's submissions if success
  */
 async function readUserSubmission(user_id, page, size, count) {
-    const username = await readUserByID(user_id);
-    const maxSize = await countSubmissions();
+    const userData = await readUserByID(user_id);
+    const maxSize = await countUserSubmissions(user_id);
     ({ page, size, count } = verifySubsQuery(page, size, count, maxSize));
 
     return new Promise((resolve, reject) => {
@@ -381,7 +403,7 @@ async function readUserSubmission(user_id, page, size, count) {
                 if (err) reject(err);
                 else {
                     let serialized = docs.map((doc) => {
-                        doc.username = username;
+                        doc.username = userData.username;
                         return doc;
                     });
                     resolve({
@@ -392,6 +414,32 @@ async function readUserSubmission(user_id, page, size, count) {
                     });
                 }
             });
+    });
+}
+
+/**
+ * Read Submission's source
+ * @param {String} sub_id Submission's ID
+ */
+function readSubmissionSrc(sub_id) {
+    return new Promise((resolve, reject) => {
+        db.submissions.findOne(
+            { _id: sub_id },
+            { ext: 1, user_id: 1, source_code: 1 },
+            (err, docs) => {
+                if (err) reject(err);
+                else if (docs === null)
+                    reject(new Error(`Invalid Submission's ID: ${sub_id}`));
+                else
+                    readUserByID(docs.user_id)
+                        .then((res) => {
+                            docs.username = res.username;
+                        })
+                        .finally(() => {
+                            resolve(docs);
+                        });
+            }
+        );
     });
 }
 
@@ -557,9 +605,12 @@ module.exports = {
     readUserPassHash,
     updateUserName,
     updateUserPassword,
+    countAllSubmissions,
+    countUserSubmissions,
     readAllSubmissions,
     readSubmission,
     readUserSubmission,
+    readSubmissionSrc,
     newSubmission,
     updateSubmission,
     readLastSatisfy,

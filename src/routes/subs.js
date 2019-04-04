@@ -1,12 +1,14 @@
 "use strict";
 
 const express = require("express");
+const { existsSync } = require("fs");
 
 const { sendCode } = require("../controller/submitCode");
 const {
     readSubmission,
     readAllSubmissions,
-    readUserSubmission
+    readUserSubmission,
+    readSubmissionSrc
 } = require("../data/database");
 const auth = require("../middleware/auth");
 const bruteForce = require("../middleware/bruteForce");
@@ -56,13 +58,31 @@ router
 router.get("/:id", (req, res) => {
     readSubmission(req.params.id).then(
         (docs) => {
-            if (docs.user_id === req.user._id) res.send(docs);
+            if (docs.user_id === req.user._id || req.user.isAdmin)
+                res.send(docs);
             else res.sendStatus(401);
         },
         (err) => {
             res.status(400).json(err.message);
         }
     );
+});
+
+router.get("/:id/source", (req, res) => {
+    readSubmissionSrc(req.params.id)
+        .then((docs) => {
+            if (docs.user_id === req.user._id || req.user.isAdmin) {
+                if (!existsSync(docs.source_code)) res.sendStatus(404);
+                else
+                    res.download(
+                        docs.source_code,
+                        "".concat(docs._id, docs.ext.toLowerCase())
+                    );
+            } else res.sendStatus(401);
+        })
+        .catch((err) => {
+            res.status(400).json(err.message);
+        });
 });
 
 module.exports = router;
