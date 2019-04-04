@@ -312,11 +312,13 @@ async function readAllSubmissions(page, size, count) {
                 if (err) reject(err);
                 else {
                     let usernameListPromise = docs.map((doc) =>
-                        readUserByID(doc.user_id).catch(() => null)
+                        readUserByID(doc.user_id)
+                            .catch(() => ({ username: null }))
+                            .then((x) => x.username)
                     );
                     Promise.all(usernameListPromise).then((usernameList) => {
                         let serialized = docs.map((doc, idx) => {
-                            doc.username = usernameList[idx].username;
+                            doc.username = usernameList[idx];
                             return doc;
                         });
                         resolve({
