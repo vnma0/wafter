@@ -124,14 +124,14 @@ async function sendCode(source_code_path, user_id, prob_name) {
         let retry = 3;
         let offset = 30000;
         let delay = 30000;
-        let timeout = 120000;
+        let timeout = 105000;
 
         judger
             .send(source_code_path, prob_name, sub_id)
             .then((res) => {
                 if (res.status !== 200) throw Error("Cannot get from Kon");
 
-                // Attempt & retry 2 times to get submission
+                // Attempt & retry 3 times to get submission
                 for (let attempt = 0; attempt < retry; attempt++) {
                     let time = offset + attempt * delay;
                     if (time < timeout) setTimeout(reloadSub, time, judger);
