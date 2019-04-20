@@ -12,10 +12,10 @@ $asset_url = $get_res.assets[0].browser_download_url
 Invoke-WebRequest $asset_url -Out $asset_name
 
 Write-Host Extracting latest release...
-if (-Not (Test-Path -Path .\public)) {
+if (Test-Path -Path .\public) {
     Remove-Item -path .\public -Recurse -Force
 }
 Expand-Archive $asset_name -DestinationPath .\public
-Remove-Item $asset_name 
-
-Write-Host Successfully installed Hestia
+Move-Item -Path .\public\build\* -Destination .\public
+Remove-Item .\public\build
+Remove-Item $asset_name
