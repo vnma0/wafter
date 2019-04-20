@@ -7,6 +7,7 @@ const passport = require("passport");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const ip = require("ip");
+const cors = require("cors");
 
 const server = require("./config/server");
 const passportConfig = require("./controller/passportConfig");
@@ -42,6 +43,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // API
+app.use("/api", cors());
 app.all("/api", (req, res) => {
     res.sendStatus(204);
 });
