@@ -18,7 +18,7 @@ install:
 - cmd: >-
     npm install --global npm@latest
 
-    git clone "https://github.com/vnma0/hestia.git" -b master --single-branch "..\hestia"
+    git clone "https://github.com/vnma0/hestia.git" -b master --depth 1 --recurse-submodules --single-branch "..\hestia" 
 
     cd ..\hestia
 
