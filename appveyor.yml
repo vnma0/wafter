@@ -15,6 +15,9 @@ platform:
   - x86
   - x64
 install:
+- cmd: >-
+    npm install
+before_build:
 - ps: >-
     $repo = "vnma0/hestia"
 
@@ -35,10 +38,6 @@ install:
     Remove-Item $asset_name
 
     Write-Host Successfully installed Hestia
-
-    cd ..\wafter
-
-    npm install
 build_script:
 - cmd: >-
     npm run pkg
