@@ -15,18 +15,26 @@ platform:
   - x86
   - x64
 install:
-- cmd: >-
-    npm install --global npm@latest
+- ps: >-
+    $repo = "vnma0/hestia"
 
-    git clone "https://github.com/vnma0/hestia.git" -b master --single-branch "..\hestia"
+    $releases_url = "https://api.github.com/repos/$repo/releases/latest"
 
-    cd ..\hestia
+    Write-Host Determining latest release of Hestia
+    $get_res = (Invoke-WebRequest $releases_url | ConvertFrom-Json)
+    Write-Host Hestia: $get_res.tag_name
 
-    npm install
+    Write-Host Downloading latest release
+    $asset_name = $get_res.assets[0].name
+    $asset_url = $get_res.assets[0].browser_download_url
+    Invoke-WebRequest $asset_url -Out $asset_name
 
-    npm run build
+    Write-Host Extracting latest release
+    Remove-Item -path .\public -Recurse -Force
+    Expand-Archive $asset_name -DestinationPath .\public
+    Remove-Item $asset_name
 
-    xcopy .\build ..\wafter\public\ /s /e
+    Write-Host Successfully installed Hestia
 
     cd ..\wafter
 
