@@ -7,6 +7,7 @@ const passport = require("passport");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const ip = require("ip");
+const expressStaticGzip = require("express-static-gzip");
 
 const server = require("./config/server");
 const passportConfig = require("./controller/passportConfig");
@@ -63,11 +64,8 @@ app.all("/api/*", (req, res) => {
     res.sendStatus(404);
 });
 
-app.use("/", express.static(server.staticFolder));
-// Temp solution ?
-app.use("/*", (req, res) => {
-    res.sendFile(server.staticFolder + "/index.html");
-});
+app.use("/", expressStaticGzip("./public"));
+app.use("/*", expressStaticGzip("./public"));
 
 let serv = app.listen(PORT, () => {
     Console.log(
