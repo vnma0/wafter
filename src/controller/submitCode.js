@@ -140,7 +140,7 @@ async function sendCode(source_code_path, user_id, prob_name) {
                 // Print error if submission updated before timeout
                 let callTimeout = () =>
                     updateSubmission(sub_id, "Timeout", null).catch((err) =>
-                        Console.log(err)
+                        Console.log(err.message)
                     );
                 setTimeout(callTimeout, timeout);
             })
