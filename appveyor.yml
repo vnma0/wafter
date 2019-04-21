@@ -16,21 +16,10 @@ platform:
   - x64
 install:
 - cmd: >-
-    npm install --global npm@latest
-
-    git clone "https://github.com/vnma0/hestia.git" -b master --single-branch "..\hestia"
-
-    cd ..\hestia
-
     npm install
-
-    npm run build
-
-    xcopy .\build ..\wafter\public\ /s /e
-
-    cd ..\wafter
-
-    npm install
+before_build:
+- ps: >-
+    .\hestia.ps1 > $null
 build_script:
 - cmd: >-
     npm run pkg

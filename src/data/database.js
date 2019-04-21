@@ -312,11 +312,13 @@ async function readAllSubmissions(page, size, count) {
                 if (err) reject(err);
                 else {
                     let usernameListPromise = docs.map((doc) =>
-                        readUserByID(doc.user_id).catch(() => null)
+                        readUserByID(doc.user_id)
+                            .catch(() => ({ username: null }))
+                            .then((x) => x.username)
                     );
                     Promise.all(usernameListPromise).then((usernameList) => {
                         let serialized = docs.map((doc, idx) => {
-                            doc.username = usernameList[idx].username;
+                            doc.username = usernameList[idx];
                             return doc;
                         });
                         resolve({
@@ -356,9 +358,14 @@ function readSubmission(sub_id) {
                     reject(new Error(`Invalid Submission's ID: ${sub_id}`));
                 else
                     readUserByID(docs.user_id)
-                        .then((res) => {
-                            docs.username = res.username;
-                        })
+                        .then(
+                            (res) => {
+                                docs.username = res.username;
+                            },
+                            () => {
+                                docs.username = null;
+                            }
+                        )
                         .finally(() => {
                             resolve(docs);
                         });
@@ -432,9 +439,14 @@ function readSubmissionSrc(sub_id) {
                     reject(new Error(`Invalid Submission's ID: ${sub_id}`));
                 else
                     readUserByID(docs.user_id)
-                        .then((res) => {
-                            docs.username = res.username;
-                        })
+                        .then(
+                            (res) => {
+                                docs.username = res.username;
+                            },
+                            () => {
+                                docs.username = null;
+                            }
+                        )
                         .finally(() => {
                             resolve(docs);
                         });
