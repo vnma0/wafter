@@ -137,9 +137,11 @@ async function sendCode(source_code_path, user_id, prob_name) {
                     if (time < timeout) setTimeout(reloadSub, time, judger);
                 }
                 // Set "Timeout" status on submission after timeout
-                // Nullify error if submission updated before timeout
+                // Print error if submission updated before timeout
                 let callTimeout = () =>
-                    updateSubmission(sub_id, "Timeout", null).catch(() => null);
+                    updateSubmission(sub_id, "Timeout", null).catch((err) =>
+                        Console.log(err)
+                    );
                 setTimeout(callTimeout, timeout);
             })
             .catch((err) => {
