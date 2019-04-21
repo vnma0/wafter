@@ -136,14 +136,15 @@ async function sendCode(source_code_path, user_id, prob_name) {
                     let time = offset + attempt * delay;
                     if (time < timeout) setTimeout(reloadSub, time, judger);
                 }
+                // Set "Timeout" status on submission after timeout
+                // Nullify error if submission updated before timeout
+                let callTimeout = () =>
+                    updateSubmission(sub_id, "Timeout", null).catch(() => null);
+                setTimeout(callTimeout, timeout);
             })
             .catch((err) => {
                 Console.log(err.message);
                 updateSubmission(sub_id, "Cannot judge", null);
-            })
-            .finally(() => {
-                // Set "Timeout" status on submission after timeout
-                setTimeout(updateSubmission, timeout, sub_id, "Timeout", null);
             });
     } catch (err) {
         Console.log(err.message);
