@@ -64,8 +64,8 @@ app.all("/api/*", (req, res) => {
     res.sendStatus(404);
 });
 
-app.use("/", expressStaticGzip("./public"));
-app.use("/*", expressStaticGzip("./public"));
+app.use("/", expressStaticGzip(server.staticFolder));
+app.use("/*", expressStaticGzip(server.staticFolder));
 
 let serv = app.listen(PORT, () => {
     Console.log(
