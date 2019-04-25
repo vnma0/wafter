@@ -22,13 +22,13 @@ if (!fs.existsSync(exportSubDir))
 
 module.exports = async (verbose = false) => {
     // load user database
-    process.stdout.write("Loading user database...")
+    process.stdout.write("Loading user database...");
     db.users = new Datastore({
         filename: join(cwd, "data", "users.db"),
         autoload: true
     });
     db.users.persistence.compactDatafile();
-    process.stdout.write("Done! Scanning...")
+    process.stdout.write("Done! Scanning...");
 
     var userList = (user_id) => new Promise((resolve, reject) => {
         db.users.find((user_id ? {_id : user_id} : {}), (err, docs) => {
@@ -36,16 +36,16 @@ module.exports = async (verbose = false) => {
             else resolve(docs);
         });
     });
-    await userList().then(async data => console.log(`\x1b[36m${data.length}\x1b[0m users are loaded.`))
+    await userList().then(async (data) => console.log(`\x1b[36m${data.length}\x1b[0m users are loaded.`));
 
     // load submissions database
-    process.stdout.write("Loading submissions database...")
+    process.stdout.write("Loading submissions database...");
     db.submissions = new Datastore({
         filename: join(cwd, "data", "submissions.db"),
         autoload: true
     });
     db.submissions.persistence.compactDatafile();
-    console.log("Done!")
+    console.log("Done!");
     
     var submissionList = () => new Promise((resolve, reject) => {
         db.submissions.find({}, (err, docs) => {
