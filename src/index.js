@@ -7,6 +7,7 @@ require("./util/config/KonConfig").genIfNotExist();
 const addUser = require("./prompt/addUser");
 const contestOptions = require("./prompt/contestOptions");
 const KonOptions = require("./prompt/KonOptions");
+const exporter = require("./extensions/submissionsExporter/enquirer.js");
 
 const enquirer = new Enquirer();
 
@@ -15,6 +16,7 @@ const mainChoices = {
     "Add user": addUser,
     "Contest options": contestOptions,
     "Kon's pair options": KonOptions,
+    "Export all submissions" : exporter,
     Exit: () => {}
 };
 

@@ -13,6 +13,8 @@ upload/
 public/
 **/*.db
 **/*.zip
+Tasks/
+export/
 
 # Environment
 .env
