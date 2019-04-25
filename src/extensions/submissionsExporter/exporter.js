@@ -21,23 +21,31 @@ if (!fs.existsSync(exportSubDir))
     fs.mkdirSync(exportSubDir);
 
 module.exports = async (verbose = false) => {
+    // load user database
+    process.stdout.write("Loading user database...")
     db.users = new Datastore({
         filename: join(cwd, "data", "users.db"),
         autoload: true
     });
     db.users.persistence.compactDatafile();
-    db.submissions = new Datastore({
-        filename: join(cwd, "data", "submissions.db"),
-        autoload: true
-    });
-    db.submissions.persistence.compactDatafile();
-    
+    process.stdout.write("Done! Scanning...")
+
     var userList = (user_id) => new Promise((resolve, reject) => {
         db.users.find((user_id ? {_id : user_id} : {}), (err, docs) => {
             if (err) reject(err);
             else resolve(docs);
         });
     });
+    await userList().then(async data => console.log(`\x1b[36m${data.length}\x1b[0m users are loaded.`))
+
+    // load submissions database
+    process.stdout.write("Loading submissions database...")
+    db.submissions = new Datastore({
+        filename: join(cwd, "data", "submissions.db"),
+        autoload: true
+    });
+    db.submissions.persistence.compactDatafile();
+    console.log("Done!")
     
     var submissionList = () => new Promise((resolve, reject) => {
         db.submissions.find({}, (err, docs) => {
@@ -45,6 +53,7 @@ module.exports = async (verbose = false) => {
             else resolve(docs);
         });
     });
+
 
     await submissionList()
         .then(async (data) => {
@@ -54,14 +63,13 @@ module.exports = async (verbose = false) => {
                 let subPath = join(cwd, sub.source_code.replace("\\", path.sep));
 
                 if (verbose) {
-                    console.log(`(${pad(index + 1, data.length)}/${data.length}) Processing file ${subPath}`);
+                    console.log(`(${pad(index + 1, data.length)}/${data.length}) Processing file \x1b[36m${subPath}\x1b[0m`);
                 }
                 else {
                     process.stdout.write(`Processing submissions (${index + 1}/${data.length})...\r`);
                 }
 
                 // start working
-                const targetFileBasename = join(exportSubDir, path.basename(subPath));
                 await userList(sub.user_id).then((userId) => {
                     // get username and log it
                     const user = userId.length ? userId[0].username : sub.user_id;
@@ -77,23 +85,25 @@ module.exports = async (verbose = false) => {
                         // copy submission
                         if (verbose)
                             console.log("\t\tCopying submission's source file...");
-                        fs.copyFileSync(subPath, `${targetFileBasename}_${user}_${sub.status}${sub.ext}`);
+                        const outName = `${sub.prob_id}_${user}_${sub.status}_${path.basename(subPath)}`;
+                        fs.copyFileSync(subPath, join(exportSubDir, outName + sub.ext));
 
                         // alter the schema a little to hide user_id
                         delete sub.user_id; delete sub.source_code; sub.user = user;
-
+                        
                         // write log
+                        const logFile = join(exportSubDir, `${outName}.log.json`);
                         if (verbose)
-                            console.log("\t\tWriting metadata to \x1b[33m%s\x1b[0m", `${targetFileBasename}.log.json`);
-                        fs.writeFileSync(`${targetFileBasename}.log.json`, JSON.stringify(sub, null, 4));
+                            console.log("\t\tWriting metadata to \x1b[33m%s\x1b[0m", logFile);
+                        fs.writeFileSync(logFile, JSON.stringify(sub, null, 4));
                     } catch (e) {
                         // silently ignored
-                        console.log(`\tError occurred during processing ${targetFileBasename}.`);
+                        console.log(`\tError occurred during processing ${subPath}.`);
                     }
                 });
             }
 
-            console.log(`Successfully exported ${data.length} submissions to \x1b[32m%s\x1b[0m\n`, "export/subs/");
+            console.log(`\nSuccessfully exported \x1b[33m${data.length}\x1b[0m submissions to \x1b[32m%s\x1b[0m.\n`, "export/subs/");
         });
 };
 
