@@ -5,21 +5,11 @@
   "main": "src/index.js",
   "bin": "build/index.js",
   "scripts": {
-    "build": "del-cli build/ && minify src/ -d build/",
+    "build": "ncc build -m src/index.js",
     "start": "node src/index.js",
     "test": "mocha",
     "dev": "nodemon src/index.js",
-    "pkg": "npm run build && pkg -o dist/wafter ."
-  },
-  "pkg": {
-    "scripts": [
-      "build/*.js",
-      "build/**/*.js"
-    ],
-    "assets": [
-      "public/**/*",
-      "public/*"
-    ]
+    "pkg": "npm run build && nexe -i dist/index.js -o dist/wafter && upx dist/wafter"
   },
   "repository": {
     "type": "git",
@@ -63,7 +53,8 @@
     "del-cli": "^1.1.0",
     "eslint": "^5.11.0",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.9",
-    "pkg": "^4.3.7"
+    "ncc": "^0.3.6",
+    "nexe": "^3.2.0",
+    "nodemon": "^1.18.9"
   }
 }
