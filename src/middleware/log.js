@@ -1,3 +1,5 @@
+"use struct";
+
 const { createWriteStream } = require("fs");
 const morgan = require("morgan");
 const filenamify = require("filenamify");
