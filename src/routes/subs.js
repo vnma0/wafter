@@ -17,9 +17,8 @@ const contestIsRunning = require("../middleware/time");
 
 const router = express.Router();
 
-const bruteMiddleware = [].concat(
-    process.env.NODE_ENV === "production" ? [bruteForce.prevent] : []
-);
+const bruteMiddleware =
+    process.env.NODE_ENV === "production" ? [bruteForce.prevent] : [];
 
 router.use(auth);
 
