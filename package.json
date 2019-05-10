@@ -3,7 +3,7 @@
   "version": "1.5.0",
   "description": "Mirai's Backend",
   "main": "src/index.js",
-  "bin": "build/index.js",
+  "bin": "src/index.js",
   "scripts": {
     "compile": "ncc build src/index.js",
     "build": "npm run compile && loose-envify dist/index.js | terser -o dist/index.min.js",
