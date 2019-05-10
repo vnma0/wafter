@@ -18,7 +18,4 @@ const serverCfg = Object.assign(serverConfig(), {
     staticFolder: staticFolder
 });
 
-// TODO: Allow option to be be parsed as parameter in CLI
-// i.e: `--port 3002`
-
 module.exports = serverCfg;
