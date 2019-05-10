@@ -33,19 +33,25 @@ app.use(logToConsole);
 app.use(logToFile);
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const cookieProd = {
+    cookie: {
+        maxAge: 86400000 // 24h
+    },
+    store: new MemoryStore({
+        checkPeriod: 86400000 // 24h every prune
+    })
+};
+const cookieSet = process.env.NODE_ENV === "production" ? cookieProd : {};
 app.use(
     session({
         resave: false,
         saveUninitialized: true,
-        cookie: {
-            maxAge: 86400000 // 24h
-        },
-        store: new MemoryStore({
-            checkPeriod: 86400000 // 24h every prune
-        }),
-        secret: server.secret
+        secret: server.secret,
+        ...cookieSet
     })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
