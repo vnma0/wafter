@@ -2,6 +2,7 @@
 
 /**
  * Read Server config: .env
+ * Comes with specified config
  */
 function serverConfig() {
     require("dotenv").config();
