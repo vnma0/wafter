@@ -31,29 +31,35 @@ function getVerdict(sub) {
 /**
  * Update submission status from log from kons'
  */
-function reloadSubs() {
-    kon.judgers.forEach((judger) => {
-        judger.get().then(
-            (coll) => {
-                coll.forEach((sub) => {
-                    const verdict = getVerdict(sub);
-                    updateSubmission(
-                        sub.id,
-                        verdict,
-                        sub.finalScore,
-                        sub.tests
-                    ).catch((err) => Console.log(err.message));
-                });
-            },
-            (err) => {
-                Console.log(
-                    `Cannot get result from Kon [${judger.serverAddress}]: ${
-                        err.message
-                    }`
-                );
-            }
-        );
-    });
+function reloadAllSubs() {
+    kon.judgers.forEach(reloadSub);
+}
+
+/**
+ * Update submission status from log from kon
+ * @param {Judger} judger Kon, ...etc
+ */
+function reloadSub(judger) {
+    judger
+        .get()
+        .then((coll) => {
+            coll.forEach((sub) => {
+                const verdict = getVerdict(sub);
+                updateSubmission(
+                    sub.id,
+                    verdict,
+                    sub.finalScore,
+                    sub.tests
+                ).catch((err) => Console.log(err.message));
+            });
+        })
+        .catch((err) => {
+            Console.log(
+                `Cannot get result from Kon [${judger.serverAddress}]: ${
+                    err.message
+                }`
+            );
+        });
 }
 
 /**
@@ -115,19 +121,40 @@ async function sendCode(source_code_path, user_id, prob_name) {
             judger = kon.judgers[judgerNum];
         }
 
-        judger.send(source_code_path, prob_name, sub_id).catch((err) => {
-            Console.log(err.message);
-        });
+        let retry = 3;
+        let offset = 30000;
+        let delay = 30000;
+        let timeout = 105000;
 
-        setImmediate(() => reloadSubs());
-        // Second trigger: 45 seconds
-        setTimeout(() => reloadSubs(), 45000);
+        judger
+            .send(source_code_path, prob_name, sub_id)
+            .then((res) => {
+                if (res.status !== 200) throw Error("Cannot get from Kon");
+
+                // Attempt & retry 3 times to get submission
+                for (let attempt = 0; attempt < retry; attempt++) {
+                    let time = offset + attempt * delay;
+                    if (time < timeout) setTimeout(reloadSub, time, judger);
+                }
+                // Set "Timeout" status on submission after timeout
+                // Print error if submission updated before timeout
+                let callTimeout = () =>
+                    updateSubmission(sub_id, "Timeout", null).catch((err) =>
+                        Console.log(err.message)
+                    );
+                setTimeout(callTimeout, timeout);
+            })
+            .catch((err) => {
+                Console.log(err.message);
+                updateSubmission(sub_id, "Cannot judge", null);
+            });
     } catch (err) {
         Console.log(err.message);
     }
 }
 
 module.exports = {
-    reloadSubs,
+    reloadAllSubs,
+    reloadSub,
     sendCode
 };
