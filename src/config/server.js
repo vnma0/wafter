@@ -2,6 +2,7 @@
 
 const path = require("path");
 const { existsSync, mkdirSync, writeFileSync } = require("fs");
+const uuidv4 = require("uuid/v4");
 
 const serverConfig = require("../util/config/serverConfig");
 
@@ -13,6 +14,7 @@ if (!existsSync(staticFolder + "/index.html"))
     writeFileSync(staticFolder + "/index.html", sampleHTML);
 
 const serverCfg = Object.assign(serverConfig(), {
+    secret: uuidv4(),
     staticFolder: staticFolder
 });
 
