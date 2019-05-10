@@ -9,7 +9,7 @@
     "start": "node src/index.js",
     "test": "mocha",
     "dev": "nodemon src/index.js",
-    "pkg": "npm run build && nexe -i dist/index.js -o dist/wafter && upx dist/wafter"
+    "pkg": "npm run build && nexe -i dist/index.js -o dist/wafter && upx dist/wafter.exe"
   },
   "repository": {
     "type": "git",
