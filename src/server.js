@@ -88,11 +88,23 @@ app.all("/api/*", (req, res) => {
 app.use("/", expressStaticGzip(server.staticFolder));
 app.use("/*", expressStaticGzip(server.staticFolder));
 
-let serv = app.listen(PORT, () => {
-    Console.log(
-        `Wafter is serving at http://${ip.address()}:${serv.address().port}`
-    );
-});
+let serv = app
+    .listen(PORT, () => {
+        Console.log(`Wafter is serving at http://${ip.address()}:${PORT}`);
+    })
+    .on("error", () => {
+        serv = app.listen(0, () => {
+            Console.log(
+                `[Warning] Cannot host on port ${PORT}! Using random port.`
+            );
+            Console.log(
+                `Wafter is serving at http://${ip.address()}:${
+                    serv.address().port
+                }`
+            );
+        });
+    });
+
 process.on("exit", () => {
     serv.close(() => {
         Console.log("Closing server");
