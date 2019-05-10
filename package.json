@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "bin": "build/index.js",
   "scripts": {
-    "build": "del-cli build/ && minify src/ -d build/",
+    "build": "del-cli build/ && minify src/ -d build/ && npm run build-version",
+    "build-version" : "node pack/versioning.js",
     "start": "node src/index.js",
     "test": "mocha",
     "dev": "nodemon src/index.js",
@@ -64,6 +65,7 @@
     "eslint": "^5.11.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.9",
-    "pkg": "^4.3.7"
+    "pkg": "^4.3.7",
+    "envify": "^4.1.0"
   }
 }
