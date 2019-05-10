@@ -12,10 +12,10 @@ function serverConfig() {
 
     const templateConfig = {
         development: {
-            port: "3001"
+            port: 3001
         },
         production: {
-            port: "80"
+            port: 80
         }
     };
 
@@ -24,6 +24,9 @@ function serverConfig() {
     const customConfig = {
         port: process.env.PORT
     };
+    Object.keys(customConfig).forEach(
+        (key) => customConfig[key] === undefined && delete customConfig[key]
+    );
 
     const finalConfig = Object.assign(envConfig, customConfig);
 
