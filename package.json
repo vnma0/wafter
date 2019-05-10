@@ -5,11 +5,12 @@
   "main": "src/index.js",
   "bin": "build/index.js",
   "scripts": {
-    "build": "ncc build -m src/index.js",
+    "compile": "ncc build src/index.js",
+    "build": "npm run compile && loose-envify dist/index.js | terser -o dist/index.min.js",
     "start": "node src/index.js",
     "test": "mocha",
     "dev": "nodemon src/index.js",
-    "pkg": "npm run build && cd dist/ && nexe -i index.js -r public/**/* -o wafter"
+    "pkg": "npm run build && cd dist/ && nexe -i index.min.js -r public/**/* -o wafter"
   },
   "repository": {
     "type": "git",
@@ -51,8 +52,10 @@
   "devDependencies": {
     "@zeit/ncc": "^0.18.3",
     "eslint": "^5.11.0",
+    "loose-envify": "^1.4.0",
     "mocha": "^5.2.0",
     "nexe": "^3.2.0",
-    "nodemon": "^1.18.9"
+    "nodemon": "^1.18.9",
+    "terser": "^3.17.0"
   }
 }
