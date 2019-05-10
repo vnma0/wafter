@@ -3,7 +3,6 @@
 const express = require("express");
 const { existsSync } = require("fs");
 
-const { disableBrutePrevent } = require("../config/server");
 const { sendCode } = require("../controller/submitCode");
 const {
     readSubmission,
@@ -19,7 +18,7 @@ const contestIsRunning = require("../middleware/time");
 const router = express.Router();
 
 const bruteMiddleware = [].concat(
-    disableBrutePrevent ? [] : [bruteForce.prevent]
+    process.env.NODE_ENV === "production" ? [bruteForce.prevent] : []
 );
 
 router.use(auth);

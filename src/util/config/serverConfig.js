@@ -12,12 +12,10 @@ function serverConfig() {
 
     const templateConfig = {
         development: {
-            port: "3001",
-            disableBrutePrevent: "1"
+            port: "3001"
         },
         production: {
-            port: "80",
-            disableBrutePrevent: ""
+            port: "80"
         }
     };
 
@@ -25,8 +23,7 @@ function serverConfig() {
         templateConfig[process.env.NODE_ENV] || templateConfig["development"];
 
     const customConfig = {
-        port: process.env.PORT,
-        disableBrutePrevent: process.env.DISABLE_BRUTE_PREVENT
+        port: process.env.PORT
     };
 
     const finalConfig = Object.assign(envConfig, customConfig);
