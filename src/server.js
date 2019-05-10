@@ -13,7 +13,11 @@ const expressStaticGzip = require("express-static-gzip");
 const server = require("./config/server");
 const passportConfig = require("./controller/passportConfig");
 const initJudger = require("./controller/initJudger");
-const { logToConsole, logToFile } = require("./middleware/log");
+const {
+    logToConsole,
+    logToFile,
+    logErrToConsole
+} = require("./middleware/log");
 
 const info = require("./routes/info");
 const subs = require("./routes/subs");
@@ -29,8 +33,12 @@ const PORT = server.port;
 
 app.use(helmet());
 app.use(helmet.noCache());
-app.use(logToConsole);
-app.use(logToFile);
+
+app.use(
+    process.env.NODE_ENV === "production"
+        ? [logToFile, logErrToConsole]
+        : logToConsole
+);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 

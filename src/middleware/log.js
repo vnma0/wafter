@@ -4,7 +4,9 @@ const { createWriteStream } = require("fs");
 const morgan = require("morgan");
 const filenamify = require("filenamify");
 
-const logToConsole = morgan("short", {
+const logToConsole = morgan("dev");
+
+const logErrToConsole = morgan("short", {
     skip: function(req, res) {
         return res.statusCode < 400;
     }
@@ -22,4 +24,4 @@ const logToFile = morgan("combined", {
     })
 });
 
-module.exports = { logToConsole, logToFile };
+module.exports = { logToConsole, logErrToConsole, logToFile };
