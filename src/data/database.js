@@ -472,7 +472,7 @@ async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
                 {
                     source_code,
                     ext,
-                    status: "Pending",
+                    status: null,
                     date: new Date(),
                     user_id,
                     prob_id,
@@ -496,11 +496,14 @@ async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
  * @param {Number} score score
  */
 async function updateSubmission(sub_id, new_verdict, score, tests) {
+    let sub = null;
     try {
-        await readSubmission(sub_id);
+        sub = await readSubmission(sub_id);
     } catch (err) {
         throw new Error(`Incorrect reference: ${sub_id}`);
     }
+    if (sub.status !== null)
+        throw new Error(`Cannot re-update submission: ${sub_id}`);
     return new Promise((resolve, reject) => {
         db.submissions.update(
             { _id: sub_id },
@@ -535,7 +538,7 @@ async function readLastSatisfy(user_id, prob_id) {
             .find({
                 user_id: user_id,
                 prob_id: prob_id,
-                status: { $ne: "Pending" }
+                status: { $ne: null }
             })
             .sort({ date: -1 })
             .exec((err, docs) => {
@@ -560,7 +563,7 @@ async function countPreviousSatisfy(sub_id) {
                         user_id: sub_data.user_id,
                         prob_id: sub_data.prob_id,
                         date: { $lt: sub_data.date },
-                        status: { $ne: "Pending" }
+                        status: { $ne: null }
                     },
                     function(err, docs) {
                         if (err) reject(err);

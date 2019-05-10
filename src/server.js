@@ -8,6 +8,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const ip = require("ip");
 const cors = require("cors");
+const expressStaticGzip = require("express-static-gzip");
 
 const server = require("./config/server");
 const passportConfig = require("./controller/passportConfig");
@@ -65,11 +66,8 @@ app.all("/api/*", (req, res) => {
     res.sendStatus(404);
 });
 
-app.use("/", express.static(server.staticFolder));
-// Temp solution ?
-app.use("/*", (req, res) => {
-    res.sendFile(server.staticFolder + "/index.html");
-});
+app.use("/", expressStaticGzip(server.staticFolder));
+app.use("/*", expressStaticGzip(server.staticFolder));
 
 let serv = app.listen(PORT, () => {
     Console.log(
