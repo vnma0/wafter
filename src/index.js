@@ -3,6 +3,7 @@ const Console = require("console");
 
 require("./util/config/contestConfig").genIfNotExist();
 require("./util/config/KonConfig").genIfNotExist();
+const version = require("./config/version");
 
 const addUser = require("./prompt/addUser");
 const contestOptions = require("./prompt/contestOptions");
@@ -36,7 +37,7 @@ async function mainPrompt() {
 async function main() {
     let res = {};
 
-    Console.log("MIRAI Wafter 1.5");
+    Console.log("MIRAI Wafter " + version);
     Console.log("Copyright (c) 2018 Vườn ươm A0. MIT License.");
 
     try {
