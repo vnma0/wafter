@@ -9,7 +9,7 @@
     "start": "node src/index.js",
     "test": "mocha",
     "dev": "nodemon src/index.js",
-    "pkg": "npm run build && nexe -i dist/index.js -o dist/wafter && upx dist/wafter.exe"
+    "pkg": "npm run build && cd dist/ && nexe -i index.js -r public/**/* -o wafter"
   },
   "repository": {
     "type": "git",
@@ -49,11 +49,11 @@
     "zip-dir": "^1.0.2"
   },
   "devDependencies": {
+    "@zeit/ncc": "^0.18.3",
     "babel-minify": "^0.5.0",
     "del-cli": "^1.1.0",
     "eslint": "^5.11.0",
     "mocha": "^5.2.0",
-    "ncc": "^0.3.6",
     "nexe": "^3.2.0",
     "nodemon": "^1.18.9"
   }
