@@ -19,7 +19,8 @@ function serverConfig() {
         }
     };
 
-    const envConfig = templateConfig[process.env.NODE_ENV] || {};
+    const envConfig =
+        templateConfig[process.env.NODE_ENV] || templateConfig.development;
 
     const customConfig = {
         port: process.env.PORT
