@@ -22,9 +22,8 @@ before_build:
     .\hestia.ps1 > $null
 build_script:
 - cmd: >-
-    # Hard code production mode
     set NODE_ENV=production
-    
+
     npm run pkg
 
     cd dist\
