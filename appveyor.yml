@@ -3,14 +3,16 @@ clone_folder: C:\wafter
 init:
 - ps: >-
     Install-Product node $env:nodejs_version $env:platform
-    $version = (Get-Content package.json) -join "`n" | ConvertFrom-Json | Select -ExpandProperty "version"
-    Update-AppveyorBuild -Version $version + "-" + $env:APPVEYOR_BUILD_VERSION
 environment:
   nodejs_version: 10
 platform:
   - x86
   - x64
 install:
+- ps: >-
+    $version = (Get-Content package.json) -join "`n" | ConvertFrom-Json | Select -ExpandProperty "version"
+
+    Update-AppveyorBuild -Version $version + "-" + $env:APPVEYOR_BUILD_VERSION
 - cmd: >-
     npm install
 before_build:
