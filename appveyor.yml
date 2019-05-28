@@ -12,7 +12,7 @@ install:
 - ps: >-
     $version = (Get-Content package.json) -join "`n" | ConvertFrom-Json | Select -ExpandProperty "version"
 
-    Update-AppveyorBuild -Version "$version-$env:APPVEYOR_BUILD_NUMBER"
+    Update-AppveyorBuild -Version "$version Build $env:APPVEYOR_BUILD_NUMBER"
 - cmd: >-
     npm install
 before_build:
