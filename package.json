@@ -6,7 +6,7 @@
   "bin": "src/index.js",
   "scripts": {
     "compile": "ncc build src/index.js",
-    "build": "npm run compile && loose-envify dist/index.js | terser -o dist/index.min.js",
+    "build": "npm run compile && loose-envify dist/index.js | terser -m -c --mangle-props --toplevel --warn -o dist/index.min.js",
     "start": "node src/index.js",
     "test": "mocha",
     "dev": "nodemon src/index.js",
@@ -56,6 +56,7 @@
     "mocha": "^5.2.0",
     "nexe": "^3.2.0",
     "nodemon": "^1.18.9",
-    "terser": "^3.17.0"
+    "terser": "^3.17.0",
+    "webpack": "^4.32.2"
   }
 }
