@@ -13,6 +13,7 @@ upload/
 public/
 **/*.db
 **/*.zip
+**/*.log
 
 # Environment
 .env

@@ -56,7 +56,7 @@ async function main() {
             }
         }
     } catch (err) {
-        Console.log(err.message);
+        Console.log(err);
     }
     process.exit();
 }

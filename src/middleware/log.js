@@ -1,17 +1,34 @@
+"use struct";
+
 const { createWriteStream } = require("fs");
 const morgan = require("morgan");
+const filenamify = require("filenamify");
 
-const logToConsole = morgan("short", {
+const logToConsole = morgan("dev");
+
+const logErrToConsole = morgan("short", {
     skip: function(req, res) {
         return res.statusCode < 400;
     }
 });
 
-const logToFile = morgan("combined", {
-    stream: createWriteStream("wafter.log", {
-        flags: "a",
-        encoding: "utf8"
-    })
-});
+const logFileName =
+    filenamify(`wafter-${new Date().toISOString()}`, {
+        replacement: "_"
+    }) + ".log";
 
-module.exports = { logToConsole, logToFile };
+const logToFile = () => [
+    morgan("combined", {
+        stream: createWriteStream(logFileName, {
+            flags: "a",
+            encoding: "utf8"
+        })
+    }),
+    morgan("combined", {
+        stream: createWriteStream("wafter.log", {
+            encoding: "utf8"
+        })
+    })
+];
+
+module.exports = { logToConsole, logErrToConsole, logToFile };

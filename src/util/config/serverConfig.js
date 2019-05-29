@@ -1,22 +1,37 @@
 "use strict";
 
-const uuidv4 = require("uuid/v4");
-
 /**
  * Read Server config: .env
+ * Comes with specified config
  */
 function serverConfig() {
     require("dotenv").config();
 
     // TODO: Allow option to be be parsed as parameter in CLI
     // i.e: `--port 3002`
-    const serverPORT = Number(process.env.PORT);
-    return {
-        displayName:
-            process.env.SERVERNAME || "Wafter - Themis Distributed Server",
-        port: isNaN(serverPORT) ? 3001 : serverPORT,
-        secret: process.env.SECRET || uuidv4()
+
+    const templateConfig = {
+        development: {
+            port: 3001
+        },
+        production: {
+            port: 80
+        }
     };
+
+    const envConfig =
+        templateConfig[process.env.NODE_ENV] || templateConfig.development;
+
+    const customConfig = {
+        port: process.env.PORT
+    };
+    Object.keys(customConfig).forEach(
+        (key) => customConfig[key] === undefined && delete customConfig[key]
+    );
+
+    const finalConfig = Object.assign(envConfig, customConfig);
+
+    return finalConfig;
 }
 
 module.exports = serverConfig;
