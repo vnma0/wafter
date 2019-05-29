@@ -13,6 +13,7 @@ install:
     $version = (Get-Content package.json) -join "`n" | ConvertFrom-Json | Select -ExpandProperty "version"
 
     Update-AppveyorBuild -Version "$version Build $env:APPVEYOR_BUILD_NUMBER"
+    
     $env:BUILD_FILENAME = "$version_Build_$env:APPVEYOR_BUILD_NUMBER"
 - cmd: >-
     npm install
