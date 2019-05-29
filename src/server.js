@@ -5,6 +5,7 @@ const express = require("express");
 const helmet = require("helmet");
 const passport = require("passport");
 const session = require("express-session");
+const MemoryStore = require("memorystore")(session);
 const bodyParser = require("body-parser");
 const ip = require("ip");
 const expressStaticGzip = require("express-static-gzip");
@@ -12,7 +13,11 @@ const expressStaticGzip = require("express-static-gzip");
 const server = require("./config/server");
 const passportConfig = require("./controller/passportConfig");
 const initJudger = require("./controller/initJudger");
-const { logToConsole, logToFile } = require("./middleware/log");
+const {
+    logToConsole,
+    logToFile,
+    logErrToConsole
+} = require("./middleware/log");
 
 const info = require("./routes/info");
 const subs = require("./routes/subs");
@@ -28,17 +33,33 @@ const PORT = server.port;
 
 app.use(helmet());
 app.use(helmet.noCache());
-app.use(logToConsole);
-app.use(logToFile);
+
+app.use(
+    process.env.NODE_ENV === "production"
+        ? [...logToFile(), logErrToConsole]
+        : logToConsole
+);
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const cookieProd = {
+    cookie: {
+        maxAge: 86400000 // 24h
+    },
+    store: new MemoryStore({
+        checkPeriod: 86400000 // 24h every prune
+    })
+};
+const cookieSet = process.env.NODE_ENV === "production" ? cookieProd : {};
 app.use(
     session({
         resave: false,
         saveUninitialized: true,
-        secret: server.secret
+        secret: server.secret,
+        ...cookieSet
     })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -67,11 +88,23 @@ app.all("/api/*", (req, res) => {
 app.use("/", expressStaticGzip(server.staticFolder));
 app.use("/*", expressStaticGzip(server.staticFolder));
 
-let serv = app.listen(PORT, () => {
-    Console.log(
-        `Wafter is serving at http://${ip.address()}:${serv.address().port}`
-    );
-});
+let serv = app
+    .listen(PORT, () => {
+        Console.log(`Wafter is serving at http://${ip.address()}:${PORT}`);
+    })
+    .on("error", () => {
+        serv = app.listen(0, () => {
+            Console.log(
+                `[Warning] Cannot host on port ${PORT}! Using random port.`
+            );
+            Console.log(
+                `Wafter is serving at http://${ip.address()}:${
+                    serv.address().port
+                }`
+            );
+        });
+    });
+
 process.on("exit", () => {
     serv.close(() => {
         Console.log("Closing server");

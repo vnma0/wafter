@@ -17,6 +17,9 @@ const contestIsRunning = require("../middleware/time");
 
 const router = express.Router();
 
+const bruteMiddleware =
+    process.env.NODE_ENV === "production" ? [bruteForce.prevent] : [];
+
 router.use(auth);
 
 router
@@ -47,7 +50,7 @@ router
                 }
             );
     })
-    .post(contestIsRunning, bruteForce.prevent, upload, (req, res) => {
+    .post(contestIsRunning, ...bruteMiddleware, upload, (req, res) => {
         const file = req.file;
         sendCode(file.path, req.user._id, file.originalname).then(
             () => res.sendStatus(200),
