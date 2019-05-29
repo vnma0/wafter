@@ -17,11 +17,18 @@ const logFileName =
         replacement: "_"
     }) + ".log";
 
-const logToFile = morgan("combined", {
-    stream: createWriteStream(logFileName, {
-        flags: "a",
-        encoding: "utf8"
+const logToFile = [
+    morgan("combined", {
+        stream: createWriteStream(logFileName, {
+            flags: "a",
+            encoding: "utf8"
+        })
+    }),
+    morgan("combined", {
+        stream: createWriteStream("wafter.log", {
+            encoding: "utf8"
+        })
     })
-});
+];
 
 module.exports = { logToConsole, logErrToConsole, logToFile };
