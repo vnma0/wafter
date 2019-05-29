@@ -6,7 +6,7 @@
   "bin": "src/index.js",
   "scripts": {
     "compile": "ncc build src/index.js",
-    "build": "npm run compile && loose-envify dist/index.js | terser -m -c --warn -o dist/index.min.js",
+    "build": "npm run compile && loose-envify dist/index.js | terser -c --warn -o dist/index.min.js",
     "start": "node src/index.js",
     "test": "mocha",
     "dev": "nodemon src/index.js",
