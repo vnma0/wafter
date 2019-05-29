@@ -1,7 +1,11 @@
 module.exports = (() => {
     const meta = require("../../package.json");
     // Get build id on CI/CD
-    let build = process.env.APPVEYOR_BUILD_NUMBER || "";
-    if (build) build = " Build " + build;
-    return meta && meta.version ? meta.version.concat(build) : "Local build";
+    let build = "Local build";
+    if (process.env.APPVEYOR_BUILD_NUMBER) {
+        build = "Build " + process.env.APPVEYOR_BUILD_NUMBER;
+    }
+    return meta && meta.version
+        ? meta.version.concat(" - " + build)
+        : "Unknown version";
 })();
