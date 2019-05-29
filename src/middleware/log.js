@@ -17,7 +17,7 @@ const logFileName =
         replacement: "_"
     }) + ".log";
 
-const logToFile = [
+const logToFile = () => [
     morgan("combined", {
         stream: createWriteStream(logFileName, {
             flags: "a",

@@ -36,7 +36,7 @@ app.use(helmet.noCache());
 
 app.use(
     process.env.NODE_ENV === "production"
-        ? [logToFile, logErrToConsole]
+        ? [...logToFile(), logErrToConsole]
         : logToConsole
 );
 
