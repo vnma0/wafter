@@ -9,7 +9,7 @@ echo Hestia: $(echo $get_res | jq -r ".tag_name")
 echo Downloading latest release...
 asset_name=$(echo $get_res | jq -r ".assets[0].name")
 asset_url=$(echo $get_res | jq -r ".assets[0].browser_download_url")
-# wget $asset_url
+wget $asset_url
 
 echo Extracting latest release...
 if [ -d public ]; then
