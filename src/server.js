@@ -19,6 +19,7 @@ const {
     logErrToConsole
 } = require("./middleware/log");
 
+const assets = require("./routes/assets");
 const info = require("./routes/info");
 const subs = require("./routes/subs");
 const users = require("./routes/users");
@@ -67,6 +68,8 @@ app.use(passport.session());
 app.all("/api", (req, res) => {
     res.sendStatus(204);
 });
+
+app.use("/api/assets", assets);
 app.use("/api/info", info);
 app.use("/api/subs", subs);
 app.use("/api/users", users);
