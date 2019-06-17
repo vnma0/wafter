@@ -13,7 +13,7 @@ $sha_url = $get_res.assets[1].browser_download_url
 $get_sha = ( -split [System.Text.Encoding]::ASCII.GetString((Invoke-WebRequest $sha_url).Content))[0]
 
 Invoke-WebRequest $asset_url -Out $asset_name
-$asset_sha = Get-FileHash $asset_name -Algorithm SHA512
+$asset_sha = (Get-FileHash $asset_name -Algorithm SHA512).Hash
 
 if ($get_sha -eq $asset_sha) {
     Write-Host Extracting latest release...
