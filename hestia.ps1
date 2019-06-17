@@ -9,13 +9,21 @@ Write-Host Hestia: $get_res.tag_name
 Write-Host Downloading latest release...
 $asset_name = $get_res.assets[0].name
 $asset_url = $get_res.assets[0].browser_download_url
-Invoke-WebRequest $asset_url -Out $asset_name
+$sha_url = $get_res.assets[1].browser_download_url
+$get_sha = ( -split [System.Text.Encoding]::ASCII.GetString((Invoke-WebRequest $sha_url).Content))[0]
 
-Write-Host Extracting latest release...
-if (Test-Path -Path .\public) {
-    Remove-Item -path .\public -Recurse -Force
+Invoke-WebRequest $asset_url -Out $asset_name
+$asset_sha = Get-FileHash $asset_name -Algorithm SHA512
+
+if ($get_sha -eq $asset_sha) {
+    Write-Host Extracting latest release...
+    if (Test-Path -Path .\public) {
+        Remove-Item -path .\public -Recurse -Force
+    }
+    Expand-Archive $asset_name -DestinationPath .\public
+    Move-Item -Path .\public\build\* -Destination .\public
+    Remove-Item .\public\build
+} else {
+    Write-Error "Checksum is not equal, please rerun the script !"
 }
-Expand-Archive $asset_name -DestinationPath .\public
-Move-Item -Path .\public\build\* -Destination .\public
-Remove-Item .\public\build
 Remove-Item $asset_name
