@@ -10,7 +10,7 @@
     "start": "node src/index.js",
     "test": "mocha",
     "dev": "nodemon src/index.js",
-    "pkg": "npm run build && cd dist/ && nexe -i index.min.js -r 'public/**/*' -o wafter"
+    "pkg": "npm run build && cd dist/ && nexe -i index.min.js -r \"public/**/*\" -o wafter"
   },
   "repository": {
     "type": "git",
