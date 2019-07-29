@@ -14,7 +14,7 @@ install:
 
     Update-AppveyorBuild -Version "$version.$env:APPVEYOR_BUILD_NUMBER"
 - cmd: >-
-    npm install
+    npm ci
 before_build:
 - ps: >-
     .\hestia.ps1 > $null
