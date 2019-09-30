@@ -277,17 +277,12 @@ function verifySubsQuery(page, size, count, maxSize) {
     return { page, size, count };
 }
 
-const readSubmissionQuery = {
-    ext: 1,
-    status: 1,
-    date: 1,
-    user_id: 1,
-    prob_id: 1,
-    score: 1,
-    tpen: 1,
-    tests: 1,
-    msg: 1
-};
+/*
+ * Convert queries to a form that nedb understands
+ */
+function multipleQueriesFormatter (arg) {
+    return Array.isArray(arg) ? { $in : arg } : arg;
+}
 
 /**
  *
@@ -295,15 +290,39 @@ const readSubmissionQuery = {
  * @param {Number} page page number
  * @param {Number} count number of subs limited in the selected
  * @param {Number} size limit the size of page
+ * @param {String[]||String} prob_id problem(s) to filter
+ * @param {String[]||String} username user(s) to filter
+ * @param {String[]||String} ext language(s) to filter
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
-async function readAllSubmissions(page, size, count) {
+async function readAllSubmissions(page, size, count, prob_id, username, ext) {
+    const { isArray } = Array;
     const maxSize = await countAllSubmissions();
     ({ page, size, count } = verifySubsQuery(page, size, count, maxSize));
 
+    let req = {};
+    if (prob_id) req.prob_id = multipleQueriesFormatter(prob_id);
+    if (ext) req.ext = multipleQueriesFormatter(ext);
+    if (username) req.user_id =
+        isArray(username)
+            ? { $in : username.map(async (name) => (await readUser(name))._id) }
+            : (await readUser(username))._id;
+
     return new Promise((resolve, reject) => {
         db.submissions
-            .find({}, readSubmissionQuery)
+            .find(
+                req,
+                {
+                    ext: 1,
+                    status: 1,
+                    date: 1,
+                    user_id: 1,
+                    prob_id: 1,
+                    score: 1,
+                    tpen: 1,
+                    tests: 1
+                }
+            )
             .sort({ date: -1 })
             .skip(size * page - count + maxSize)
             .limit(size)

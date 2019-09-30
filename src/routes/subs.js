@@ -27,27 +27,27 @@ router.use(auth);
 router
     .route("/")
     .get((req, res) => {
-        let { page, size, count } = req.query;
+        let { page, size, count, prob_id, username, ext } = req.query;
 
         page = Number(page);
         size = Number(size);
         count = Number(count);
 
         if (req.user.isAdmin)
-            readAllSubmissions(page, size, count).then(
-                docs => {
+            readAllSubmissions(page, size, count, prob_id, username, ext).then(
+                (docs) => {
                     res.send(docs);
                 },
-                err => {
+                (err) => {
                     res.status(400).json(err.message);
                 }
             );
         else
             readUserSubmission(req.user._id, page, size, count).then(
-                docs => {
+                (docs) => {
                     res.send(docs);
                 },
-                err => {
+                (err) => {
                     res.status(400).json(err.message);
                 }
             );
