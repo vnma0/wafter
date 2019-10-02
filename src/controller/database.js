@@ -290,9 +290,9 @@ function multipleQueriesFormatter (arg) {
  * @param {Number} page page number
  * @param {Number} count number of subs limited in the selected
  * @param {Number} size limit the size of page
- * @param {String[]||String} prob_id problem(s) to filter
- * @param {String[]||String} username user(s) to filter
- * @param {String[]||String} ext language(s) to filter
+ * @param {String[]|String} prob_id problem(s) to filter
+ * @param {String[]|String} username user(s) to filter
+ * @param {String[]|String} ext language(s) to filter
  * @returns {Promise<Array<ReturnSubmission>>} Array of submission if success
  */
 async function readAllSubmissions(page, size, count, prob_id, username, ext) {
