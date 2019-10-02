@@ -303,10 +303,17 @@ async function readAllSubmissions(page, size, count, prob_id, username, ext) {
     let req = {};
     if (prob_id) req.prob_id = multipleQueriesFormatter(prob_id);
     if (ext) req.ext = multipleQueriesFormatter(ext);
-    if (username) req.user_id =
-        isArray(username)
-            ? { $in : username.map(async (name) => (await readUser(name))._id) }
-            : (await readUser(username))._id;
+    if (username) {
+        let parsed = isArray(username)
+        // regardless of user's availability, always have valid data
+            ? { $in : (await Promise.allSettled(username.map(name => readUser(name).catch(() => {}))))
+                    .map(({ _id }) => _id)  // extract _id
+                    .filter(Boolean)    // filter `undefined`s & clear them out
+            }
+            : (await readUser(username).catch(() => {}))._id;
+        // check for undefined ids or empty array (all queries are invalid)
+        ((parsed && parsed.length) ? req.user_id = parsed : undefined)
+    }
 
     return new Promise((resolve, reject) => {
         db.submissions
