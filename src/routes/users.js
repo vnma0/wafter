@@ -18,7 +18,7 @@ router.get("/", (req, res) => {
 });
 
 const verifyUserId = (req, res, next) => {
-    if (req.user._id !== req.params.userid) res.sendStatus(403);
+    if ((req.user._id !== req.params.userid) && (!req.user.isAdmin)) res.sendStatus(403);
     else next();
 };
 
