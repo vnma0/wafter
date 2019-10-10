@@ -18,7 +18,11 @@ router.get("/", (req, res) => {
 });
 
 const verifyUserId = (req, res, next) => {
-    if ((req.user._id !== req.params.userid) && (!req.user.isAdmin)) res.sendStatus(403);
+    if ((req.user._id !== req.params.userid)
+        // if it is NOT the user themselves
+         && (!req.user.isAdmin))
+         // and the request maker is NOT an administrator
+            res.sendStatus(403);    // forbidden
     else next();
 };
 
