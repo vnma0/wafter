@@ -29,8 +29,6 @@
     "dotenv": "^8.1.0",
     "enquirer": "^2.3.2",
     "express": "^4.17.1",
-    "express-brute": "^1.0.1",
-    "express-brute-nedb": "^1.1.0",
     "express-session": "^1.16.2",
     "express-static-gzip": "^2.0.5",
     "filenamify": "^4.1.0",
@@ -47,6 +45,7 @@
     "node-fetch": "^2.6.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "rate-limiter-flexible": "^1.1.6",
     "uuid": "^3.3.3",
     "valid-url": "^1.0.9",
     "zip-dir": "^1.0.2"
