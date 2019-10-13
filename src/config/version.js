@@ -9,7 +9,7 @@ module.exports = (() => {
     // Set version string
     let version = meta && meta.version
         ? meta.version.concat("+" + build)
-        : "undef";
+        : "undefined";
     process.versions.wafter = version;
 
     return version;
