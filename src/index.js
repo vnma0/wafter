@@ -16,6 +16,7 @@ const mainChoices = {
     "Add user": addUser,
     "Contest options": contestOptions,
     "Kon's pair options": KonOptions,
+    Version: () => {},
     Exit: () => {}
 };
 
@@ -37,6 +38,7 @@ async function mainPrompt() {
 async function main() {
     let res = {};
 
+    process.title = "MIRAI Wafter " + VERSION;
     Console.log("MIRAI Wafter " + VERSION);
     Console.log("Copyright (c) 2018-2019 Vườn ươm A0. MIT License.");
 
@@ -49,6 +51,16 @@ async function main() {
                 Console.log(
                     `Exited to menu${err.message ? `: ${err.message}` : ""}`
                 );
+            }
+
+            if (res.main === "Version") {
+                Console.log({
+                    wafter: process.versions.wafter,
+                    node: process.versions.node,
+                    v8: process.versions.v8,
+                    platform: process.platform,
+                    arch: process.arch
+                });
             }
 
             if (res.main === "Start server") {
