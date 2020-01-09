@@ -9,7 +9,7 @@ const {
     readAllSubmissions,
     readUserSubmission,
     readSubmissionSrc
-} = require("../data/database");
+} = require("../controller/database");
 const auth = require("../middleware/auth");
 const bruteForce = require("../middleware/bruteForce");
 const upload = require("../middleware/upload");

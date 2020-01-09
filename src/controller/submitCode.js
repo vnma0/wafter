@@ -5,7 +5,7 @@ const { basename, extname } = require("path");
 
 const kon = require("../config/kon");
 const contest = require("../config/contest");
-const { newSubmission, updateSubmission } = require("../data/database");
+const { newSubmission, updateSubmission } = require("./database");
 
 /**
  * Parse Submission from kon.js for verdict

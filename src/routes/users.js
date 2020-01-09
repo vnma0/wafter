@@ -2,7 +2,7 @@
 
 const express = require("express");
 
-const { readUserByID, updateUserPassword } = require("../data/database");
+const { readUserByID, updateUserPassword } = require("../controller/database");
 const auth = require("../middleware/auth");
 
 const router = express.Router();

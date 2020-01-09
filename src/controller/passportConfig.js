@@ -4,7 +4,7 @@ const {
     readUser,
     readUserByID,
     readUserPassHash
-} = require("../data/database");
+} = require("./database");
 const { Strategy } = require("passport-local");
 const bcrypt = require("bcryptjs");
 

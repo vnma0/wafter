@@ -4,7 +4,7 @@ const {
     bestSubmission,
     readAllUser,
     readUserByID
-} = require("../data/database");
+} = require("../controller/database");
 const score = require("./score");
 const contest = require("../config/contest");
 
