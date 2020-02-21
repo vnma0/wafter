@@ -1,77 +1,66 @@
-const Enquirer = require("enquirer");
+// const { Select } = require("enquirer");
 const Console = require("console");
 
 require("./util/config/contestConfig").genIfNotExist();
-require("./util/config/KonConfig").genIfNotExist();
+// require("./util/config/KonConfig").genIfNotExist();
 const VERSION = require("./config/version");
 
-const addUser = require("./prompt/addUser");
-const contestOptions = require("./prompt/contestOptions");
-const KonOptions = require("./prompt/KonOptions");
+// const addUser = require("./prompt/addUser");
+// const contestOptions = require("./prompt/contestOptions");
+// const KonOptions = require("./prompt/KonOptions");
+const server = require("./server");
 
-const enquirer = new Enquirer();
-
-const mainChoices = {
-    "Start server": () => {},
-    "Add user": addUser,
-    "Contest options": contestOptions,
-    "Kon's pair options": KonOptions,
-    Version: () => {},
-    Exit: () => {}
-};
+// const mainChoices = {
+//     "Contest options": contestOptions,
+//     "Kon's pair options": KonOptions
+// };
 
 /**
  * Main prompt
  */
-async function mainPrompt() {
-    return enquirer.prompt({
-        type: "select",
-        name: "main",
-        message: "How can I help you ?",
-        choices: Object.keys(mainChoices)
-    });
-}
+// const mainPrompt = new Select({
+//     name: "main",
+//     message: "How can I help you ?",
+//     choices: ["Start server", ...Object.keys(mainChoices), "Version", "Exit"]
+// });
 
 /**
  * Main menu
  */
-async function main() {
-    let res = {};
-
+function main() {
     process.title = "MIRAI Wafter " + VERSION;
     Console.log("MIRAI Wafter " + VERSION);
-    Console.log("Copyright (c) 2018-2019 Vườn ươm A0. MIT License.");
-
-    try {
-        while (res.main !== "Exit") {
-            res = await mainPrompt();
-            try {
-                await mainChoices[res.main]();
-            } catch (err) {
-                Console.log(
-                    `Exited to menu${err.message ? `: ${err.message}` : ""}`
-                );
-            }
-
-            if (res.main === "Version") {
-                Console.log({
-                    wafter: process.versions.wafter,
-                    node: process.versions.node,
-                    v8: process.versions.v8,
-                    platform: process.platform,
-                    arch: process.arch
-                });
-            }
-
-            if (res.main === "Start server") {
-                require("./server");
-                return;
-            }
-        }
-    } catch (err) {
-        Console.log(err);
-    }
-    process.exit();
+    Console.log("Copyright (c) 2018-2020 Vườn ươm A0. MIT License.");
+    Console.log({
+        wafter: process.versions.wafter,
+        node: process.versions.node,
+        v8: process.versions.v8,
+        platform: process.platform,
+        arch: process.arch
+    });
+    server();
+    // mainPrompt
+    //     .run()
+    //     .then((res) => {
+    //         if (res === "Start server") {
+                
+    //         } else if (res === "Version") {
+    //             Console.log({
+    //                 wafter: process.versions.wafter,
+    //                 node: process.versions.node,
+    //                 v8: process.versions.v8,
+    //                 platform: process.platform,
+    //                 arch: process.arch
+    //             });
+    //         } else if (Reflect.has(mainChoices, res)) {
+    //             Reflect.apply(mainChoices[res], null, []).catch((err) => {
+    //                 Console.log(
+    //                     `Exited to menu${err.message ? `: ${err.message}` : ""}`
+    //                 );
+    //             });
+    //         }
+    //     })
+    //     .catch(console.error);
 }
 
 main();
