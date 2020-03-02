@@ -2,17 +2,14 @@
 const Console = require("console");
 
 require("./util/config/contestConfig").genIfNotExist();
-// require("./util/config/KonConfig").genIfNotExist();
 const VERSION = require("./config/version");
 
 // const addUser = require("./prompt/addUser");
 // const contestOptions = require("./prompt/contestOptions");
-// const KonOptions = require("./prompt/KonOptions");
 const server = require("./server");
 
 // const mainChoices = {
 //     "Contest options": contestOptions,
-//     "Kon's pair options": KonOptions
 // };
 
 /**
