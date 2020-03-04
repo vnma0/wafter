@@ -29,8 +29,6 @@
     "dotenv": "^8.2.0",
     "enquirer": "^2.3.4",
     "express": "^4.17.1",
-    "express-brute": "^1.0.1",
-    "express-brute-nedb": "^1.1.0",
     "express-session": "^1.17.0",
     "express-static-gzip": "^2.0.6",
     "filenamify": "^4.1.0",
@@ -47,7 +45,8 @@
     "node-fetch": "^2.6.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "uuid": "^7.0.1",
+    "rate-limiter-flexible": "^2.0.0",
+    "uuid": "^7.0.2",
     "valid-url": "^1.0.9",
     "zip-dir": "^1.0.2"
   },
@@ -58,6 +57,6 @@
     "mocha": "^7.1.0",
     "nexe": "^3.3.2",
     "nodemon": "^2.0.2",
-    "terser": "^4.6.4"
+    "terser": "^4.6.6"
   }
 }
