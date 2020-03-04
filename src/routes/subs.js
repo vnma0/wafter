@@ -60,17 +60,22 @@ router
         const code_ext = extname(file_name);
         const prob_id = basename(file_name, code_ext);
 
-        const sub_id = await newSubmission(
-            file.path,
-            code_ext,
-            user_id,
-            prob_id
-        );
-
-        Kon.sendCode(file.path, file_name, sub_id);
-
-        // Send code to checker
-        res.sendStatus(501);
+        try {
+            const sub_id = await newSubmission(
+                file.path,
+                code_ext,
+                user_id,
+                prob_id
+            );
+            const success = Kon.sendCode(file.path, file_name, sub_id);
+            if (success) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(400);
+            }
+        } catch (err) {
+            res.sendStatus(500);
+        }
     });
 
 router.get("/:id", (req, res) => {
