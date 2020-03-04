@@ -9,9 +9,11 @@ const MemoryStore = require("memorystore")(session);
 const bodyParser = require("body-parser");
 const ip = require("ip");
 const expressStaticGzip = require("express-static-gzip");
+const WebSocket = require("ws");
 
 const server = require("./config/server");
 const passportConfig = require("./controller/passportConfig");
+const konSetup = require("./controller/konSetup");
 // const initJudger = require("./controller/initJudger");
 const {
     logToConsole,
@@ -53,6 +55,9 @@ function startServer() {
                 );
             });
         });
+
+    const konSocket = new WebSocket.Server({ server: serv, path: "/kon" });
+    konSetup(konSocket);
 
     return serv;
 }

@@ -49,6 +49,7 @@
     "passport-local": "^1.0.0",
     "uuid": "^7.0.1",
     "valid-url": "^1.0.9",
+    "ws": "^7.2.1",
     "zip-dir": "^1.0.2"
   },
   "devDependencies": {
