@@ -17,8 +17,10 @@ class KonClient {
 }
 
 class Kon {
-    isInit = false;
-    clients = [];
+    constructor() {
+        isInit = false;
+        clients = [];
+    }
 
     get hasClient() {
         return this.clients.length !== 0;
@@ -70,7 +72,6 @@ class Kon {
      * @param {String} sub_id
      */
     sendCode(file_path, file_name, sub_id) {
-
         // TODO: Send message to user when there's no KonClient
         if (!this.hasClient) return false;
 
