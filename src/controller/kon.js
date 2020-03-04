@@ -2,6 +2,9 @@ const { readFileSync } = require("fs");
 const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
 
+const { updateSubmission } = require("./database");
+const { getBriefVerdict } = require("../util/parseKon");
+
 class KonClient {
     /**
      *
@@ -36,7 +39,22 @@ class Kon {
             // TODO: Add human-readable alias
 
             // TODO: Receive response from konClient
-            // ws.onmessage()
+            socket.onmessage = event => {
+                try {
+                    event.data = JSON.parse(event.data);
+                } catch (err) {
+                    console.log(`Invalid message from ${client.id}`);
+                }
+                const sub = event.data;
+                console.log(`Received result of ${sub.id}`);
+                // TODO: store Themis message
+                updateSubmission(
+                    sub.id,
+                    getBriefVerdict(sub.tests),
+                    sub.totalScore,
+                    sub.tests
+                ).catch(err => console.log(`${sub.id} has already updated.`));
+            };
 
             socket.onclose = event => {
                 const idx = this.clients.findIndex(val => val.id === client.id);
@@ -52,6 +70,8 @@ class Kon {
      * @param {String} sub_id
      */
     sendCode(file_path, file_name, sub_id) {
+
+        // TODO: Send message to user when there's no KonClient
         if (!this.hasClient) return false;
 
         const sendData = {
