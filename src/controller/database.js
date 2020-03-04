@@ -458,13 +458,13 @@ function readSubmissionSrc(sub_id) {
 /**
  * Add submission to database
  * @param {String} source_code Source Code
+ * @param {Number} ext Source code's extension
  * @param {String} user_id User's ID
  * @param {String} prob_id Problem's ID
  * @param {Number} tpen Submission's penalty
- * @param {Number} ext Source code's extension
  * @returns {Promise<String>} Submission's ID if success
  */
-async function newSubmission(source_code, user_id, prob_id, tpen, ext) {
+async function newSubmission(source_code, ext, user_id, prob_id, tpen = 0) {
     await readUserByID(user_id);
     return new Promise((resolve, reject) => {
         db.submissions.insert(
