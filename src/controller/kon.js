@@ -32,7 +32,6 @@ class Kon {
             const client = new KonClient(socket);
             this.clients.push(client);
             console.log(`[${client.id}] just connected`);
-            socket.send(`Welcome. Your id is: ${client.id}`);
 
             // TODO: Add human-readable alias
 
@@ -56,9 +55,9 @@ class Kon {
         if (!this.hasClient) return false;
 
         const sendData = {
-            data: readFileSync(file_path, { encoding: "base64" }),
-            file_name,
-            sub_id
+            id: sub_id,
+            name: file_name,
+            data: readFileSync(file_path, { encoding: "base64" })
         };
         console.log(sendData);
         this.clients[0].socket.send(JSON.stringify(sendData));
