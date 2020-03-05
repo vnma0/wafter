@@ -55,7 +55,7 @@ class Kon {
                     getBriefVerdict(sub.tests),
                     sub.totalScore,
                     sub.tests
-                ).catch(err => console.log(`${sub.id} has already updated.`));
+                ).catch(err => console.log(`Can't update ${sub.id}.`));
             };
 
             socket.onclose = event => {
