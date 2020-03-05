@@ -13,6 +13,7 @@ class KonClient {
     constructor(ws) {
         this.id = uuidv4();
         this.socket = ws;
+        this.queue = [];
     }
 }
 
@@ -48,19 +49,27 @@ class Kon {
                     console.log(`Invalid message from ${client.id}`);
                 }
                 const sub = event.data;
-                console.log(`Received result of ${sub.id}`);
+                console.log(`Received result of ${sub.id} from [${client.id}]`);
+
+                // Verify submission
+                const idx = client.queue.indexOf(sub.id);
+                if (idx > -1) {
+                    client.queue.splice(idx, 1);
+                    updateSubmission(
+                        sub.id,
+                        getBriefVerdict(sub.tests),
+                        sub.totalScore,
+                        sub.tests
+                    ).catch(err =>
+                        console.log(`Can't update ${sub.id}: ${err}.`)
+                    );
+                } else console.log(`Invalid ${sub.id}.`);
                 // TODO: store Themis message
-                updateSubmission(
-                    sub.id,
-                    getBriefVerdict(sub.tests),
-                    sub.totalScore,
-                    sub.tests
-                ).catch(err => console.log(`Can't update ${sub.id}.`));
             };
 
             socket.onclose = event => {
                 const idx = this.clients.findIndex(val => val.id === client.id);
-                this.clients.splice(idx);
+                this.clients.splice(idx, 1);
                 console.log(`[${client.id}] closed connection`);
             };
         });
@@ -80,8 +89,13 @@ class Kon {
             name: file_name,
             data: readFileSync(file_path, { encoding: "base64" })
         };
+        const select_client = this.clients.sort(
+            (x, y) => x.queue.length - y.queue.length
+        )[0];
+        console.log(`Sending to ${select_client.id}`);
         console.log(sendData);
-        this.clients[0].socket.send(JSON.stringify(sendData));
+        select_client.queue.push(sub_id);
+        select_client.socket.send(JSON.stringify(sendData));
         return true;
     }
 }
