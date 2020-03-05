@@ -18,8 +18,8 @@ class KonClient {
 
 class Kon {
     constructor() {
-        isInit = false;
-        clients = [];
+        this.isInit = false;
+        this.clients = [];
     }
 
     get hasClient() {
