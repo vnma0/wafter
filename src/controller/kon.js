@@ -37,7 +37,7 @@ class Kon {
         this.server.on("connection", (socket, req) => {
             const client = new KonClient(socket);
             this.clients.push(client);
-            console.log(`[${client.id}] just connected`);
+            console.log(`(${client.id})[${req.connection.remoteAddress}] just connected`);
 
             // TODO: Add human-readable alias
 
