@@ -10,10 +10,11 @@ class KonClient {
      *
      * @param {WebSocket} ws Websocket of KonClient
      */
-    constructor(ws) {
+    constructor(ws, ip) {
         this.id = uuidv4();
         this.socket = ws;
         this.queue = new Set();
+        this.ip = ip;
     }
 }
 
@@ -35,7 +36,7 @@ class Kon {
         this.server = new WebSocket.Server({ server: serv, path: "/kon" });
         this.isInit = true;
         this.server.on("connection", (socket, req) => {
-            const client = new KonClient(socket);
+            const client = new KonClient(socket, req.connection.remoteAddress);
             this.clients.add(client);
             console.log(
                 `(${client.id})[${req.connection.remoteAddress}] just connected`
@@ -43,7 +44,7 @@ class Kon {
 
             // TODO: Add human-readable alias
 
-            // TODO: Receive response from konClient
+            // TODO: Extends message platform
             socket.onmessage = (event) => {
                 try {
                     event.data = JSON.parse(event.data);
@@ -65,7 +66,7 @@ class Kon {
                         console.log(`Can't update ${sub.id}: ${err}.`)
                     );
                 } else console.log(`Invalid ${sub.id}.`);
-                // TODO: store Themis message
+                // TODO: store Themis message in db
             };
 
             socket.onclose = (event) => {
