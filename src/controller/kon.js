@@ -13,18 +13,18 @@ class KonClient {
     constructor(ws) {
         this.id = uuidv4();
         this.socket = ws;
-        this.queue = [];
+        this.queue = new Set();
     }
 }
 
 class Kon {
     constructor() {
         this.isInit = false;
-        this.clients = [];
+        this.clients = new Set();
     }
 
     get hasClient() {
-        return this.clients.length !== 0;
+        return this.clients.size !== 0;
     }
 
     /**
@@ -36,13 +36,15 @@ class Kon {
         this.isInit = true;
         this.server.on("connection", (socket, req) => {
             const client = new KonClient(socket);
-            this.clients.push(client);
-            console.log(`(${client.id})[${req.connection.remoteAddress}] just connected`);
+            this.clients.add(client);
+            console.log(
+                `(${client.id})[${req.connection.remoteAddress}] just connected`
+            );
 
             // TODO: Add human-readable alias
 
             // TODO: Receive response from konClient
-            socket.onmessage = event => {
+            socket.onmessage = (event) => {
                 try {
                     event.data = JSON.parse(event.data);
                 } catch (err) {
@@ -52,25 +54,23 @@ class Kon {
                 console.log(`Received result of ${sub.id} from [${client.id}]`);
 
                 // Verify submission
-                const idx = client.queue.indexOf(sub.id);
-                if (idx > -1) {
-                    client.queue.splice(idx, 1);
+                if (client.queue.has(sub.id)) {
+                    client.queue.delete(sub.id);
                     updateSubmission(
                         sub.id,
                         getBriefVerdict(sub.tests),
                         sub.totalScore,
                         sub.tests
-                    ).catch(err =>
+                    ).catch((err) =>
                         console.log(`Can't update ${sub.id}: ${err}.`)
                     );
                 } else console.log(`Invalid ${sub.id}.`);
                 // TODO: store Themis message
             };
 
-            socket.onclose = event => {
-                const idx = this.clients.findIndex(val => val.id === client.id);
-                this.clients.splice(idx, 1);
+            socket.onclose = (event) => {
                 console.log(`[${client.id}] closed connection`);
+                this.clients.delete(client);
             };
         });
     }
@@ -89,12 +89,12 @@ class Kon {
             name: file_name,
             data: readFileSync(file_path, { encoding: "base64" })
         };
-        const select_client = this.clients.sort(
-            (x, y) => x.queue.length - y.queue.length
+        const select_client = [...this.clients].sort(
+            (x, y) => x.queue.size - y.queue.size
         )[0];
         console.log(`Sending to ${select_client.id}`);
         console.log(sendData);
-        select_client.queue.push(sub_id);
+        select_client.queue.add(sub_id);
         select_client.socket.send(JSON.stringify(sendData));
         return true;
     }
