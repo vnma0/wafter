@@ -1,12 +1,9 @@
 "use strict";
 
-const ExpressBrute = require("express-brute");
-const ExpressBruteNedbStore = require("express-brute-nedb");
+const ExpressBruteFlexible = require("rate-limiter-flexible/lib/ExpressBruteFlexible");
 
-const store = new ExpressBruteNedbStore({
-    filename: "./brute.db"
-});
+const bruteforce = new ExpressBruteFlexible(
+    ExpressBruteFlexible.LIMITER_TYPES.MEMORY
+);
 
-const bruteForce = new ExpressBrute(store);
-
-module.exports = bruteForce;
+module.exports = bruteforce;
