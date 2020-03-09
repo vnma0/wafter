@@ -13,7 +13,7 @@ db.users = new Datastore({
 });
 db.users.persistence.setAutocompactionInterval(5000);
 db.submissions = new Datastore({
-    filename: join("data", "submissions.db"),
+    filename: join(cwd, "data", "submissions.db"),
     autoload: true
 });
 db.submissions.persistence.setAutocompactionInterval(5000);
