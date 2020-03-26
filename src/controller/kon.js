@@ -1,6 +1,7 @@
 const { readFileSync } = require("fs");
 const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
+const CryptoJS = require("crypto-js");
 
 const { updateSubmission } = require("./database");
 const { getBriefVerdict } = require("../util/parseKon");
@@ -22,6 +23,7 @@ class Kon {
     constructor() {
         this.isInit = false;
         this.clients = new Set();
+        this.key = process.env.konKey || uuidv4();
     }
 
     get hasClient() {
@@ -85,10 +87,22 @@ class Kon {
         // TODO: Send message to user when there's no KonClient
         if (!this.hasClient) return false;
 
+        const encryptMsg = (data, salt) => {
+            const key = CryptoJS.PBKDF2(this.key, salt, {
+                keySize: 256 / 32
+            });
+            return CryptoJS.Rabbit.encrypt(data, key).toString();
+        };
+
+        const data = encryptMsg(
+            readFileSync(file_path, { encoding: "base64" }),
+            sub_id
+        );
+
         const sendData = {
             id: sub_id,
             name: file_name,
-            data: readFileSync(file_path, { encoding: "base64" })
+            data
         };
         const select_client = [...this.clients].sort(
             (x, y) => x.queue.size - y.queue.size

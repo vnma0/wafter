@@ -56,6 +56,7 @@ function startServer() {
         });
 
     Kon.init(serv);
+    console.log(`Key for Kon is:\n${Kon.key}\nUse this for Kon authentication.`);
 
     return serv;
 }
