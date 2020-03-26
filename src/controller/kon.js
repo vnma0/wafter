@@ -93,8 +93,7 @@ class Kon {
         const select_client = [...this.clients].sort(
             (x, y) => x.queue.size - y.queue.size
         )[0];
-        console.log(`Sending to ${select_client.id}`);
-        console.log(sendData);
+        console.log(`Sending ${sendData.id} to ${select_client.id}`);
         select_client.queue.add(sub_id);
         select_client.socket.send(JSON.stringify(sendData));
         return true;
