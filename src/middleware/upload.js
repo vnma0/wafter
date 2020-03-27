@@ -74,7 +74,7 @@ function isCorrectFile(file) {
 }
 
 /**
- * Check if recieved file is a valid source code
+ * Check if received file is a valid source code
  * If the received file is empty, send status 400
  * Else if file's type is incorrect, send status 415
  * Else call next()

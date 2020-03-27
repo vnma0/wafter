@@ -4,7 +4,7 @@ const { extname } = require("path");
 const Enquirer = require("enquirer");
 const neatCsv = require("neat-csv");
 
-const { newUser } = require("../data/database");
+const { newUser } = require("../controller/database");
 const { isPassword, isUsername } = require("../util/userValid");
 
 const enquirer = new Enquirer();

@@ -2,14 +2,16 @@
 
 const express = require("express");
 const { existsSync } = require("fs");
+const { basename, extname } = require("path");
 
-const { sendCode } = require("../controller/submitCode");
 const {
     readSubmission,
     readAllSubmissions,
     readUserSubmission,
-    readSubmissionSrc
-} = require("../data/database");
+    readSubmissionSrc,
+    newSubmission
+} = require("../controller/database");
+const Kon = require("../controller/kon");
 const auth = require("../middleware/auth");
 const bruteForce = require("../middleware/bruteForce");
 const upload = require("../middleware/upload");
@@ -33,39 +35,57 @@ router
 
         if (req.user.isAdmin)
             readAllSubmissions(page, size, count).then(
-                (docs) => {
+                docs => {
                     res.send(docs);
                 },
-                (err) => {
+                err => {
                     res.status(400).json(err.message);
                 }
             );
         else
             readUserSubmission(req.user._id, page, size, count).then(
-                (docs) => {
+                docs => {
                     res.send(docs);
                 },
-                (err) => {
+                err => {
                     res.status(400).json(err.message);
                 }
             );
     })
-    .post(contestIsRunning, ...bruteMiddleware, upload, (req, res) => {
+    .post(contestIsRunning, ...bruteMiddleware, upload, async (req, res) => {
         const file = req.file;
-        sendCode(file.path, req.user._id, file.originalname).then(
-            () => res.sendStatus(200),
-            () => res.sendStatus(400)
-        );
+        const file_name = file.originalname;
+        const user_id = req.user._id;
+
+        const code_ext = extname(file_name);
+        const prob_id = basename(file_name, code_ext);
+
+        try {
+            const sub_id = await newSubmission(
+                file.path,
+                code_ext,
+                user_id,
+                prob_id
+            );
+            const success = Kon.sendCode(file.path, file_name, sub_id);
+            if (success) {
+                res.sendStatus(200);
+            } else {
+                res.sendStatus(503);
+            }
+        } catch (err) {
+            res.sendStatus(500);
+        }
     });
 
 router.get("/:id", (req, res) => {
     readSubmission(req.params.id).then(
-        (docs) => {
+        docs => {
             if (docs.user_id === req.user._id || req.user.isAdmin)
                 res.send(docs);
             else res.sendStatus(401);
         },
-        (err) => {
+        err => {
             res.status(400).json(err.message);
         }
     );
@@ -73,7 +93,7 @@ router.get("/:id", (req, res) => {
 
 router.get("/:id/source", (req, res) => {
     readSubmissionSrc(req.params.id)
-        .then((docs) => {
+        .then(docs => {
             if (docs.user_id === req.user._id || req.user.isAdmin) {
                 if (!existsSync(docs.source_code)) res.sendStatus(404);
                 else
@@ -83,7 +103,7 @@ router.get("/:id/source", (req, res) => {
                     );
             } else res.sendStatus(401);
         })
-        .catch((err) => {
+        .catch(err => {
             res.status(400).json(err.message);
         });
 });
