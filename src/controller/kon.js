@@ -63,7 +63,8 @@ class Kon {
                         sub.id,
                         getBriefVerdict(sub.tests),
                         sub.totalScore,
-                        sub.tests
+                        sub.tests,
+                        sub.msg
                     ).catch((err) =>
                         console.log(`Can't update ${sub.id}: ${err}.`)
                     );
