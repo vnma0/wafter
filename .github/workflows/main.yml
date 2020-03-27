@@ -21,6 +21,8 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run pkg
+      env:
+        APPVEYOR_BUILD_NUMBER: ${{ github.run_number }}
     - name: Publish build output
       uses: actions/upload-artifact@v1
       with:
