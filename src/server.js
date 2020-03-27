@@ -94,7 +94,7 @@ function setupAPIRoute(app) {
  */
 function initServer(app) {
     app.use(helmet());
-    app.use(helmet.noCache());
+    // app.use(helmet.noCache());
     app.use(
         process.env.NODE_ENV === "production"
             ? [...logToFile(), logErrToConsole]
