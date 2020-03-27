@@ -1,5 +1,6 @@
 "use strict";
 
+const chalk = require("chalk");
 const Console = require("console");
 const express = require("express");
 const helmet = require("helmet");
@@ -56,7 +57,7 @@ function startServer() {
         });
 
     Kon.init(serv);
-    console.log(`Key for Kon is:\n${Kon.key}\nUse this for Kon authentication.`);
+    console.log(`Key for Kon is: ${chalk.bgGreenBright.black(Kon.key)}\nUse this for Kon authentication.`);
 
     return serv;
 }
