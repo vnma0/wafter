@@ -22,7 +22,7 @@ build_script:
 - cmd: >-
     set NODE_ENV=production
 
-    npm run pkg
+    npm run pkg -- -t 12.15.0
 
     cd dist\
 
