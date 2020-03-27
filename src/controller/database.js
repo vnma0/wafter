@@ -226,6 +226,7 @@ async function updateUserPassword(user_id, old_pass, new_pass) {
 //  * score:           Submission's score (like in OI)
 //  * tpen:            Submission's penalty (like in ACM)
 //  * tests:           Submission's tests result
+//  * msg   Submission's error message from compiler
 //  */
 
 /**
@@ -276,6 +277,18 @@ function verifySubsQuery(page, size, count, maxSize) {
     return { page, size, count };
 }
 
+const readSubmissionQuery = {
+    ext: 1,
+    status: 1,
+    date: 1,
+    user_id: 1,
+    prob_id: 1,
+    score: 1,
+    tpen: 1,
+    tests: 1,
+    msg: 1
+};
+
 /**
  *
  * Retrieve list of submissions in database
@@ -290,19 +303,7 @@ async function readAllSubmissions(page, size, count) {
 
     return new Promise((resolve, reject) => {
         db.submissions
-            .find(
-                {},
-                {
-                    ext: 1,
-                    status: 1,
-                    date: 1,
-                    user_id: 1,
-                    prob_id: 1,
-                    score: 1,
-                    tpen: 1,
-                    tests: 1
-                }
-            )
+            .find({}, readSubmissionQuery)
             .sort({ date: -1 })
             .skip(size * page - count + maxSize)
             .limit(size)
@@ -319,6 +320,11 @@ async function readAllSubmissions(page, size, count) {
                     Promise.all(usernameListPromise).then((usernameList) => {
                         let serialized = docs.map((doc, idx) => {
                             doc.username = usernameList[idx];
+                            if (doc.msg)
+                                doc.msg = Buffer.from(
+                                    doc.msg,
+                                    "base64"
+                                ).toString("utf8");
                             return doc;
                         });
                         resolve({
@@ -340,37 +346,30 @@ async function readAllSubmissions(page, size, count) {
  */
 function readSubmission(sub_id) {
     return new Promise((resolve, reject) => {
-        db.submissions.findOne(
-            { _id: sub_id },
-            {
-                ext: 1,
-                status: 1,
-                date: 1,
-                user_id: 1,
-                prob_id: 1,
-                score: 1,
-                tpen: 1,
-                tests: 1
-            },
-            function(err, docs) {
-                if (err) reject(err);
-                else if (docs === null)
-                    reject(new Error(`Invalid Submission's ID: ${sub_id}`));
-                else
-                    readUserByID(docs.user_id)
-                        .then(
-                            (res) => {
-                                docs.username = res.username;
-                            },
-                            () => {
-                                docs.username = null;
-                            }
-                        )
-                        .finally(() => {
-                            resolve(docs);
-                        });
+        db.submissions.findOne({ _id: sub_id }, readSubmissionQuery, function(
+            err,
+            doc
+        ) {
+            if (err) reject(err);
+            else if (doc === null)
+                reject(new Error(`Invalid Submission's ID: ${sub_id}`));
+            else {
+                if (doc.msg)
+                    doc.msg = Buffer.from(doc.msg, "base64").toString("utf8");
+                readUserByID(doc.user_id)
+                    .then(
+                        (res) => {
+                            doc.username = res.username;
+                        },
+                        () => {
+                            doc.username = null;
+                        }
+                    )
+                    .finally(() => {
+                        resolve(doc);
+                    });
             }
-        );
+        });
     });
 }
 
@@ -390,19 +389,7 @@ async function readUserSubmission(user_id, page, size, count) {
 
     return new Promise((resolve, reject) => {
         db.submissions
-            .find(
-                { user_id: user_id },
-                {
-                    ext: 1,
-                    status: 1,
-                    date: 1,
-                    user_id: 1,
-                    prob_id: 1,
-                    score: 1,
-                    tpen: 1,
-                    tests: 1
-                }
-            )
+            .find({ user_id: user_id }, readSubmissionQuery)
             .sort({ date: -1 })
             .skip(size * page - count + maxSize)
             .limit(size)
@@ -411,6 +398,10 @@ async function readUserSubmission(user_id, page, size, count) {
                 else {
                     let serialized = docs.map((doc) => {
                         doc.username = userData.username;
+                        if (doc.msg)
+                            doc.msg = Buffer.from(doc.msg, "base64").toString(
+                                "utf8"
+                            );
                         return doc;
                     });
                     resolve({
@@ -478,7 +469,8 @@ async function newSubmission(source_code, ext, user_id, prob_id, tpen = 0) {
                     prob_id,
                     tpen,
                     score: null,
-                    tests: null
+                    tests: null,
+                    msg: null
                 }
             ],
             function(err, docs) {
@@ -495,7 +487,7 @@ async function newSubmission(source_code, ext, user_id, prob_id, tpen = 0) {
  * @param {Object} new_verdict new verdict
  * @param {Number} score score
  */
-async function updateSubmission(sub_id, new_verdict, score, tests) {
+async function updateSubmission(sub_id, new_verdict, score, tests, msg) {
     let sub = null;
     try {
         sub = await readSubmission(sub_id);
@@ -511,7 +503,8 @@ async function updateSubmission(sub_id, new_verdict, score, tests) {
                 $set: {
                     status: new_verdict,
                     score: score,
-                    tests: tests
+                    tests: tests,
+                    msg: Buffer.from(msg).toString("base64")
                 }
             },
             {},
