@@ -226,7 +226,7 @@ async function updateUserPassword(user_id, old_pass, new_pass) {
 //  * score:           Submission's score (like in OI)
 //  * tpen:            Submission's penalty (like in ACM)
 //  * tests:           Submission's tests result
-//  * msg   Submission's error message from compiler
+//  * msg:             Submission's error message from compiler
 //  */
 
 /**
