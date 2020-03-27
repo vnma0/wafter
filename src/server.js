@@ -12,6 +12,7 @@ const expressStaticGzip = require("express-static-gzip");
 
 const server = require("./config/server");
 const passportConfig = require("./controller/passportConfig");
+const Kon = require("./controller/kon");
 // const initJudger = require("./controller/initJudger");
 const {
     logToConsole,
@@ -53,6 +54,9 @@ function startServer() {
                 );
             });
         });
+
+    Kon.init(serv);
+    console.log(`Key for Kon is:\n${Kon.key}\nUse this for Kon authentication.`);
 
     return serv;
 }
