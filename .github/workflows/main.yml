@@ -21,3 +21,8 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run pkg
+    - name: Publish build output
+      uses: actions/upload-artifact@v1
+      with:
+        name: wafter_${{ matrix.os }}_node-${{ matrix.node-version }}
+        path: dist/
