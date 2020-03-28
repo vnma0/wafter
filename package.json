@@ -6,11 +6,11 @@
   "bin": "src/index.js",
   "scripts": {
     "compile": "ncc build src/index.js -m -o build/",
-    "build": "npm run compile && loose-envify build/index.js | terser -c --warn -o build/index.min.js",
+    "build": "npm run compile && loose-envify build/index.js | terser -c --warn -o build/wafter.js",
     "start": "node src/index.js --unhandled-rejections=strict",
     "test": "mocha",
     "dev": "nodemon src/index.js",
-    "pkg": "npm run build && cd build/ && nexe -i index.min.js -r \"public/**/*\" -o ../dist/wafter"
+    "pkg": "npm run build && cd build/ && nexe -i wafter.js -r \"public/**/*\" -o ../dist/wafter"
   },
   "repository": {
     "type": "git",
