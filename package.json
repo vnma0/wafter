@@ -10,7 +10,7 @@
     "start": "node src/index.js --unhandled-rejections=strict",
     "test": "mocha",
     "dev": "nodemon src/index.js",
-    "pkg": "npm run build && cd build/ && nexe -i wafter.js -r \"public/**/*\" -o ../dist/wafter"
+    "pkg": "cd build/ && nexe -i wafter.js -r \"public/**/*\" -o ../dist/wafter"
   },
   "repository": {
     "type": "git",

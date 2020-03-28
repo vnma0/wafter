@@ -6,8 +6,7 @@ jobs:
   build:  
     strategy:
       matrix:
-        node-version: [10.16.0, 12.15.0]
-        os: [ubuntu-16.04, ubuntu-18.04, windows-2019, macos-10.15]
+        os: [ubuntu-18.04, windows-2019, macos-10.15]
     
     name: Build ${{ matrix.os }} | Node v${{ matrix.node-version }}
     runs-on: ${{ matrix.os }}
@@ -16,15 +15,19 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 12.15.0
     - name: Install dependencies
       run: npm ci
+    - name: Install hestia
+      run: pwsh ./hestia.ps1
     - name: Build
+      run: npm run build
+    - name: Package
       run: npm run pkg
       env:
-        APPVEYOR_BUILD_NUMBER: ${{ github.run_number }}
+        BUILD_TAG: ${{ github.run_number }}.${{ github.sha }}(${{ github.ref }})
     - name: Publish build output
       uses: actions/upload-artifact@v1
       with:
-        name: wafter_${{ matrix.os }}_node-${{ matrix.node-version }}
+        name: wafter-${{ github.sha }}_${{ matrix.os }}
         path: dist/
