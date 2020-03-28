@@ -5,12 +5,12 @@
   "main": "src/index.js",
   "bin": "src/index.js",
   "scripts": {
-    "compile": "ncc build src/index.js",
-    "build": "npm run compile && loose-envify dist/index.js | terser -c --warn -o dist/index.min.js",
+    "compile": "ncc build src/index.js -m -o build/",
+    "build": "npm run compile && loose-envify build/index.js | terser -c --warn -o build/index.min.js",
     "start": "node src/index.js --unhandled-rejections=strict",
     "test": "mocha",
     "dev": "nodemon src/index.js",
-    "pkg": "npm run build && cd dist/ && nexe -i index.min.js -r \"public/**/*\" -o wafter"
+    "pkg": "npm run build && cd build/ && nexe -i index.min.js -r \"public/**/*\" -o ../dist/wafter"
   },
   "repository": {
     "type": "git",
