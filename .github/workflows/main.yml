@@ -21,6 +21,8 @@ jobs:
     - name: Install hestia
       run: .\hestia.ps1
     - name: Build
+      run: npm run build
+    - name: Package
       run: npm run pkg
       env:
         BUILD_TAG: ${{ github.run_number }}.${{ github.sha }}(${{ github.ref }})
