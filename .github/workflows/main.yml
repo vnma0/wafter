@@ -21,9 +21,9 @@ jobs:
     - name: Build
       run: npm run pkg
       env:
-        BUILD_TAG: ${{ github.run_number }}.${{ github.ref }}.${{ github.sha }}
+        BUILD_TAG: ${{ github.run_number }}.${{ github.sha }}(${{ github.ref }})
     - name: Publish build output
       uses: actions/upload-artifact@v1
       with:
-        name: wafter-${{ github.ref }}_${{ matrix.os }}
+        name: wafter-${{ github.sha }}_${{ matrix.os }}
         path: dist/
