@@ -92,7 +92,7 @@ class Kon {
             const key = CryptoJS.PBKDF2(this.key, salt, {
                 keySize: 256 / 32
             });
-            return CryptoJS.Rabbit.encrypt(data, key).toString();
+            return CryptoJS.AES.encrypt(data, key).toString();
         };
 
         const data = encryptMsg(
