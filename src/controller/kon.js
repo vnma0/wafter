@@ -1,4 +1,4 @@
-const { readFileSync } = require("fs");
+const { readFile } = require("fs");
 const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
 const CryptoJS = require("crypto-js");
@@ -84,7 +84,7 @@ class Kon {
      * @param {String} file_name
      * @param {String} sub_id
      */
-    sendCode(file_path, file_name, sub_id) {
+    async sendCode(file_path, file_name, sub_id) {
         // TODO: Send message to user when there's no KonClient
         if (!this.hasClient) return false;
 
@@ -96,7 +96,7 @@ class Kon {
         };
 
         const data = encryptMsg(
-            readFileSync(file_path, { encoding: "base64" }),
+            await readFile(file_path, { encoding: "base64" }),
             sub_id
         );
 

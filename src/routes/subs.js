@@ -67,7 +67,7 @@ router
                 user_id,
                 prob_id
             );
-            const success = Kon.sendCode(file.path, file_name, sub_id);
+            const success = await Kon.sendCode(file.path, file_name, sub_id);
             if (success) {
                 res.sendStatus(200);
             } else {
