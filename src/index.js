@@ -8,6 +8,10 @@ const server = require("./server");
 // const contestOptions = require("./prompt/contestOptions");
 // const addUser = require("./prompt/addUser");
 
+/**
+ * Main procedure
+ * Used for logging diagnostic info
+ */
 function main() {
     process.title = "MIRAI Wafter " + VERSION;
     Console.log("MIRAI Wafter " + VERSION);

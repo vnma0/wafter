@@ -45,9 +45,9 @@ function parseCtCfg(configData) {
 
     name = String(name);
     mode = String(mode);
-    allowEveryoneReg = Boolean(allowEveryoneReg);
+    allowEveryoneReg = !!(allowEveryoneReg);
 
-    if (!score.hasOwnProperty(mode)) throw new Error("Invalid mode");
+    if (!Reflect.has(score, mode)) throw new Error("Invalid mode");
 
     startTime = parseTime(startTime);
     endTime = parseTime(endTime);
@@ -74,7 +74,7 @@ function getSample() {
     now.setHours(now.getHours() + 1);
     const end = now.toJSON();
     return {
-        name: "Sample Contest",
+        name: "Contest",
         mode: "OI",
         startTime: start,
         endTime: end,

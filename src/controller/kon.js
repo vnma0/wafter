@@ -73,7 +73,9 @@ class Kon {
             };
 
             socket.onclose = (event) => {
-                console.log(`[${client.id}] closed connection`);
+                console.log(
+                    `[${client.id}] closed connection. Code: ${event.reason}. Reason: ${event.reason}`
+                );
                 this.clients.delete(client);
             };
         });
