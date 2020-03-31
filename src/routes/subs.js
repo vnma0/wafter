@@ -36,7 +36,7 @@ router
                     res.send(docs);
                 },
                 (err) => {
-                    res.status(400).json(err.message);
+                    res.status(400).json({ err: err.message });
                 }
             );
         else
@@ -45,7 +45,7 @@ router
                     res.send(docs);
                 },
                 (err) => {
-                    res.status(400).json(err.message);
+                    res.status(400).json({ err: err.message });
                 }
             );
     })
@@ -83,7 +83,7 @@ router.get("/:id", (req, res) => {
             else res.sendStatus(401);
         },
         (err) => {
-            res.status(400).json(err.message);
+            res.status(400).json({ err: err.message });
         }
     );
 });
@@ -101,7 +101,7 @@ router.get("/:id/source", (req, res) => {
             } else res.sendStatus(401);
         })
         .catch((err) => {
-            res.status(400).json(err.message);
+            res.status(400).json({ err: err.message });
         });
 });
 
