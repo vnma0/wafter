@@ -9,6 +9,7 @@ const {
 } = require("../controller/database");
 const auth = require("../middleware/auth");
 const bruteForce = require("../middleware/bruteForce");
+const contest = require("../config/contest");
 
 const router = express.Router();
 
@@ -23,15 +24,15 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", bruteForce, async (req, res) => {
-    if (!req.user.isAdmin) res.sendStatus(401);
-    else {
+    if (req.user.isAdmin || contest.allowEveryoneReg) {
         const form = req.body;
         try {
             await newUser(form.username, form.password);
+            res.sendStatus(200);
         } catch (err) {
             res.status(400).json({ err: err.message });
         }
-    }
+    } else res.sendStatus(401);
 });
 
 const verifyUserId = (req, res, next) => {

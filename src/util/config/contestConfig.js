@@ -39,11 +39,13 @@ function parseCtCfg(configData) {
         endTime,
         mode,
         probList,
-        allowedCodeExt
+        allowedCodeExt,
+        allowEveryoneReg
     } = configData;
 
     name = String(name);
     mode = String(mode);
+    allowEveryoneReg = Boolean(allowEveryoneReg);
 
     if (!score.hasOwnProperty(mode)) throw new Error("Invalid mode");
 
@@ -58,7 +60,8 @@ function parseCtCfg(configData) {
         startTime: startTime,
         endTime: endTime,
         probList: parseContainer(probList),
-        allowedCodeExt: parseContainer(allowedCodeExt)
+        allowedCodeExt: parseContainer(allowedCodeExt),
+        allowEveryoneReg: allowEveryoneReg
     };
 }
 
