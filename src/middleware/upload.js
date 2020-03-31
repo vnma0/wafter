@@ -1,7 +1,7 @@
 "use strict";
 
 const multer = require("multer");
-const { isBinaryFileSync } = require("isbinaryfile");
+const { isBinaryFile } = require("isbinaryfile");
 const { extname, basename } = require("path");
 
 const code = require("../config/code");
@@ -54,8 +54,8 @@ const codeUpload = limitUpload(
  * Check if given file is a valid source code by check if it's binary or not
  * @param {Object} file source code blob
  */
-function checkCodeType(file) {
-    return !isBinaryFileSync(file.path);
+async function isAllowedFileType(file) {
+    return !(await isBinaryFile(file.path));
 }
 
 /**
@@ -82,12 +82,12 @@ function isCorrectFile(file) {
  * @param {Response} res Express response object
  * @param {callback} next Express next middleware function
  */
-function validateCode(req, res, next) {
+async function validateCode(req, res, next) {
     const code = req.file;
     // Check for invalid code
     if (!code) res.sendStatus(400);
     else {
-        if (checkCodeType(code) && isCorrectFile(code)) next();
+        if ((await isAllowedFileType(code)) && isCorrectFile(code)) next();
         else res.sendStatus(415);
     }
 }
