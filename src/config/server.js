@@ -9,7 +9,7 @@ const staticFolder = path.join(__dirname, "../../public");
 
 const serverCfg = Object.assign(serverConfig(), {
     secret: uuidv4(),
-    staticFolder
+    staticFolder: staticFolder
 });
 
 module.exports = serverCfg;
