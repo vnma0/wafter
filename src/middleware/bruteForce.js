@@ -6,4 +6,5 @@ const bruteforce = new ExpressBruteFlexible(
     ExpressBruteFlexible.LIMITER_TYPES.MEMORY
 );
 
-module.exports = bruteforce;
+module.exports =
+    process.env.NODE_ENV === "production" ? [bruteforce.prevent] : [];

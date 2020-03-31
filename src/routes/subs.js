@@ -19,9 +19,6 @@ const contestIsRunning = require("../middleware/time");
 
 const router = express.Router();
 
-const bruteMiddleware =
-    process.env.NODE_ENV === "production" ? [bruteForce.prevent] : [];
-
 router.use(auth);
 
 router
@@ -35,24 +32,24 @@ router
 
         if (req.user.isAdmin)
             readAllSubmissions(page, size, count).then(
-                docs => {
+                (docs) => {
                     res.send(docs);
                 },
-                err => {
+                (err) => {
                     res.status(400).json(err.message);
                 }
             );
         else
             readUserSubmission(req.user._id, page, size, count).then(
-                docs => {
+                (docs) => {
                     res.send(docs);
                 },
-                err => {
+                (err) => {
                     res.status(400).json(err.message);
                 }
             );
     })
-    .post(contestIsRunning, ...bruteMiddleware, upload, async (req, res) => {
+    .post(contestIsRunning, bruteForce, upload, async (req, res) => {
         const file = req.file;
         const file_name = file.originalname;
         const user_id = req.user._id;
@@ -80,12 +77,12 @@ router
 
 router.get("/:id", (req, res) => {
     readSubmission(req.params.id).then(
-        docs => {
+        (docs) => {
             if (docs.user_id === req.user._id || req.user.isAdmin)
                 res.send(docs);
             else res.sendStatus(401);
         },
-        err => {
+        (err) => {
             res.status(400).json(err.message);
         }
     );
@@ -93,7 +90,7 @@ router.get("/:id", (req, res) => {
 
 router.get("/:id/source", (req, res) => {
     readSubmissionSrc(req.params.id)
-        .then(docs => {
+        .then((docs) => {
             if (docs.user_id === req.user._id || req.user.isAdmin) {
                 if (!existsSync(docs.source_code)) res.sendStatus(404);
                 else
@@ -103,7 +100,7 @@ router.get("/:id/source", (req, res) => {
                     );
             } else res.sendStatus(401);
         })
-        .catch(err => {
+        .catch((err) => {
             res.status(400).json(err.message);
         });
 });
