@@ -1,10 +1,13 @@
-const { readFileSync } = require("fs");
+const { readFile } = require("fs");
+const { promisify } = require("util");
 const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
 const CryptoJS = require("crypto-js");
 
 const { updateSubmission } = require("./database");
 const { getBriefVerdict } = require("../util/parseKon");
+
+const readFileAsync = promisify(readFile);
 
 class KonClient {
     /**
@@ -73,7 +76,9 @@ class Kon {
             };
 
             socket.onclose = (event) => {
-                console.log(`[${client.id}] closed connection`);
+                console.log(
+                    `[${client.id}] closed connection. Code: ${event.reason}. Reason: ${event.reason}`
+                );
                 this.clients.delete(client);
             };
         });
@@ -84,7 +89,7 @@ class Kon {
      * @param {String} file_name
      * @param {String} sub_id
      */
-    sendCode(file_path, file_name, sub_id) {
+    async sendCode(file_path, file_name, sub_id) {
         // TODO: Send message to user when there's no KonClient
         if (!this.hasClient) return false;
 
@@ -92,11 +97,11 @@ class Kon {
             const key = CryptoJS.PBKDF2(this.key, salt, {
                 keySize: 256 / 32
             });
-            return CryptoJS.Rabbit.encrypt(data, key).toString();
+            return CryptoJS.AES.encrypt(data, key.toString()).toString();
         };
 
         const data = encryptMsg(
-            readFileSync(file_path, { encoding: "base64" }),
+            await readFileAsync(file_path, { encoding: "base64" }),
             sub_id
         );
 

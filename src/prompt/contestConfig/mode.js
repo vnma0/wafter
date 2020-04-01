@@ -9,7 +9,7 @@ const enquirer = new Enquirer();
  * Contest mode prompt
  */
 async function modePrompt(init = {}) {
-    const _mode = score.hasOwnProperty(init.mode) ? init.mode : null;
+    const _mode = Reflect.has(score, init.mode) ? init.mode : null;
     const { mode } = await enquirer.prompt({
         type: "select",
         name: "mode",

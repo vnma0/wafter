@@ -19,9 +19,6 @@ const contestIsRunning = require("../middleware/time");
 
 const router = express.Router();
 
-const bruteMiddleware =
-    process.env.NODE_ENV === "production" ? [bruteForce.prevent] : [];
-
 router.use(auth);
 
 router
@@ -35,24 +32,24 @@ router
 
         if (req.user.isAdmin)
             readAllSubmissions(page, size, count).then(
-                docs => {
+                (docs) => {
                     res.send(docs);
                 },
-                err => {
-                    res.status(400).json(err.message);
+                (err) => {
+                    res.status(400).json({ err: err.message });
                 }
             );
         else
             readUserSubmission(req.user._id, page, size, count).then(
-                docs => {
+                (docs) => {
                     res.send(docs);
                 },
-                err => {
-                    res.status(400).json(err.message);
+                (err) => {
+                    res.status(400).json({ err: err.message });
                 }
             );
     })
-    .post(contestIsRunning, ...bruteMiddleware, upload, async (req, res) => {
+    .post(contestIsRunning, bruteForce, upload, async (req, res) => {
         const file = req.file;
         const file_name = file.originalname;
         const user_id = req.user._id;
@@ -67,7 +64,7 @@ router
                 user_id,
                 prob_id
             );
-            const success = Kon.sendCode(file.path, file_name, sub_id);
+            const success = await Kon.sendCode(file.path, file_name, sub_id);
             if (success) {
                 res.sendStatus(200);
             } else {
@@ -80,31 +77,31 @@ router
 
 router.get("/:id", (req, res) => {
     readSubmission(req.params.id).then(
-        docs => {
+        (docs) => {
             if (docs.user_id === req.user._id || req.user.isAdmin)
                 res.send(docs);
             else res.sendStatus(401);
         },
-        err => {
-            res.status(400).json(err.message);
+        (err) => {
+            res.status(400).json({ err: err.message });
         }
     );
 });
 
 router.get("/:id/source", (req, res) => {
     readSubmissionSrc(req.params.id)
-        .then(docs => {
+        .then((docs) => {
             if (docs.user_id === req.user._id || req.user.isAdmin) {
                 if (!existsSync(docs.source_code)) res.sendStatus(404);
                 else
                     res.download(
                         docs.source_code,
-                        "".concat(docs._id, docs.ext.toLowerCase())
+                        "".concat(docs.prob_id, docs.ext.toLowerCase())
                     );
             } else res.sendStatus(401);
         })
-        .catch(err => {
-            res.status(400).json(err.message);
+        .catch((err) => {
+            res.status(400).json({ err: err.message });
         });
 });
 

@@ -57,7 +57,11 @@ function startServer() {
         });
 
     Kon.init(serv);
-    console.log(`Key for Kon is: ${chalk.bgGreenBright.black(Kon.key)}\nUse this for Kon authentication.`);
+    console.log(
+        `Key for Kon is: ${chalk.bgGreenBright.black(
+            Kon.key
+        )}\nUse this for Kon authentication.`
+    );
 
     return serv;
 }

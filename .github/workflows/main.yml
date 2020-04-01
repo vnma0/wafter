@@ -6,7 +6,7 @@ jobs:
   build:  
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-2019, macos-10.15]
+        os: [ubuntu-18.04, windows-2019]
     
     name: Build ${{ matrix.os }} | Node v${{ matrix.node-version }}
     runs-on: ${{ matrix.os }}
