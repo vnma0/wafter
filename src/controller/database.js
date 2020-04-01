@@ -3,6 +3,7 @@
 const bcrypt = require("bcryptjs");
 const { join } = require("path");
 const cwd = require("../config/cwd");
+const { passwordRegex } = require("../config/contest");
 const Datastore = require("nedb");
 const { isUsername, isPassword } = require("../util/userValid");
 
@@ -185,6 +186,7 @@ async function updateUserName(user_id, old_name, new_name) {
  */
 async function updateUserPassword(user_id, old_pass, new_pass) {
     if (!isPassword(new_pass)) throw new Error("Invalid new password");
+    if (!new_pass.match(passwordRegex)) throw new Error("Password does not match requirements");
     const newHashPass = bcrypt.hash(new_pass, bcrypt.genSaltSync(10));
 
     const dbUserPassHash = await readUserPassHash(user_id);

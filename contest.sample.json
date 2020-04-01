@@ -4,5 +4,6 @@
     "endTime": "2019-02-27T17:30:00.000Z",
     "mode": "OI",
     "probList": ["LARES", "GCD"],
-    "allowedCodeExt": [".C", ".CPP"]
+    "allowedCodeExt": [".C", ".CPP"],
+    "passwordRegex": ".{6,18}"
 }

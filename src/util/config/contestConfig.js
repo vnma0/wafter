@@ -39,7 +39,8 @@ function parseCtCfg(configData) {
         endTime,
         mode,
         probList,
-        allowedCodeExt
+        allowedCodeExt,
+        passwordRegex: pregex
     } = configData;
 
     name = String(name);
@@ -50,6 +51,9 @@ function parseCtCfg(configData) {
     startTime = parseTime(startTime);
     endTime = parseTime(endTime);
 
+    if (pregex && (typeof pregex !== 'string'))
+        throw new TypeError(`passwordRegex must be a string, got ${typeof pregex}`);
+
     if (startTime >= endTime) throw new Error("Start time is after end time");
 
     return {
@@ -58,7 +62,8 @@ function parseCtCfg(configData) {
         startTime: startTime,
         endTime: endTime,
         probList: parseContainer(probList),
-        allowedCodeExt: parseContainer(allowedCodeExt)
+        allowedCodeExt: parseContainer(allowedCodeExt),
+        passwordRegex: new RegExp(pregex ? pregex : '.{6,18}')
     };
 }
 
