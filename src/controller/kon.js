@@ -1,10 +1,13 @@
 const { readFile } = require("fs");
+const { promisify } = require("util");
 const WebSocket = require("ws");
 const { v4: uuidv4 } = require("uuid");
 const CryptoJS = require("crypto-js");
 
 const { updateSubmission } = require("./database");
 const { getBriefVerdict } = require("../util/parseKon");
+
+const readFileAsync = promisify(readFile);
 
 class KonClient {
     /**
@@ -94,11 +97,11 @@ class Kon {
             const key = CryptoJS.PBKDF2(this.key, salt, {
                 keySize: 256 / 32
             });
-            return CryptoJS.AES.encrypt(data, key).toString();
+            return CryptoJS.AES.encrypt(data, key.toString()).toString();
         };
 
         const data = encryptMsg(
-            await readFile(file_path, { encoding: "base64" }),
+            await readFileAsync(file_path, { encoding: "base64" }),
             sub_id
         );
 
