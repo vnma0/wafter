@@ -17,7 +17,7 @@ function parseTime(timeData) {
 
 /**
  * Parse Problem List
- * @param {Array} container
+ * @param {Array<String>} container
  */
 function parseContainer(container) {
     if (!Array.isArray(container)) throw new Error("Invalid Container");
@@ -45,7 +45,7 @@ function parseCtCfg(configData) {
 
     name = String(name);
     mode = String(mode);
-    allowEveryoneReg = !!(allowEveryoneReg);
+    allowEveryoneReg = !!allowEveryoneReg;
 
     if (!Reflect.has(score, mode)) throw new Error("Invalid mode");
 
@@ -53,6 +53,18 @@ function parseCtCfg(configData) {
     endTime = parseTime(endTime);
 
     if (startTime >= endTime) throw new Error("Start time is after end time");
+
+    probList = parseContainer(probList);
+    if (probList.length === 0)
+        throw new Error(
+            "Problem list is empty or malformed! Please add problem code to 'probList' in contest.json"
+        );
+
+    allowedCodeExt = parseContainer(allowedCodeExt);
+    if (allowedCodeExt.length === 0)
+        throw new Error(
+            "Allowed code extension list is empty or malformed! Please add code extension to 'allowedCodeExt' in contest.json"
+        );
 
     return {
         name: name,
@@ -79,7 +91,8 @@ function getSample() {
         startTime: start,
         endTime: end,
         probList: [],
-        allowedCodeExt: [".CPP", ".C"]
+        allowedCodeExt: [".CPP", ".C"],
+        allowEveryoneReg: false
     };
 }
 
