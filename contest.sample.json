@@ -5,5 +5,5 @@
     "mode": "OI",
     "probList": ["LARES", "GCD"],
     "allowedCodeExt": [".C", ".CPP"],
-    "passwordCondition": ".{6, 18}"
+    "passwordRegex": ".{6,18}"
 }
