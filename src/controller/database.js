@@ -320,11 +320,6 @@ async function readAllSubmissions(page, size, count) {
                     Promise.all(usernameListPromise).then((usernameList) => {
                         let serialized = docs.map((doc, idx) => {
                             doc.username = usernameList[idx];
-                            if (doc.msg)
-                                doc.msg = Buffer.from(
-                                    doc.msg,
-                                    "base64"
-                                ).toString("utf8");
                             return doc;
                         });
                         resolve({
@@ -354,8 +349,6 @@ function readSubmission(sub_id) {
             else if (doc === null)
                 reject(new Error(`Invalid Submission's ID: ${sub_id}`));
             else {
-                if (doc.msg)
-                    doc.msg = Buffer.from(doc.msg, "base64").toString("utf8");
                 readUserByID(doc.user_id)
                     .then(
                         (res) => {
@@ -398,10 +391,6 @@ async function readUserSubmission(user_id, page, size, count) {
                 else {
                     let serialized = docs.map((doc) => {
                         doc.username = userData.username;
-                        if (doc.msg)
-                            doc.msg = Buffer.from(doc.msg, "base64").toString(
-                                "utf8"
-                            );
                         return doc;
                     });
                     resolve({
@@ -504,7 +493,7 @@ async function updateSubmission(sub_id, new_verdict, score, tests, msg) {
                     status: new_verdict,
                     score: score,
                     tests: tests,
-                    msg: Buffer.from(msg).toString("base64")
+                    msg: msg
                 }
             },
             {},
