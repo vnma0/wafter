@@ -13,18 +13,8 @@ const contest = require("../config/contest");
 
 const router = express.Router();
 
-router.use(auth);
-
-/**
- * GET /users
- * If user -> redirect to user
- */
-router.get("/", (req, res) => {
-    res.redirect(req.baseUrl + "/" + req.user._id);
-});
-
 router.post("/", bruteForce, async (req, res) => {
-    if (req.user.isAdmin || contest.allowEveryoneReg) {
+    if ((req.user && req.user.isAdmin) || contest.allowEveryoneReg) {
         const form = req.body;
         try {
             await newUser(form.username, form.password);
@@ -33,6 +23,16 @@ router.post("/", bruteForce, async (req, res) => {
             res.status(400).json({ err: err.message });
         }
     } else res.sendStatus(401);
+});
+
+router.use(auth);
+
+/**
+ * GET /users
+ * If user -> redirect to user
+ */
+router.get("/", (req, res) => {
+    res.redirect(req.baseUrl + "/" + req.user._id);
 });
 
 const verifyUserId = (req, res, next) => {
@@ -58,7 +58,7 @@ router.put("/:userid/password", verifyUserId, (req, res) => {
     const form = req.body;
     if (form.password === form.newPassword)
         res.status(400).json({
-            err: "New password cannot be the same with old password"
+            err: "New password cannot be the same with old password",
         });
     else
         updateUserPassword(user._id, form.password, form.newPassword)
