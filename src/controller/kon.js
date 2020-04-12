@@ -13,6 +13,7 @@ class KonClient {
     /**
      *
      * @param {WebSocket} ws Websocket of KonClient
+     * @param {String} ip KonClient IP
      */
     constructor(ws, ip) {
         this.id = uuidv4();
@@ -24,6 +25,14 @@ class KonClient {
     send({ id, name, data }) {
         this.queue.add(id);
         this.socket.send(JSON.stringify({ id, name, data }));
+    }
+
+    remove(id) {
+        return this.queue.delete(id);
+    }
+
+    get queue_size() {
+        return this.queue.size;
     }
 }
 
@@ -65,8 +74,7 @@ class Kon {
                 console.log(`Received result of ${sub.id} from [${client.id}]`);
 
                 // Verify submission
-                if (client.queue.has(sub.id)) {
-                    client.queue.delete(sub.id);
+                if (client.remove(sub.id)) {
                     updateSubmission(
                         sub.id,
                         getBriefVerdict(sub.tests),
@@ -116,7 +124,7 @@ class Kon {
             data,
         };
         const select_client = [...this.clients].sort(
-            (x, y) => x.queue.size - y.queue.size
+            (x, y) => x.queue_size - y.queue_size
         )[0];
         console.log(`Sending ${sendData.id} to ${select_client.id}`);
         select_client.send(sendData);
