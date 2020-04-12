@@ -16,10 +16,37 @@ class KonClient {
      * @param {String} ip KonClient IP
      */
     constructor(ws, ip) {
+        // TODO: Add human-readable alias
         this.id = uuidv4();
         this.socket = ws;
         this.queue = new Set();
         this.ip = ip;
+
+        // TODO: Extends message platform
+
+        // Init recieve method
+        this.socket.onmessage = (event) => {
+            try {
+                event.data = JSON.parse(event.data);
+            } catch (err) {
+                console.log(`Invalid message from ${this.id}`);
+            }
+            const sub = event.data;
+            console.log(`Received result of ${sub.id} from [${this.id}]`);
+
+            // Verify submission
+            if (this.remove(sub.id)) {
+                updateSubmission(
+                    sub.id,
+                    sub.totalScore,
+                    sub.tests,
+                    sub.msg
+                ).catch((err) =>
+                    console.log(`Can't update ${sub.id}: ${err}.`)
+                );
+            } else console.log(`Invalid ${sub.id}.`);
+            // TODO: store Themis message in db
+        };
     }
 
     send({ id, name, data }) {
@@ -60,33 +87,6 @@ class Kon {
             console.log(
                 `(${client.id})[${req.connection.remoteAddress}] just connected`
             );
-
-            // TODO: Add human-readable alias
-
-            // TODO: Extends message platform
-            socket.onmessage = (event) => {
-                try {
-                    event.data = JSON.parse(event.data);
-                } catch (err) {
-                    console.log(`Invalid message from ${client.id}`);
-                }
-                const sub = event.data;
-                console.log(`Received result of ${sub.id} from [${client.id}]`);
-
-                // Verify submission
-                if (client.remove(sub.id)) {
-                    updateSubmission(
-                        sub.id,
-                        sub.totalScore,
-                        sub.tests,
-                        sub.msg
-                    ).catch((err) =>
-                        console.log(`Can't update ${sub.id}: ${err}.`)
-                    );
-                } else console.log(`Invalid ${sub.id}.`);
-                // TODO: store Themis message in db
-            };
-
             socket.onclose = (event) => {
                 console.log(
                     `[${client.id}] closed connection. Code: ${event.reason}. Reason: ${event.reason}`
