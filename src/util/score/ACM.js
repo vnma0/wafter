@@ -35,16 +35,9 @@ function sortFun(a, b) {
     else return a.score - b.score;
 }
 
-/**
- * Array of accepted Status
- * bestSubmission use this to filter what is "best"
- */
-const acceptedStatus = ["AC"];
-
 module.exports = {
     calc,
     sortSub,
-    acceptedStatus,
     allowScoreboard: true,
     sortFun
 };
