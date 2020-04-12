@@ -1,12 +1,11 @@
-// const { Select } = require("enquirer");
+const meow = require("meow");
 const Console = require("console");
 
 require("./util/config/contestConfig").genIfNotExist();
 const VERSION = require("./config/version");
 
 const server = require("./server");
-// const contestOptions = require("./prompt/contestOptions");
-// const addUser = require("./prompt/addUser");
+const addUser = require("./prompt/addUser");
 
 /**
  * Main procedure
@@ -21,12 +20,25 @@ function main() {
         node: process.versions.node,
         v8: process.versions.v8,
         platform: process.platform,
-        arch: process.arch
+        arch: process.arch,
+    });
+
+    const cli = meow({
+        flags: {
+            addUser: {
+                type: "boolean",
+            },
+        },
     });
 
     // TODO: Add OOBE
-
-    server();
+    if (cli.flags.addUser) {
+        addUser().finally(() => {
+            process.exit();
+        });
+    } else {
+        server();
+    }
 }
 
 main();
