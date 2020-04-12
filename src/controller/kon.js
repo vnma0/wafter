@@ -20,6 +20,11 @@ class KonClient {
         this.queue = new Set();
         this.ip = ip;
     }
+
+    send({ id, name, data }) {
+        this.queue.add(id);
+        this.socket.send(JSON.stringify({ id, name, data }));
+    }
 }
 
 class Kon {
@@ -95,7 +100,7 @@ class Kon {
 
         const encryptMsg = (data, salt) => {
             const key = CryptoJS.PBKDF2(this.key, salt, {
-                keySize: 256 / 32
+                keySize: 256 / 32,
             });
             return CryptoJS.AES.encrypt(data, key.toString()).toString();
         };
@@ -108,14 +113,13 @@ class Kon {
         const sendData = {
             id: sub_id,
             name: file_name,
-            data
+            data,
         };
         const select_client = [...this.clients].sort(
             (x, y) => x.queue.size - y.queue.size
         )[0];
         console.log(`Sending ${sendData.id} to ${select_client.id}`);
-        select_client.queue.add(sub_id);
-        select_client.socket.send(JSON.stringify(sendData));
+        select_client.send(sendData);
         return true;
     }
 }
