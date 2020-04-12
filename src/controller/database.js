@@ -473,10 +473,11 @@ async function newSubmission(source_code, ext, user_id, prob_id, tpen = 0) {
 /**
  * Update submission in database
  * @param {String} sub_id Submission's ID
- * @param {Object} new_verdict new verdict
- * @param {Number} score score
+ * @param {Number} score Submission score
+ * @param {Array<TestCase>} tests Submission test result
+ * @param {String} msg Judger and Compiler message
  */
-async function updateSubmission(sub_id, new_verdict, score, tests, msg) {
+async function updateSubmission(sub_id, score, tests, msg) {
     let sub = null;
     try {
         sub = await readSubmission(sub_id);
@@ -490,7 +491,7 @@ async function updateSubmission(sub_id, new_verdict, score, tests, msg) {
             { _id: sub_id },
             {
                 $set: {
-                    status: new_verdict,
+                    status: true,
                     score: score,
                     tests: tests,
                     msg: msg

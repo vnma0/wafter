@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const CryptoJS = require("crypto-js");
 
 const { updateSubmission } = require("./database");
-const { getBriefVerdict } = require("../util/parseKon");
+// const { getBriefVerdict } = require("../util/parseKon");
 
 const readFileAsync = promisify(readFile);
 
@@ -77,7 +77,6 @@ class Kon {
                 if (client.remove(sub.id)) {
                     updateSubmission(
                         sub.id,
-                        getBriefVerdict(sub.tests),
                         sub.totalScore,
                         sub.tests,
                         sub.msg
