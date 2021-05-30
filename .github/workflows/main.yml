@@ -22,10 +22,10 @@ jobs:
       run: pwsh ./hestia.ps1
     - name: Build
       run: npm run build
+      env:
+        BUILD_TAG: GH${{ github.run_number }}.${{ github.sha }}(${{ github.ref }})
     - name: Package
       run: npm run pkg
-      env:
-        BUILD_TAG: ${{ github.run_number }}.${{ github.sha }}(${{ github.ref }})
     - name: Publish build output
       uses: actions/upload-artifact@v1
       with:
