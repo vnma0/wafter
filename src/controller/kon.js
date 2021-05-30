@@ -5,7 +5,6 @@ const { v4: uuidv4 } = require("uuid");
 const CryptoJS = require("crypto-js");
 
 const { updateSubmission } = require("./database");
-// const { getBriefVerdict } = require("../util/parseKon");
 
 const readFileAsync = promisify(readFile);
 
