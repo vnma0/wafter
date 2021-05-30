@@ -491,14 +491,18 @@ async function updateSubmission(sub_id, score, tests, msg) {
             { _id: sub_id },
             {
                 $set: {
-                    status: tests.reduce((acc, e) => acc | e, 0) ? "WA" : "AC",
+                    status:
+                        score === null ||
+                        tests.reduce((acc, e) => acc | e.verdBit, 0)
+                            ? "WA"
+                            : "AC",
                     score: score,
                     tests: tests,
-                    msg: msg
-                }
+                    msg: msg,
+                },
             },
             {},
-            function(err, numAffected) {
+            function (err, numAffected) {
                 if (err) reject(err);
                 else if (numAffected === 0)
                     reject(Error(`Failed to update sub_id ${sub_id}`));
