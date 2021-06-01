@@ -492,10 +492,11 @@ async function updateSubmission(sub_id, score, tests, msg) {
             {
                 $set: {
                     status:
-                        score === null ||
-                        tests.reduce((acc, e) => acc | e.verdBit, 0)
-                            ? "WA"
-                            : "AC",
+                        score === null
+                            ? "CE"
+                            : tests.reduce((acc, e) => acc | e.verdBit, 0)
+                                ? "WA"
+                                : "AC",
                     score: score,
                     tests: tests,
                     msg: msg,
