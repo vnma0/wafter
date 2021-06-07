@@ -580,7 +580,7 @@ function bestSubmission(user_id, prob_id, ctype) {
             .find({
                 user_id: user_id,
                 prob_id: prob_id,
-                status: true
+                status: { $in: ctype.acceptedStatus }
             })
             .sort({ date: -1 })
             .exec((err, docs) => {
