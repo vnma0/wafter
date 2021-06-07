@@ -5,7 +5,6 @@ const { v4: uuidv4 } = require("uuid");
 const CryptoJS = require("crypto-js");
 
 const { updateSubmission } = require("./database");
-const { getBriefVerdict } = require("../util/parseKon");
 
 const readFileAsync = promisify(readFile);
 
@@ -13,12 +12,53 @@ class KonClient {
     /**
      *
      * @param {WebSocket} ws Websocket of KonClient
+     * @param {String} ip KonClient IP
      */
     constructor(ws, ip) {
+        // TODO: Add human-readable alias
         this.id = uuidv4();
         this.socket = ws;
         this.queue = new Set();
         this.ip = ip;
+
+        // TODO: Extends message platform
+
+        // Init recieve method
+        this.socket.onmessage = (event) => {
+            try {
+                event.data = JSON.parse(event.data);
+            } catch (err) {
+                console.log(`Invalid message from ${this.id}`);
+            }
+            const sub = event.data;
+            console.log(`Received result of ${sub.id} from [${this.id}]`);
+
+            // Verify submission
+            if (this.remove(sub.id)) {
+                updateSubmission(
+                    sub.id,
+                    sub.totalScore,
+                    sub.tests,
+                    sub.msg
+                ).catch((err) =>
+                    console.log(`Can't update ${sub.id}: ${err}.`)
+                );
+            } else console.log(`Invalid ${sub.id}.`);
+            // TODO: store Themis message in db
+        };
+    }
+
+    send({ id, name, data }) {
+        this.queue.add(id);
+        this.socket.send(JSON.stringify({ id, name, data }));
+    }
+
+    remove(id) {
+        return this.queue.delete(id);
+    }
+
+    get queue_size() {
+        return this.queue.size;
     }
 }
 
@@ -46,35 +86,6 @@ class Kon {
             console.log(
                 `(${client.id})[${req.connection.remoteAddress}] just connected`
             );
-
-            // TODO: Add human-readable alias
-
-            // TODO: Extends message platform
-            socket.onmessage = (event) => {
-                try {
-                    event.data = JSON.parse(event.data);
-                } catch (err) {
-                    console.log(`Invalid message from ${client.id}`);
-                }
-                const sub = event.data;
-                console.log(`Received result of ${sub.id} from [${client.id}]`);
-
-                // Verify submission
-                if (client.queue.has(sub.id)) {
-                    client.queue.delete(sub.id);
-                    updateSubmission(
-                        sub.id,
-                        getBriefVerdict(sub.tests),
-                        sub.totalScore,
-                        sub.tests,
-                        sub.msg
-                    ).catch((err) =>
-                        console.log(`Can't update ${sub.id}: ${err}.`)
-                    );
-                } else console.log(`Invalid ${sub.id}.`);
-                // TODO: store Themis message in db
-            };
-
             socket.onclose = (event) => {
                 console.log(
                     `[${client.id}] closed connection. Code: ${event.reason}. Reason: ${event.reason}`
@@ -95,7 +106,7 @@ class Kon {
 
         const encryptMsg = (data, salt) => {
             const key = CryptoJS.PBKDF2(this.key, salt, {
-                keySize: 256 / 32
+                keySize: 256 / 32,
             });
             return CryptoJS.AES.encrypt(data, key.toString()).toString();
         };
@@ -108,14 +119,13 @@ class Kon {
         const sendData = {
             id: sub_id,
             name: file_name,
-            data
+            data,
         };
         const select_client = [...this.clients].sort(
-            (x, y) => x.queue.size - y.queue.size
+            (x, y) => x.queue_size - y.queue_size
         )[0];
         console.log(`Sending ${sendData.id} to ${select_client.id}`);
-        select_client.queue.add(sub_id);
-        select_client.socket.send(JSON.stringify(sendData));
+        select_client.send(sendData);
         return true;
     }
 }
