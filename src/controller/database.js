@@ -479,6 +479,12 @@ async function newSubmission(source_code, ext, user_id, prob_id, tpen = 0) {
  */
 async function updateSubmission(sub_id, score, tests, msg) {
     let sub = null;
+    let verdictCalc = () =>
+        score === null
+            ? "CE"
+            : tests.reduce((acc, e) => acc | e.verdBit, 0)
+                ? "WA"
+                : "AC";
     try {
         sub = await readSubmission(sub_id);
     } catch (err) {
@@ -491,12 +497,7 @@ async function updateSubmission(sub_id, score, tests, msg) {
             { _id: sub_id },
             {
                 $set: {
-                    status:
-                        score === null
-                            ? "CE"
-                            : tests.reduce((acc, e) => acc | e.verdBit, 0)
-                                ? "WA"
-                                : "AC",
+                    status: verdictCalc(),
                     score: score,
                     tests: tests,
                     msg: msg,
